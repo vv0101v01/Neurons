@@ -1,0 +1,75 @@
+# Declarations removed as dead code / 已刪除的死碼清單
+#
+# One name per line.  `tools/deadcode.py` and `tools/deadapi.py` report
+# candidates; this file records the ones that were actually deleted, so that
+# `tools/refactor_audit.py` can tell an intentional removal from an accidental
+# loss of interface.
+#
+# 每個名字一行。`tools/refactor_audit.py` 以此區分「刻意刪除的死碼」與
+# 「意外遺失的介面」。
+#
+alg_modulus_irreducible_small
+alg_to_rat
+algmat_add
+bdd_dag_false
+bdd_dag_true
+bdd_dag_xor
+bdd_manager_stats
+cert_path_const
+cert_square_eq
+cert_vec_to_numeric
+checked_fill_value
+checked_line_body
+checked_line_fn
+checked_line_level
+cinterval
+deval
+dfunctor_const
+dfunctor_pi
+dfunctor_product
+dfunctor_sum
+dlevel_const
+dlevel_max
+dlevel_succ
+dlevel_var
+dsystem_compatibility
+dterm_family_strictly_positive
+dtube_nf_class
+equiv_inv_value
+face_sat_within_budget
+glue_equiv_term
+hit_plan_type_term
+hit_type_term
+mat_get
+mutual_type_value
+poly_scale
+pval_not
+pval_swap
+qcc_make
+qci_mat_add
+qci_mat_contains_point
+qmat_Jordan_block_sizes
+qmat_transpose
+quad_compatible
+quad_conj
+quad_div
+quad_is_rat
+quad_pow
+quad_to_rat
+quotient_point_term
+rat_interval_width
+rat_is_one
+rat_is_square
+rpoly_const
+sc_i
+schema_registry_hit_by_name
+schema_registry_hit_plan
+schema_registry_inductive_by_id
+schema_registry_inductive_plan
+schema_registry_stats
+subline_const
+sym_mat_trace
+sym_scalar_matrix
+sym_vec_scale_c
+ua_term
+uty_implicit_arrow

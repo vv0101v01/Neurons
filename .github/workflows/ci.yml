@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  MOONBIT_VERSION: latest
+
+jobs:
+  build:
+    name: check / fmt / test / theorems / audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Toolchain version
+        run: moon version --all
+
+      # A cached `.mooncakes` / `_build` would hide a broken import graph,
+      # so the cache key includes every manifest and source file.
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.moon/lib
+            ~/.moon/bin
+            _build
+            .mooncakes
+          key: ${{ runner.os }}-moon-${{ env.MOONBIT_VERSION }}-${{ hashFiles('moon.mod', 'moon.pkg', 'cmd/main/moon.pkg', 'tools/dead_code_removed.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-moon-${{ env.MOONBIT_VERSION }}-
+
+      - name: moon check (warnings are errors)
+        run: |
+          set -o pipefail
+          out=$(moon check --deny-warn 2>&1) || { echo "$out"; exit 1; }
+          echo "$out"
+
+      - name: moon fmt --check
+        run: moon fmt --check
+
+      - name: moon info is up to date
+        run: |
+          moon info
+          git diff --exit-code -- pkg.generated.mbti cmd/main/pkg.generated.mbti \
+            || { echo "::error::pkg.generated.mbti is stale — run moon info"; exit 1; }
+
+      - name: moon test
+        run: moon test
+
+      - name: theorem table (cmd/main)
+        run: moon run cmd/main
+
+      - name: specification audit
+        run: python3 tools/audit_spec.py --check
+
+      - name: dead code report
+        run: python3 tools/deadcode.py
+
+      - name: interface / cycle audit
+        run: python3 tools/refactor_audit.py

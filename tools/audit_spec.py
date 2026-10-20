@@ -69,6 +69,74 @@ FAMILIES = {
     "定理登記與範例": ("(名稱, Bool) 登記列；具體見證向量／項", "可判定命題在見證上的實現", "moon test／登記表"),
     "規格登記": ("SpecEntry 六元組", "規格之規格；完備性對產生介面核對", "spec_registry_sound＋本審計"),
     "輔助工具": ("整數／網格等具體值", "基礎集合層工具", "直接計算"),
+    "重構證書與介面等價": (
+        "SymbolSet 為排序去重的符號名集（介面）；RefactorPlan 為「有序宣告列 before/after ＋索引表」，索引表須為置換且每個索引兩側同名；RefactorCertificate 是該等價的 ua 像",
+        "移動宣告＝同一個 package 命名空間內的介面等價；證書是路徑，判定向量沿路徑傳輸（coe），複合是路徑複合（ua 函子性）",
+        "索引表以 `index_table_is_bijection` 判定置換性；`plan_agrees_with_univalence` 把計劃補齊到 2 的冪後拉回有限宇宙，故判定即 `fin_map_is_equiv`；丟失／改名／非置換一律拒絕",
+    ),
+    "可計算單值性與 n 維立方演算法": (
+        "FinMap 為 |A| 長的目標索引列（可枚舉的表）；CPath 為 ua 像 (src, dst, 等價表)；NBox 為 2n−1 個 (n−1)-面立方體加一個缺失面，nfill 為面子格上的 Möbius 交錯和，ncomp 取缺失面",
+        "等價的類型（表）與 ua 像（路徑）互為逆，兩方向逆律在全部元素上判決；開盒到填充是邊界限制映射的截面，且與維度重標交換",
+        "表可枚舉故『ua 是等價』為窮舉判定（路徑數 = n!）；nfill 在樣本網格逐面核對，成本 2^(2n−1)−1 可作預算判決",
+    ),
+}
+
+# English names for the generated appendix headings.
+EN_FAMILY_NAMES = {
+    "複數標量": "Complex scalars",
+    "複向量與內積": "Complex vectors and inner product",
+    "矩陣與伴隨": "Matrices and adjoint",
+    "投影與特徵空間": "Projectors and eigenspaces",
+    "Karoubi 包絡": "Karoubi envelope",
+    "區間": "Interval",
+    "面公式與 BDD": "Face formulas and BDDs",
+    "面偏序範疇": "Face poset category",
+    "系統與剪枝": "Systems and pruning",
+    "系統符號範形": "Symbolic system normal forms",
+    "立方體與 Kan 填充": "Cubes and Kan filling",
+    "未型別 NbE": "Untyped NbE",
+    "HOAS": "HOAS",
+    "型別化 NbE 與 η": "Typed NbE and eta",
+    "依賴型別 NbE（Π/Σ/宇宙）": "Dependent NbE (Pi/Sigma/universes)",
+    "立方 AST 與維度 NbE": "Cubical AST and dimension NbE",
+    "AST Kan comp/hcomp": "AST Kan comp/hcomp",
+    "資料型別與 HIT 消去": "Data types and HIT elimination",
+    "持久環境、惰性與語義快取": "Persistent environments, laziness and semantic caches",
+    "依賴語義系統與 partial 值": "Dependent semantic systems and partial values",
+    "通用歸納族 schema": "Generic inductive-family schemas",
+    "通用 HIT schema": "Generic HIT schemas",
+    "依賴 Kan 線（coe/comp）": "Dependent Kan lines (coe/comp)",
+    "精確符號代數": "Exact symbolic algebra",
+    "譜投影與仿射唯一填充": "Spectral projectors and unique affine filling",
+    "句法笛卡兒閉範疇": "Syntactic cartesian closed category",
+    "有限宇宙型別與值": "Finite universe types and values",
+    "Wiring 符號等價": "Symbolic wirings of equivalences",
+    "同構、等價、ua、coe": "Isomorphisms, equivalences, ua, coe",
+    "PathP、離散路徑與 J": "PathP, discrete paths and J",
+    "有限 Glue": "Finite Glue",
+    "Glue comp（有限線）": "Glue comp (finite lines)",
+    "Glue comp（子空間線）": "Glue comp (subspace lines)",
+    "BDD DAG、預算與 DPLL": "BDD DAGs, budgets and DPLL",
+    "原始 DSystem 相容性與 first-match 範形": "Raw DSystem compatibility and first-match normal forms",
+    "AST 一等 Equiv 與 GlueEquiv": "First-class Equiv and GlueEquiv in the AST",
+    "受檢查語義型別線": "Checked semantic type lines",
+    "Schema 註冊與 elaboration 快取": "Schema registry and elaboration caches",
+    "Schema 函子、正性與歸納遞迴": "Schema functors, positivity and induction-recursion",
+    "Schema 擴展：互歸納、商與宇宙多態": "Schema extensions: mutual induction, quotients, universe polymorphism",
+    "精確單變量多項式與有理矩陣": "Exact univariate polynomials and rational matrices",
+    "代數擴張與根式範形": "Algebraic extensions and radical normal forms",
+    "廣義特徵空間與 Jordan 理論": "Generalized eigenspaces and Jordan theory",
+    "認證數值影子與精確立方體": "Certified numeric shadows and exact cubes",
+    "球面與懸掛 HIT": "Spheres and suspension HITs",
+    "Jacobi 區間譜迭代": "Jacobi interval spectral iteration",
+    "高階合一與雙向 elaborator": "Higher-order unification and bidirectional elaboration",
+    "參數化模組與名字空間": "Parametric modules and namespaces",
+    "範疇化總檢": "Categorification audit",
+    "定理登記與範例": "Theorem registry and examples",
+    "規格登記": "Specification registry",
+    "輔助工具": "Utilities",
+    "可計算單值性與 n 維立方演算法": "Computable univalence and the n-dimensional cube algorithm",
+    "重構證書與介面等價": "Refactor certificates and interface equivalence",
 }
 
 TYPE_FAMILY = {
@@ -116,6 +184,11 @@ TYPE_FAMILY = {
     "BddDagFace": "BDD DAG、預算與 DPLL", "BddDagNode": "BDD DAG、預算與 DPLL",
     "BddManager": "BDD DAG、預算與 DPLL", "FaceDecision": "BDD DAG、預算與 DPLL",
     "FaceSatDecision": "BDD DAG、預算與 DPLL",
+    "SymbolSet": "重構證書與介面等價", "IndexTable": "重構證書與介面等價",
+    "RefactorPlan": "重構證書與介面等價", "RefactorCertificate": "重構證書與介面等價",
+    "DecoupleStep": "重構證書與介面等價",
+    "FinMap": "可計算單值性與 n 維立方演算法", "CPath": "可計算單值性與 n 維立方演算法",
+    "NBox": "可計算單值性與 n 維立方演算法", "NBoxSide": "可計算單值性與 n 維立方演算法",
     "DSystemCompatibility": "原始 DSystem 相容性與 first-match 範形",
     "DSystemIncompatibility": "原始 DSystem 相容性與 first-match 範形",
     "DTubeNF": "原始 DSystem 相容性與 first-match 範形",
@@ -318,6 +391,55 @@ CHECK_FAMILY_HINTS = [
 ]
 
 PREFIXES = [
+    ("symbol_set", "重構證書與介面等價"),
+    ("symbol_set_size", "重構證書與介面等價"),
+    ("symbol_set_items", "重構證書與介面等價"),
+    ("symbol_set_eq", "重構證書與介面等價"),
+    ("symbol_set_contains", "重構證書與介面等價"),
+    ("symbol_set_index", "重構證書與介面等價"),
+    ("ordered_items", "重構證書與介面等價"),
+    ("ordered_index", "重構證書與介面等價"),
+    ("index_table", "重構證書與介面等價"),
+    ("index_table_size", "重構證書與介面等價"),
+    ("index_table_identity", "重構證書與介面等價"),
+    ("index_table_is_bijection", "重構證書與介面等價"),
+    ("index_table_inv", "重構證書與介面等價"),
+    ("index_table_comp", "重構證書與介面等價"),
+    ("index_table_is_identity", "重構證書與介面等價"),
+    ("refactor_plan", "重構證書與介面等價"),
+    ("refactor_plan_size", "重構證書與介面等價"),
+    ("plan_preserves_symbol_set", "重構證書與介面等價"),
+    ("plan_of_ordered", "重構證書與介面等價"),
+    ("refactor_is_equivalence", "重構證書與介面等價"),
+    ("certify", "重構證書與介面等價"),
+    ("certificate_label", "重構證書與介面等價"),
+    ("certificate_is_identity", "重構證書與介面等價"),
+    ("certificate_transport_int", "重構證書與介面等價"),
+    ("certificate_transport_roundtrip", "重構證書與介面等價"),
+    ("certificate_compose", "重構證書與介面等價"),
+    ("certificate_inverse", "重構證書與介面等價"),
+    ("ty_of_bits", "重構證書與介面等價"),
+    ("next_pow2", "重構證書與介面等價"),
+    ("log2_int", "重構證書與介面等價"),
+    ("plan_to_fin_map", "重構證書與介面等價"),
+    ("plan_agrees_with_univalence", "重構證書與介面等價"),
+    ("decouple_step", "重構證書與介面等價"),
+    ("decoupling_steps", "重構證書與介面等價"),
+    ("decoupling_certified", "重構證書與介面等價"),
+    ("decoupling_conserves_names", "重構證書與介面等價"),
+    ("decoupling_preserves_families", "重構證書與介面等價"),
+    ("refactor_certificates_sound", "重構證書與介面等價"),
+    ("fin_", "可計算單值性與 n 維立方演算法"),
+    ("fin", "可計算單值性與 n 維立方演算法"),
+    ("ua_", "可計算單值性與 n 維立方演算法"),
+    ("cpath_", "可計算單值性與 n 維立方演算法"),
+    ("ty_card", "可計算單值性與 n 維立方演算法"),
+    ("j_rule_on_ua", "可計算單值性與 n 維立方演算法"),
+    ("transport_", "可計算單值性與 n 維立方演算法"),
+    ("nbox", "可計算單值性與 n 維立方演算法"),
+    ("nfill", "可計算單值性與 n 維立方演算法"),
+    ("ncomp", "可計算單值性與 n 維立方演算法"),
+    ("cube_approx_eq", "可計算單值性與 n 維立方演算法"),
     ("sphere", "球面與懸掛 HIT"), ("suspension_", "球面與懸掛 HIT"),
     ("rat_interval", "Jacobi 區間譜迭代"), ("rat_sqrt_interval", "Jacobi 區間譜迭代"),
     ("rat_cmp_exact", "Jacobi 區間譜迭代"), ("rat_le_exact", "Jacobi 區間譜迭代"),
@@ -428,12 +550,26 @@ PREFIXES = [
     ("telescope_", "通用歸納族 schema"),
     ("dhit_", "通用 HIT schema"), ("hit_", "通用 HIT schema"),
     ("run_all_checks", "定理登記與範例"), ("all_checks_pass", "定理登記與範例"),
+    ("check_cube_algorithm", "可計算單值性與 n 維立方演算法"),
+    ("fin_equiv_search", "可計算單值性與 n 維立方演算法"),
+    ("fin_equiv_count", "可計算單值性與 n 維立方演算法"),
+    ("fin_map", "可計算單值性與 n 維立方演算法"),
+    ("univalence_decides", "可計算單值性與 n 維立方演算法"),
+    ("univalence_compute_all", "可計算單值性與 n 維立方演算法"),
+    ("univalence_path_count", "可計算單值性與 n 維立方演算法"),
+    ("transport_roundtrip", "可計算單值性與 n 維立方演算法"),
+    ("ncomp", "可計算單值性與 n 維立方演算法"),
+    ("nfill", "可計算單值性與 n 維立方演算法"),
+    ("cube_permute", "可計算單值性與 n 維立方演算法"),
+    ("default_samples", "可計算單值性與 n 維立方演算法"),
+    ("fact", "可計算單值性與 n 維立方演算法"),
     ("print_report", "定理登記與範例"),
 ]
 
 KIND_ZH = {
-    "fn": "函數", "struct": "結構", "enum": "列舉", "type": "型別別名",
-    "let": "常量", "constructor": "構造子", "field": "欄位",
+    "fn": "函數 / fn", "struct": "結構 / struct", "enum": "列舉 / enum",
+    "type": "型別別名 / type", "let": "常量 / let",
+    "constructor": "構造子 / constructor", "field": "欄位 / field",
 }
 
 
@@ -498,24 +634,30 @@ def render(decls):
         assert fam in FAMILIES, f"unclassified symbol: {sym} ({kind}) -> {fam}"
         by_family[fam].append((sym, kind))
     total = len(decls)
-    out.append(f"共 **{total}** 個公共符號（宣告＋構造子＋欄位），分屬 {sum(1 for v in by_family.values() if v)} 個規格族。")
+    families = sum(1 for v in by_family.values() if v)
+    out.append(
+        f"共 **{total}** 個公共符號（宣告＋構造子＋欄位），分屬 {families} 個規格族。"
+        f" / **{total}** public symbols (declarations + constructors + fields) in "
+        f"{families} specification families."
+    )
     for fam, (canon, cat, dec) in FAMILIES.items():
         items = sorted(by_family[fam])
         if not items:
             continue
         out.append("")
-        out.append(f"### {fam}")
+        en = EN_FAMILY_NAMES.get(fam, "")
+        out.append(f"### {fam} — {en}" if en else f"### {fam}")
         out.append("")
-        out.append(f"- 規範形式：{canon}")
-        out.append(f"- 範疇化：{cat}")
-        out.append(f"- 判定：{dec}")
+        out.append(f"- 規範形式 / Canonical form：{canon}")
+        out.append(f"- 範疇化 / Categorification：{cat}")
+        out.append(f"- 判定 / Decision procedure：{dec}")
         out.append("")
-        out.append("| 符號 | 類別 |")
+        out.append("| 符號 / Symbol | 類別 / Kind |")
         out.append("|---|---|")
         for sym, kind in items:
             note = ""
             if "oracle" in sym or "extensional" in sym:
-                note = "（差分測試 oracle，非判定路徑）"
+                note = "（差分測試 oracle，非判定路徑 / diff-test oracle, not a decision path）"
             out.append(f"| `{sym}` | {KIND_ZH[kind]}{note} |")
     return "\n".join(out) + "\n"
 
