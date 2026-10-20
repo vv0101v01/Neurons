@@ -1,0 +1,3875 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "username/cubical-hermitian"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn alg_add(AlgNum, AlgNum) -> AlgNum
+
+pub fn alg_coeffs(AlgNum) -> Array[Rat]
+
+pub fn alg_compatible(AlgNum, AlgNum) -> Bool
+
+pub fn alg_div(AlgNum, AlgNum) -> AlgNum?
+
+pub fn alg_eq(AlgNum, AlgNum) -> Bool
+
+pub fn alg_eval_qpoly(QPoly, AlgNum) -> AlgNum
+
+pub fn alg_ext_degree(AlgNum) -> Int32
+
+pub fn alg_generator(QPoly) -> AlgNum
+
+pub fn alg_int(QPoly, Int32) -> AlgNum
+
+pub fn alg_inv(AlgNum) -> AlgNum?
+
+pub fn alg_is_zero(AlgNum) -> Bool
+
+pub fn alg_make(QPoly, QPoly) -> AlgNum
+
+pub fn alg_minimal_polynomial(AlgNum) -> QPoly
+
+pub fn alg_modulus_irreducible_small(AlgNum) -> Bool
+
+pub fn alg_mul(AlgNum, AlgNum) -> AlgNum
+
+pub fn alg_multiplication_matrix(AlgNum) -> QMat
+
+pub fn alg_neg(AlgNum) -> AlgNum
+
+pub fn alg_norm(AlgNum) -> Rat
+
+pub fn alg_of_quad(QuadNum) -> AlgNum
+
+pub fn alg_one(QPoly) -> AlgNum
+
+pub fn alg_pow(AlgNum, Int32) -> AlgNum
+
+pub fn alg_rat(QPoly, Rat) -> AlgNum
+
+pub fn alg_rebase_to_minimal(AlgNum) -> AlgNum
+
+pub fn alg_scale_rat(Rat, AlgNum) -> AlgNum
+
+pub fn alg_sqrt_rat(Rat) -> AlgNum
+
+pub fn alg_sub(AlgNum, AlgNum) -> AlgNum
+
+pub fn alg_to_rat(AlgNum) -> Rat?
+
+pub fn alg_trace(AlgNum) -> Rat
+
+pub fn alg_zero(QPoly) -> AlgNum
+
+pub fn algmat_Jordan_chains(AlgMat, AlgNum) -> Array[Array[Array[AlgNum]]]
+
+pub fn algmat_Jordan_decomposition(AlgMat, Array[AlgNum]) -> AlgJordanDecomposition?
+
+pub fn algmat_add(AlgMat, AlgMat) -> AlgMat
+
+pub fn algmat_charpoly(AlgMat) -> Array[AlgNum]
+
+pub fn algmat_eigenvalue_multiplicity(AlgMat, AlgNum) -> Int32
+
+pub fn algmat_eq(AlgMat, AlgMat) -> Bool
+
+pub fn algmat_from_columns(QPoly, Array[Array[AlgNum]]) -> AlgMat
+
+pub fn algmat_from_qmat(QMat, QPoly) -> AlgMat
+
+pub fn algmat_generalized_eigenspace(AlgMat, AlgNum) -> AlgGeneralizedEigenspace
+
+pub fn algmat_identity(QPoly, Int32) -> AlgMat
+
+pub fn algmat_mul(AlgMat, AlgMat) -> AlgMat
+
+pub fn algmat_nullity(AlgMat) -> Int32
+
+pub fn algmat_nullspace(AlgMat) -> Array[Array[AlgNum]]
+
+pub fn algmat_pow(AlgMat, Int32) -> AlgMat
+
+pub fn algmat_rank(AlgMat) -> Int32
+
+pub fn algmat_scalar(AlgNum, Int32) -> AlgMat
+
+pub fn algmat_sub(AlgMat, AlgMat) -> AlgMat
+
+pub fn algmat_trace(AlgMat) -> AlgNum
+
+pub fn algmat_vec(AlgMat, Array[AlgNum]) -> Array[AlgNum]
+
+pub fn algmat_zero(QPoly, Int32) -> AlgMat
+
+pub fn algrows_nullspace(QPoly, Array[Array[AlgNum]], Int32) -> Array[Array[AlgNum]]
+
+pub fn algrows_rref(Array[Array[AlgNum]], Int32) -> AlgRref
+
+pub fn algvec_in_span(Array[Array[AlgNum]], Array[AlgNum]) -> Bool
+
+pub fn algvec_is_zero(Array[AlgNum]) -> Bool
+
+pub fn algvec_rank(Array[Array[AlgNum]]) -> Int32
+
+pub fn algvec_zero(QPoly, Int32) -> Array[AlgNum]
+
+pub fn all_checks_pass() -> Bool
+
+pub fn as_equiv_type(DValue) -> DEquivTypeParts?
+
+pub fn as_glue(DValue) -> DGlueParts?
+
+pub fn as_glue_equiv(DValue) -> DGlueEquivParts?
+
+pub fn as_list_elem(DValue) -> DValue?
+
+pub fn as_path(DValue) -> DPathParts?
+
+pub fn as_pi(DValue) -> DFamilyParts?
+
+pub fn as_sigma(DValue) -> DFamilyParts?
+
+pub fn as_univ_level(DValue) -> Int32?
+
+pub fn assignment_of_mask(Int32, Int32) -> Array[Bool]
+
+pub fn bdd_and(Bdd, Bdd) -> Bdd
+
+pub fn bdd_dag_and(BddManager, Int32, Int32) -> Int32
+
+pub fn bdd_dag_build_face(BddManager, Face) -> Int32
+
+pub fn bdd_dag_face_eq(Face, Face, Int32) -> Bool
+
+pub fn bdd_dag_face_le(Face, Face, Int32) -> Bool
+
+pub fn bdd_dag_false(BddManager) -> Int32
+
+pub fn bdd_dag_not(BddManager, Int32) -> Int32
+
+pub fn bdd_dag_of_face(Face, Int32, max_nodes? : Int32) -> BddDagFace
+
+pub fn bdd_dag_of_face_best(Face, Int32, max_nodes? : Int32) -> BddBestBuild
+
+pub fn bdd_dag_or(BddManager, Int32, Int32) -> Int32
+
+pub fn bdd_dag_reachable_count(BddManager, Int32) -> Int32
+
+pub fn bdd_dag_sat_face(Face, Int32) -> Bool
+
+pub fn bdd_dag_true(BddManager) -> Int32
+
+pub fn bdd_dag_var(BddManager, Int32) -> Int32
+
+pub fn bdd_dag_witness(BddManager, Int32) -> Array[Bool]?
+
+pub fn bdd_dag_xor(BddManager, Int32, Int32) -> Int32
+
+pub fn bdd_face_eq(Face, Face, Int32) -> Bool
+
+pub fn bdd_face_le(Face, Face, Int32) -> Bool
+
+pub fn bdd_manager_new(Int32, max_nodes? : Int32) -> BddManager
+
+pub fn bdd_manager_node_count(BddManager) -> Int32
+
+pub fn bdd_manager_stats(BddManager) -> (Int32, Int32, Int32, Int32, Bool)
+
+pub fn bdd_manager_with_order(Array[Int32], Int32, max_nodes? : Int32) -> BddManager
+
+pub fn bdd_not(Bdd) -> Bdd
+
+pub fn bdd_of_face(Face, Int32) -> Bdd
+
+pub fn bdd_or(Bdd, Bdd) -> Bdd
+
+pub fn bdd_sat_face(Face, Int32) -> Bool
+
+pub fn bdd_satisfying_cubes(Bdd, Int32) -> Array[Array[Int32]]
+
+pub fn bdd_tree_of_dag(BddManager, Int32) -> Bdd
+
+pub fn bdd_var_order_candidates(Face, Int32) -> Array[Array[Int32]]
+
+pub fn bdd_worst_case_nodes(Int32) -> Int32
+
+pub fn bool_not_equiv_term() -> DTerm
+
+pub fn bool_not_term() -> DTerm
+
+pub fn bool_ops_module() -> ModuleDef
+
+pub fn bool_schema() -> DInductiveSpec
+
+pub fn branch(Face, Array[Complex]) -> VecBranch
+
+pub fn bumped_filler(Cube, Array[Complex]) -> Cube
+
+pub fn cert_complement(CertMat) -> CertMat
+
+pub fn cert_eigenspace_kan_sound(CertMat, CertPath, CertPath, CertPath) -> Bool
+
+pub fn cert_example_projector() -> CertMat
+
+pub fn cert_example_unit() -> Array[QuadC]
+
+pub fn cert_filler_respects_box(CertSquare, CertPath, CertPath, CertPath) -> Bool
+
+pub fn cert_in_image(CertMat, Array[QuadC]) -> Bool
+
+pub fn cert_in_kernel(CertMat, Array[QuadC]) -> Bool
+
+pub fn cert_inner(Array[QuadC], Array[QuadC]) -> QuadC
+
+pub fn cert_is_hermitian(CertMat) -> Bool
+
+pub fn cert_is_idempotent(CertMat) -> Bool
+
+pub fn cert_is_projector(CertMat) -> Bool
+
+pub fn cert_mat_add(CertMat, CertMat) -> CertMat
+
+pub fn cert_mat_adjoint(CertMat) -> CertMat
+
+pub fn cert_mat_eq(CertMat, CertMat) -> Bool
+
+pub fn cert_mat_from_rows(Array[Array[QuadC]]) -> CertMat
+
+pub fn cert_mat_identity(Int32) -> CertMat
+
+pub fn cert_mat_mul(CertMat, CertMat) -> CertMat
+
+pub fn cert_mat_scale_quad(QuadNum, CertMat) -> CertMat
+
+pub fn cert_mat_sub(CertMat, CertMat) -> CertMat
+
+pub fn cert_mat_to_numeric(CertMat) -> CMat
+
+pub fn cert_mat_trace(CertMat) -> QuadC
+
+pub fn cert_mat_vec(CertMat, Array[QuadC]) -> Array[QuadC]
+
+pub fn cert_mat_zero(Int32) -> CertMat
+
+pub fn cert_open_box_wf(CertPath, CertPath, CertPath) -> Bool
+
+pub fn cert_outer(Array[QuadC]) -> CertMat
+
+pub fn cert_path_const(Array[QuadC]) -> CertPath
+
+pub fn cert_path_end(CertPath) -> Array[QuadC]
+
+pub fn cert_path_eq(CertPath, CertPath) -> Bool
+
+pub fn cert_path_in_image(CertMat, CertPath) -> Bool
+
+pub fn cert_path_is_affine(CertPath) -> Bool
+
+pub fn cert_path_line(Array[QuadC], Array[QuadC]) -> CertPath
+
+pub fn cert_path_start(CertPath) -> Array[QuadC]
+
+pub fn cert_path_sym(CertPath) -> CertPath
+
+pub fn cert_projector_of_vector(Array[QuadC]) -> CertMat?
+
+pub fn cert_pruning_repairs_filler(CertMat, CertPath, CertPath, CertPath, Array[QuadC]) -> Bool
+
+pub fn cert_square_add(CertSquare, CertSquare) -> CertSquare
+
+pub fn cert_square_apply(CertMat, CertSquare) -> CertSquare
+
+pub fn cert_square_bilinear(Array[QuadC], Array[QuadC], Array[QuadC], Array[QuadC]) -> CertSquare
+
+pub fn cert_square_bump(CertSquare, Array[QuadC]) -> CertSquare
+
+pub fn cert_square_eq(CertSquare, CertSquare) -> Bool
+
+pub fn cert_square_face(CertSquare, Int32) -> CertPath
+
+pub fn cert_square_fill(CertPath, CertPath, CertPath) -> CertSquare
+
+pub fn cert_square_in_image(CertMat, CertSquare) -> Bool
+
+pub fn cert_vec_add(Array[QuadC], Array[QuadC]) -> Array[QuadC]
+
+pub fn cert_vec_eq(Array[QuadC], Array[QuadC]) -> Bool
+
+pub fn cert_vec_scale(QuadC, Array[QuadC]) -> Array[QuadC]
+
+pub fn cert_vec_scale_quad(QuadNum, Array[QuadC]) -> Array[QuadC]
+
+pub fn cert_vec_sub(Array[QuadC], Array[QuadC]) -> Array[QuadC]
+
+pub fn cert_vec_to_numeric(Array[QuadC]) -> Array[Complex]
+
+pub fn cert_vec_zero(Int32) -> Array[QuadC]
+
+pub fn certify_numeric_projector(CMat, CertMat, Double) -> NumericProjectorCertificate
+
+pub fn certify_projector(CertMat) -> ProjectorCertificate
+
+pub fn charpoly_sym(SymMat) -> UPoly
+
+pub fn check_Jacobi_interval() -> Bool
+
+pub fn check_algebraic_extensions_and_Jordan() -> Bool
+
+pub fn check_ast_bool_elim() -> Bool
+
+pub fn check_ast_coe_terms() -> Bool
+
+pub fn check_ast_data() -> Bool
+
+pub fn check_ast_hcomp_data_terms() -> Bool
+
+pub fn check_ast_hcomp_hit_terms() -> Bool
+
+pub fn check_ast_hcomp_sigma_path_terms() -> Bool
+
+pub fn check_ast_hcomp_univ_term() -> Bool
+
+pub fn check_ast_hits() -> Bool
+
+pub fn check_ast_kan_all() -> Bool
+
+pub fn check_ast_kan_terms() -> Bool
+
+pub fn check_ast_kan_types() -> Bool
+
+pub fn check_ast_list_len() -> Bool
+
+pub fn check_ast_nat_dep() -> Bool
+
+pub fn check_ast_nat_pred() -> Bool
+
+pub fn check_ast_paths() -> Bool
+
+pub fn check_bdd_and_certified_numeric() -> Bool
+
+pub fn check_bdd_canonical() -> Bool
+
+pub fn check_categories_all() -> Bool
+
+pub fn check_coe_definitional() -> Bool
+
+pub fn check_commuting() -> Bool
+
+pub fn check_constructor_constraints() -> Bool
+
+pub fn check_container_functor_tree() -> Bool
+
+pub fn check_cube3_and_moving_hit_comp() -> Bool
+
+pub fn check_cube_comp() -> Bool
+
+pub fn check_cubical_identities(Cube, Array[Double]) -> Bool
+
+pub fn check_dep_all() -> Bool
+
+pub fn check_dep_pi() -> Bool
+
+pub fn check_dep_sigma() -> Bool
+
+pub fn check_dep_universe() -> Bool
+
+pub fn check_dsystem_canonical_partial_nf() -> Bool
+
+pub fn check_dsystem_compatibility() -> Bool
+
+pub fn check_dsystem_first_match_nf() -> Bool
+
+pub fn check_eigenspace() -> Bool
+
+pub fn check_equiv_ast() -> Bool
+
+pub fn check_eta_all() -> Bool
+
+pub fn check_eta_function() -> Bool
+
+pub fn check_eta_product() -> Bool
+
+pub fn check_eta_spine() -> Bool
+
+pub fn check_eta_swap_involution() -> Bool
+
+pub fn check_eta_unit() -> Bool
+
+pub fn check_face_poset_category() -> Bool
+
+pub fn check_generated_hit_schemas() -> Bool
+
+pub fn check_generated_inductive_schemas() -> Bool
+
+pub fn check_glue() -> Bool
+
+pub fn check_glue_comp_all() -> Bool
+
+pub fn check_glue_comp_finite() -> Bool
+
+pub fn check_glue_comp_vec() -> Bool
+
+pub fn check_hit_endpoint_conversion() -> Bool
+
+pub fn check_hit_schema_arguments() -> Bool
+
+pub fn check_hit_schema_circle_segment() -> Bool
+
+pub fn check_hit_schema_torus_comp() -> Bool
+
+pub fn check_hit_schema_validation() -> Bool
+
+pub fn check_hoas() -> Bool
+
+pub fn check_hou_elaborator() -> Bool
+
+pub fn check_interval_faces() -> Bool
+
+pub fn check_j() -> Bool
+
+pub fn check_kan_all_types() -> Bool
+
+pub fn check_kan_coe_dependent() -> Bool
+
+pub fn check_kan_coe_pi_sigma() -> Bool
+
+pub fn check_kan_comp_tube() -> Bool
+
+pub fn check_kan_dep_all() -> Bool
+
+pub fn check_kan_embeddings() -> Bool
+
+pub fn check_kan_pruning() -> Bool
+
+pub fn check_karoubi_category() -> Bool
+
+pub fn check_module_system() -> Bool
+
+pub fn check_multibranch_glue_partial() -> Bool
+
+pub fn check_mutual_inductives() -> Bool
+
+pub fn check_nbe() -> Bool
+
+pub fn check_nested_rose_tree() -> Bool
+
+pub fn check_orthogonal_roundtrip() -> Bool
+
+pub fn check_pathp_exchange() -> Bool
+
+pub fn check_persistent_env_lazy_cache() -> Bool
+
+pub fn check_phase5_semantic_systems() -> Bool
+
+pub fn check_phase6_infrastructure() -> Bool
+
+pub fn check_projector() -> Bool
+
+pub fn check_quotient_schema() -> Bool
+
+pub fn check_schema_extensions() -> Bool
+
+pub fn check_schema_indexed() -> Bool
+
+pub fn check_schema_inductive_comp() -> Bool
+
+pub fn check_schema_list() -> Bool
+
+pub fn check_schema_nat_add() -> Bool
+
+pub fn check_schema_nat_neutral_quote() -> Bool
+
+pub fn check_schema_tree() -> Bool
+
+pub fn check_schema_validation() -> Bool
+
+pub fn check_schema_vec_comp() -> Bool
+
+pub fn check_schema_w() -> Bool
+
+pub fn check_spectral_identities() -> Bool
+
+pub fn check_spectral_matrices() -> Bool
+
+pub fn check_sphere3() -> Bool
+
+pub fn check_structural_positivity() -> Bool
+
+pub fn check_symbolic_affine_filler() -> Bool
+
+pub fn check_symbolic_algebra_all() -> Bool
+
+pub fn check_symbolic_nonlinear_boundary() -> Bool
+
+pub fn check_symbolic_pruning() -> Bool
+
+pub fn check_syntactic_category() -> Bool
+
+pub fn check_systems() -> Bool
+
+pub fn check_tarski_induction_recursion() -> Bool
+
+pub fn check_telescope_terms(Array[DTelescopeEntry], Array[DTerm], Array[DValue], Array[DValue], DEnv, DEnv, DDimEnv) -> Array[DValue]?
+
+pub fn check_ua_coe() -> Bool
+
+pub fn check_universe_schemes() -> Bool
+
+pub fn check_wiring_category() -> Bool
+
+pub fn check_wiring_coherence() -> Bool
+
+pub fn checked_coe_value(DCheckedTypeLine, Dim, Dim, DValue, Int32) -> DValue
+
+pub fn checked_comp_value(DCheckedTypeLine, DSystem, DValue, Int32) -> DValue
+
+pub fn checked_constant_type_line(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
+
+pub fn checked_constant_type_line_closed(DTerm) -> DCheckedTypeLine?
+
+pub fn checked_fill_value(DCheckedTypeLine, DSystem, DValue, Int32) -> (Dim) -> DValue
+
+pub fn checked_line_at(DCheckedTypeLine, Dim) -> DValue
+
+pub fn checked_line_body(DCheckedTypeLine) -> DTerm
+
+pub fn checked_line_conv(Int32, Int32, DCheckedTypeLine, DCheckedTypeLine) -> Bool
+
+pub fn checked_line_endpoints(DCheckedTypeLine) -> (DValue, DValue)
+
+pub fn checked_line_fn(DCheckedTypeLine) -> (Dim) -> DValue
+
+pub fn checked_line_is_constant(DCheckedTypeLine) -> Bool
+
+pub fn checked_line_level(DCheckedTypeLine) -> Int32
+
+pub fn checked_line_of_pathp_term(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
+
+pub fn checked_line_quote_body(Int32, Int32, DCheckedTypeLine) -> DTerm
+
+pub fn checked_line_reify_closed((Dim) -> DValue) -> DCheckedTypeLine?
+
+pub fn checked_pathp_type(DCheckedTypeLine, DValue, DValue) -> DValue
+
+pub fn checked_type_line(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
+
+pub fn checked_type_line_closed(DTerm) -> DCheckedTypeLine?
+
+pub fn checked_ua_line(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
+
+pub fn cinterval(RatInterval, RatInterval) -> CInterval
+
+pub fn cinterval_add(CInterval, CInterval) -> CInterval
+
+pub fn cinterval_conj(CInterval) -> CInterval
+
+pub fn cinterval_contains(CInterval, QCpx) -> Bool
+
+pub fn cinterval_hull(CInterval, CInterval) -> CInterval
+
+pub fn cinterval_midpoint(CInterval) -> QCpx
+
+pub fn cinterval_mul(CInterval, CInterval) -> CInterval
+
+pub fn cinterval_neg(CInterval) -> CInterval
+
+pub fn cinterval_normalize(CInterval, Int32) -> CInterval
+
+pub fn cinterval_one() -> CInterval
+
+pub fn cinterval_point(QCpx) -> CInterval
+
+pub fn cinterval_sub(CInterval, CInterval) -> CInterval
+
+pub fn cinterval_subset(CInterval, CInterval) -> Bool
+
+pub fn cinterval_zero() -> CInterval
+
+pub fn circle_dim_of(DValue) -> Dim
+
+pub fn circle_level_scheme() -> DHitLevelScheme
+
+pub fn circle_point(Dim) -> DValue
+
+pub fn circle_schema() -> DHitSpec
+
+pub fn coe_computes(UPath) -> Bool
+
+pub fn coe_rules_definitional() -> Bool
+
+pub fn coe_upath(UPath, Int32, Int32, PVal) -> PVal
+
+pub fn coe_value((Dim) -> DValue, Dim, Dim, DValue, Int32) -> DValue
+
+pub fn commuting_product(CMat, CMat) -> CMat
+
+pub fn commuting_projectors_compatible(CMat, CMat) -> Bool
+
+pub fn comp_bool_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_circle_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_equiv_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_glue_equiv_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_glue_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_hit_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_inductive_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_list_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_nat_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_path_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_pi_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_schema_args(Array[DConstructorArg], (Dim) -> Array[DValue], (Array[DValue], Array[DValue]) -> DValue, DSystem, (Int32, Dim, Int32) -> DValue, Int32) -> Array[DValue]
+
+pub fn comp_schema_args_decoded(Array[DConstructorArg], (Dim) -> Array[DValue], (Array[DValue], Array[DValue]) -> DValue, (Array[DValue], Array[DValue], DValue) -> DValue, DSystem, (Int32, Dim, Int32) -> DValue, Int32) -> Array[DValue]
+
+pub fn comp_sigma_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_torus_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_univ_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn comp_value((Dim) -> DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn compatibility_respects_quotient(VecSystem, VecSystem, Int32) -> Bool
+
+pub fn compile_mutual_inductive(String, Array[DInductiveSpec]) -> DMutualFamily?
+
+pub fn complement(CMat) -> CMat
+
+pub fn container_tree_schema() -> DInductiveSpec
+
+pub fn contains_int(Array[Int32], Int32) -> Bool
+
+pub fn conv_at(Int32, Int32, DValue, DValue, DValue) -> Bool
+
+pub fn conv_at_under_face(Int32, Int32, Face, DValue, DValue, DValue) -> Bool
+
+pub fn conv_decode_neutral(Int32, Int32, DInductiveSpec, Array[DValue], Array[DValue], DNeutral, DInductiveSpec, Array[DValue], Array[DValue], DNeutral) -> Bool
+
+pub fn conv_hit_cell_at(Int32, Int32, DHitSpec, Array[DValue], DValue, DValue) -> Bool
+
+pub fn conv_hit_elim_neutral(Int32, Int32, DHitSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral, DHitSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral) -> Bool
+
+pub fn conv_hit_type(Int32, Int32, DHitSpec, Array[DValue], Array[DValue], DHitSpec, Array[DValue], Array[DValue]) -> Bool
+
+pub fn conv_inductive_elim_neutral(Int32, Int32, DInductiveSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral, DInductiveSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral) -> Bool
+
+pub fn conv_inductive_type(Int32, Int32, DInductiveSpec, Array[DValue], Array[DValue], DInductiveSpec, Array[DValue], Array[DValue]) -> Bool
+
+pub fn conv_intro_at(Int32, Int32, DInductiveSpec, Array[DValue], DValue, DValue) -> Bool
+
+pub fn conv_neutral(Int32, Int32, DNeutral, DNeutral) -> Bool
+
+pub fn conv_schema_args(Int32, Int32, Array[DConstructorArg], Array[DValue], (Array[DValue]) -> DValue, Array[DValue], Array[DValue]) -> Bool
+
+pub fn conv_schema_args_full(Int32, Int32, Array[DConstructorArg], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue]) -> Bool
+
+pub fn conv_telescope_values(Int32, Int32, Array[DTelescopeEntry], Array[DValue], Array[DValue], Array[DValue], Array[DValue]) -> Bool
+
+pub fn conv_ty(Int32, Int32, DValue, DValue) -> Bool
+
+pub fn cube3_schema() -> DHitSpec
+
+pub fn cube_const(Array[Complex], Int32) -> Cube
+
+pub fn cube_eval(Cube, Array[Double]) -> Array[Complex]
+
+pub fn cube_ext_eq(Cube, Cube, Array[Double]) -> Bool
+
+pub fn cube_in_eigenspace(CMat, Cube, Array[Double]) -> Bool
+
+pub fn cube_in_subline(SubLine, Cube, Int32, Array[Double]) -> Bool
+
+pub fn cx(Double, Double) -> Complex
+
+pub fn cx_add(Complex, Complex) -> Complex
+
+pub fn cx_approx_eq(Complex, Complex) -> Bool
+
+pub fn cx_conj(Complex) -> Complex
+
+pub fn cx_mul(Complex, Complex) -> Complex
+
+pub fn cx_real(Double) -> Complex
+
+pub fn cx_scale(Double, Complex) -> Complex
+
+pub fn cx_sub(Complex, Complex) -> Complex
+
+pub fn cx_zero() -> Complex
+
+pub fn d_as_type(DTerm, DEnv, DEnv, DDimEnv) -> DTypeVal?
+
+pub fn d_check(DTerm, DValue, DEnv, DEnv, DDimEnv) -> DValue?
+
+pub fn d_check_glue_equiv_partial(DTerm, DGlueEquivParts, DEnv, DEnv, DDimEnv) -> Array[DValue]?
+
+pub fn d_equiv_branch(Face, DTerm, DTerm) -> DEquivBranch
+
+pub fn d_face_term(Face, DTerm) -> DFaceTerm
+
+pub fn d_infer(DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn d_nat_lit(Int32) -> DTerm
+
+pub fn d_tube(Face, DTerm) -> DTubeTerm
+
+pub fn dapp_dim(DValue, Dim) -> DValue
+
+pub fn dapp_typed(DValue, DValue, DValue) -> DValue
+
+pub fn darg_decoded(String, Int32) -> DConstructorArg
+
+pub fn darg_decoded_function(String, Int32, index? : Array[DTerm]) -> DConstructorArg
+
+pub fn darg_external(String, DTerm) -> DConstructorArg
+
+pub fn darg_function(String, DTerm, index? : Array[DTerm]) -> DConstructorArg
+
+pub fn darg_mutual(String, Int32, Array[DTerm]) -> DConstructorArg
+
+pub fn darg_mutual_function(String, Int32, DTerm, index? : Array[DTerm]) -> DConstructorArg
+
+pub fn darg_nested(String, DPositiveFunctor) -> DConstructorArg
+
+pub fn darg_recursive(String, index? : Array[DTerm]) -> DConstructorArg
+
+pub fn dbool_not(DValue) -> DValue
+
+pub fn dcoe(DLine, Double, Double, DValue) -> DValue
+
+pub fn dcomp(DLine, ((Double) -> DValue)?, DValue) -> DValue
+
+pub fn dconstructor_constraint(DTerm, DTerm, DTerm) -> DConstructorConstraint
+
+pub fn dconstructor_spec(String, Array[DConstructorArg], result_index? : Array[DTerm], constraints? : Array[DConstructorConstraint]) -> DConstructorSpec
+
+pub fn dconstructor_spec_constrained(String, Array[DConstructorArg], Array[DConstructorConstraint], result_index? : Array[DTerm]) -> DConstructorSpec
+
+pub fn ddim_at(DDimEnv, Int32) -> Dim?
+
+pub fn ddim_cons(Dim, DDimEnv) -> DDimEnv
+
+pub fn ddim_empty() -> DDimEnv
+
+pub fn ddim_extend(Array[Dim], DDimEnv) -> DDimEnv
+
+pub fn ddim_from_array(Array[Dim]) -> DDimEnv
+
+pub fn ddim_len(DDimEnv) -> Int32
+
+pub fn ddim_to_array(DDimEnv) -> Array[Dim]
+
+pub fn decode_term(DInductiveSpec, Array[DTerm], Array[DTerm], DTerm) -> DTerm
+
+pub fn decompose(CMat, Array[Complex]) -> (Array[Complex], Array[Complex])
+
+pub fn def_eq(Term, Term, Int32) -> Bool
+
+pub fn def_eq_eta(Term, Term, LTy, Array[LTy]) -> Bool
+
+pub let default_schema_registry : DSchemaRegistry
+
+pub fn degenerate_cube(Cube, Int32) -> Cube
+
+pub fn denv_at(DEnv, Int32) -> DValue?
+
+pub fn denv_cons(DValue, DEnv) -> DEnv
+
+pub fn denv_empty() -> DEnv
+
+pub fn denv_extend(Array[DValue], DEnv) -> DEnv
+
+pub fn denv_from_array(Array[DValue]) -> DEnv
+
+pub fn denv_len(DEnv) -> Int32
+
+pub fn denv_tail(DEnv) -> DEnv
+
+pub fn denv_to_array(DEnv) -> Array[DValue]
+
+pub fn dep_check_closed(DTerm, DTerm) -> Bool
+
+pub fn dep_def_eq_closed(DTerm, DTerm, DTerm) -> Bool
+
+pub fn dep_id_term() -> DTerm
+
+pub fn dep_id_type() -> DTerm
+
+pub fn dep_nf_closed(DTerm, DTerm) -> DTerm?
+
+pub fn dep_type_of_closed(DTerm) -> DTerm?
+
+pub fn dep_type_val_of(DTerm) -> DTypeVal?
+
+pub fn dequiv_branch_value(Face, DValue, DValue) -> DEquivBranchValue
+
+pub fn deval(DTerm, Array[DValue]) -> DValue
+
+pub fn deval_dim(DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn dface_value(Face, DValue) -> DFaceValue
+
+pub fn dfill(DLine, ((Double) -> DValue)?, DValue) -> (Double) -> DValue
+
+pub fn dfst_typed(DValue, (DValue) -> DValue) -> DValue
+
+pub fn dfunctor_const(DTerm) -> DPositiveFunctor
+
+pub fn dfunctor_container(DTerm, DTerm, index? : Array[DTerm]) -> DPositiveFunctor
+
+pub fn dfunctor_identity(Array[DTerm]) -> DPositiveFunctor
+
+pub fn dfunctor_list(DPositiveFunctor) -> DPositiveFunctor
+
+pub fn dfunctor_pi(DTerm, DPositiveFunctor) -> DPositiveFunctor
+
+pub fn dfunctor_product(DPositiveFunctor, DPositiveFunctor) -> DPositiveFunctor
+
+pub fn dfunctor_sum(DPositiveFunctor, DPositiveFunctor) -> DPositiveFunctor
+
+pub fn dhit_cell_spec(String, Int32, Array[DConstructorArg], Array[DHitFaceExpr], result_index? : Array[DTerm], constraints? : Array[DConstructorConstraint]) -> DHitCellSpec
+
+pub fn dhit_face(Int32, Array[DTerm], Array[Dim]) -> DHitFaceExpr
+
+pub fn dhit_level_scheme(String, Int32, DLevelExpr, (Array[Int32]) -> DHitSpec) -> DHitLevelScheme
+
+pub fn dhit_spec(String, Int32, Array[DTelescopeEntry], Array[DTelescopeEntry], Array[DHitCellSpec]) -> DHitSpec
+
+pub fn dim_cache_key(Dim) -> String
+
+pub fn dim_eq_sem(Dim, Dim) -> Bool
+
+pub fn dim_nvars_sem(Dim) -> Int32
+
+pub fn dim_quote(Dim, Int32) -> Dim
+
+pub fn dim_simplify(Dim) -> Dim
+
+pub fn dim_subst(Dim, Int32, Bool) -> Dim
+
+pub fn dim_vars_of(Dim) -> Array[Int32]
+
+pub fn dinductive_level_scheme(String, Int32, DLevelExpr, (Array[Int32]) -> DInductiveSpec) -> DInductiveLevelScheme
+
+pub fn dinductive_recursive_spec(String, Int32, Array[DTelescopeEntry], Array[DTelescopeEntry], Array[DConstructorSpec], Array[DTerm], decode_level? : Int32) -> DInductiveSpec
+
+pub fn dinductive_spec(String, Int32, Array[DTelescopeEntry], Array[DTelescopeEntry], Array[DConstructorSpec]) -> DInductiveSpec
+
+pub fn disc_path_sym(DiscPath) -> DiscPath
+
+pub fn disc_path_wf(DiscPath) -> Bool
+
+pub fn disc_samples() -> Array[Double]
+
+pub fn dlevel_const(Int32) -> DLevelExpr
+
+pub fn dlevel_eval(DLevelExpr, Array[Int32]) -> Int32?
+
+pub fn dlevel_max(DLevelExpr, DLevelExpr) -> DLevelExpr
+
+pub fn dlevel_succ(DLevelExpr) -> DLevelExpr
+
+pub fn dlevel_var(Int32) -> DLevelExpr
+
+pub fn dline_at(DLine, Double) -> DValue
+
+pub fn dline_bool() -> DLine
+
+pub fn dline_bool_not_ua() -> DLine
+
+pub fn dline_const(DValue) -> DLine
+
+pub fn dline_from_maps(DValue, DValue, (DValue) -> DValue, (DValue) -> DValue) -> DLine
+
+pub fn dline_of_lty(LTy) -> DLine
+
+pub fn dline_of_ty(Ty) -> DLine
+
+pub fn dline_of_upath(UPath) -> DLine
+
+pub fn dline_pi(DLine, ((Double) -> DValue) -> DLine) -> DLine
+
+pub fn dline_pi_constfam(DLine, DLine) -> DLine
+
+pub fn dline_sigma(DLine, ((Double) -> DValue) -> DLine) -> DLine
+
+pub fn dline_sigma_constfam(DLine, DLine) -> DLine
+
+pub fn dline_unit() -> DLine
+
+pub fn dline_univ(Int32) -> DLine
+
+pub fn dmax(Double, Double) -> Double
+
+pub fn dmin(Double, Double) -> Double
+
+pub fn double_dyadic_interval(Double, Int32) -> (Rat, Rat)?
+
+pub fn dpositivity_report(Bool, Bool, Bool, Bool, Bool) -> DPositivityReport
+
+pub fn dsnd_typed(DValue, DValue, (DValue) -> DValue) -> DValue
+
+pub fn dsystem_canonical(Int32, Int32, (Dim) -> DValue, DSystem) -> DSystem
+
+pub fn dsystem_checked(Int32, Int32, (Dim) -> DValue, DSystem, DValue) -> DSystem?
+
+pub fn dsystem_checked_of(Int32, Int32, (Dim) -> DValue, Array[DTubeBranch], DValue) -> DSystem?
+
+pub fn dsystem_compatibility(Bool, DSystemIncompatibility, Int32, Int32) -> DSystemCompatibility
+
+pub fn dsystem_compatibility_report(Int32, Int32, (Dim) -> DValue, DSystem, DValue?) -> DSystemCompatibility
+
+pub fn dsystem_compatible_with_base(Int32, Int32, (Dim) -> DValue, DSystem, DValue) -> Bool
+
+pub fn dsystem_domain_face(DSystem) -> Face
+
+pub fn dsystem_empty() -> DSystem
+
+pub fn dsystem_first_match_checked(Int32, Int32, (Dim) -> DValue, DSystem, DValue) -> DSystem?
+
+pub fn dsystem_first_match_eq(Int32, Int32, (Dim) -> DValue, DSystem, DSystem) -> Bool
+
+pub fn dsystem_first_match_normal_form(Int32, Int32, (Dim) -> DValue, DSystem) -> DTubeNF
+
+pub fn dsystem_first_match_system(Int32, Int32, (Dim) -> DValue, DSystem) -> DSystem
+
+pub fn dsystem_first_path(DSystem, DValue) -> (Dim) -> DValue
+
+pub fn dsystem_map(DSystem, ((Dim) -> DValue) -> (Dim) -> DValue) -> DSystem
+
+pub fn dsystem_of(Array[DTubeBranch]) -> DSystem
+
+pub fn dsystem_of_first_match_nf(DTubeNF) -> DSystem
+
+pub fn dsystem_pairwise_compatible(Int32, Int32, (Dim) -> DValue, DSystem) -> Bool
+
+pub fn dsystem_singleton(Face, (Dim) -> DValue) -> DSystem
+
+pub fn dtelescope_entry(String, DTerm) -> DTelescopeEntry
+
+pub fn dterm_cache_key(DTerm) -> String
+
+pub fn dterm_children(DTerm) -> Array[DTerm]
+
+pub fn dterm_family_occurs(DTerm, String) -> Bool
+
+pub fn dterm_family_positivity(DTerm, String) -> DPositivityReport
+
+pub fn dterm_family_strictly_positive(DTerm, String) -> Bool
+
+pub fn dterm_shift(DTerm, Int32, Int32) -> DTerm
+
+pub fn dterm_substitute(DTerm, Int32, DTerm) -> DTerm
+
+pub fn dtube_nf_class(Bdd, (Dim) -> DValue) -> DTubeNFClass
+
+pub fn dv_nat_lit(Int32) -> DValue
+
+pub fn dvalue_of_ty(Ty) -> DValue
+
+pub fn dvalue_to_pval(DValue) -> PVal
+
+pub fn eigen_equations_hold(CMat, Array[Complex]) -> Bool
+
+pub fn eigen_interval_contains(EigenInterval, Rat) -> Bool
+
+pub fn eigenspace_kan_sound(CMat, Cube, Cube, Cube, Array[Double]) -> Bool
+
+pub fn eigenspace_well_formed(CMat, Array[Array[Complex]]) -> Bool
+
+pub fn elab_check(Elaborator, STerm, UTerm) -> ElabResult?
+
+pub fn elab_infer(Elaborator, STerm) -> ElabResult?
+
+pub fn elab_result_to_dterm(Elaborator, ElabResult) -> DTerm?
+
+pub fn elab_type_to_dterm(Elaborator, ElabResult) -> DTerm?
+
+pub fn elaborator_new() -> Elaborator
+
+pub fn elems_of(Ty) -> Array[PVal]
+
+pub let eps : Double
+
+pub fn equal_nat_pair_schema() -> DInductiveSpec
+
+pub fn equiv_bool_not() -> Equiv
+
+pub fn equiv_bwd_value(DValue, DValue, DValue) -> DValue
+
+pub fn equiv_comp(Equiv, Equiv) -> Equiv
+
+pub fn equiv_ext_eq(Equiv, Equiv) -> Bool
+
+pub fn equiv_ext_eq_oracle(Equiv, Equiv) -> Bool
+
+pub fn equiv_fun_value(DValue, DValue, DValue, DValue) -> DValue
+
+pub fn equiv_fwd_value(DValue, DValue, DValue) -> DValue
+
+pub fn equiv_id(Ty) -> Equiv
+
+pub fn equiv_id_value(DValue) -> DValue
+
+pub fn equiv_inv(Equiv) -> Equiv
+
+pub fn equiv_inv_fun_value(DValue, DValue, DValue, DValue) -> DValue
+
+pub fn equiv_inv_value(DValue, DValue, DValue) -> DValue
+
+pub fn equiv_make_value(DValue, DValue, DValue, DValue, DValue, DValue) -> DValue
+
+pub fn equiv_of_wiring(Wiring) -> Equiv
+
+pub fn equiv_parts(DValue, DValue, DValue) -> DEquivParts
+
+pub fn equiv_prod(Equiv, Equiv) -> Equiv
+
+pub fn equiv_retr_type(DValue, DValue, DValue, DValue) -> DValue
+
+pub fn equiv_retr_value(DValue, DValue, DValue) -> DValue
+
+pub fn equiv_sect_type(DValue, DValue, DValue, DValue) -> DValue
+
+pub fn equiv_sect_value(DValue, DValue, DValue) -> DValue
+
+pub fn equiv_swap(Ty, Ty) -> Equiv
+
+pub fn equiv_type_term(DTerm, DTerm) -> DTerm
+
+pub fn equiv_wf(Equiv) -> Bool
+
+pub fn equiv_wf_extensional(Equiv) -> Bool
+
+pub fn eta_single_valued_on(Term, LTy, Array[LTy]) -> Bool
+
+pub fn eval(Term, Array[Value]) -> Value
+
+pub fn eval_bool_elim((DValue) -> DValue, DValue, DValue, DValue, Int32) -> DValue
+
+pub fn eval_check_t(Term, LTy, Array[LTy], Array[TValue]) -> TValue?
+
+pub fn eval_circle_elim((DValue) -> DValue, DValue, DValue, DValue, Int32) -> DValue
+
+pub fn eval_decode_term(DInductiveSpec, Array[DTerm], Array[DTerm], DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn eval_dim(Dim, Array[Double]) -> Double
+
+pub fn eval_dim_bool(Dim, Array[Bool]) -> Bool
+
+pub fn eval_dim_expr(Dim, DDimEnv) -> Dim
+
+pub fn eval_glue_equiv_term(DTerm, Array[DEquivBranch], DEnv, DDimEnv) -> DValue
+
+pub fn eval_hit_elim(DHitSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DValue, Int32) -> DValue
+
+pub fn eval_hit_elim_term(DHitSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn eval_hit_intro_term(DHitSpec, Int32, Array[DTerm], Array[DTerm], Array[Dim], DEnv, DDimEnv) -> DValue
+
+pub fn eval_hit_type_term(DHitSpec, Array[DTerm], DEnv, DDimEnv) -> DValue
+
+pub fn eval_inductive_decode(DInductiveSpec, Array[DValue], Array[DValue], DValue, Int32) -> DValue
+
+pub fn eval_inductive_elim(DInductiveSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DValue, Int32) -> DValue
+
+pub fn eval_inductive_elim_term(DInductiveSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn eval_inductive_type_term(DInductiveSpec, Array[DTerm], DEnv, DDimEnv) -> DValue
+
+pub fn eval_infer_t(Term, Array[LTy], Array[TValue]) -> TypedValue?
+
+pub fn eval_intro_term(DInductiveSpec, Int32, Array[DTerm], Array[DTerm], DEnv, DDimEnv) -> DValue
+
+pub fn eval_list_elim(DValue, (DValue) -> DValue, DValue, DValue, DValue, Int32) -> DValue
+
+pub fn eval_mk_equiv_term(DTerm, DTerm, DTerm, DTerm, DTerm, DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn eval_mutual_elim(DMutualFamily, Array[(Array[DValue], DValue) -> DValue], Array[Array[DValue]], Array[DValue], Int32, Array[DValue], DValue, Int32) -> DValue
+
+pub fn eval_nat_elim((DValue) -> DValue, DValue, DValue, DValue, Int32) -> DValue
+
+pub fn eval_torus_elim((DValue) -> DValue, (Dim, Dim) -> DValue, DValue, Int32) -> DValue
+
+pub fn eval_tube_terms(Array[DTubeTerm], DEnv, DDimEnv) -> DSystem
+
+pub fn eval_ua_term(DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn even_odd_components() -> Array[DInductiveSpec]
+
+pub fn even_odd_family() -> DMutualFamily?
+
+pub fn example_projector() -> CMat
+
+pub fn example_unit() -> Array[Complex]
+
+pub fn face_bound(Face, Int32) -> Face
+
+pub fn face_eq_dpll(Face, Face, Int32, max_steps? : Int32) -> FaceDecision
+
+pub fn face_eq_mod(Face, Face, Int32) -> Bool
+
+pub fn face_eq_within_budget(Face, Face, Int32, Int32) -> FaceDecision
+
+pub fn face_eval_env(Face, DDimEnv) -> Face
+
+pub fn face_holds(Face, Array[Bool]) -> Bool
+
+pub fn face_is_bot_sem(Face) -> Bool
+
+pub fn face_is_sat_sem(Face) -> Bool
+
+pub fn face_is_top_sem(Face) -> Bool
+
+pub fn face_join_universal(Face, Face, Face, Int32) -> Bool
+
+pub fn face_le(Face, Face, Int32) -> Bool
+
+pub fn face_maps_commute(Cube, Double, Double) -> Bool
+
+pub fn face_meet_universal(Face, Face, Face, Int32) -> Bool
+
+pub fn face_not(Face) -> Face
+
+pub fn face_nvars_sem(Face) -> Int32
+
+pub fn face_of_bdd(Bdd) -> Face
+
+pub fn face_quote(Face, Int32) -> Face
+
+pub fn face_sat(Face, Int32) -> Bool
+
+pub fn face_sat_dpll(Face, Int32, max_steps? : Int32) -> FaceSatDecision
+
+pub fn face_sat_within_budget(Face, Int32, Int32) -> FaceDecision
+
+pub fn face_simplify(Face) -> Face
+
+pub fn face_subst(Face, Int32, Bool) -> Face
+
+pub fn face_unsat(Face, Int32) -> Bool
+
+pub fn face_var0(Int32) -> Face
+
+pub fn face_var1(Int32) -> Face
+
+pub fn face_vars(Face) -> Array[Int32]
+
+pub fn face_witness(Face, Int32) -> Array[Bool]?
+
+pub fn fill_subline(SubLine, VecBox) -> Cube
+
+pub fn fill_value((Dim) -> DValue, DSystem, DValue, Int32) -> (Dim) -> DValue
+
+pub fn filler_respects_box(Cube, Cube, Cube, Cube, Array[Double]) -> Bool
+
+pub fn fin_schema() -> DInductiveSpec
+
+pub fn flatten_pval(PVal) -> Array[PVal]
+
+pub fn force_value(DValue) -> DValue
+
+pub fn frac_add(SymFrac, SymFrac) -> SymFrac
+
+pub fn frac_div(SymFrac, SymFrac) -> SymFrac
+
+pub fn frac_eq(SymFrac, SymFrac) -> Bool
+
+pub fn frac_int(Int32) -> SymFrac
+
+pub fn frac_is_zero(SymFrac) -> Bool
+
+pub fn frac_make(Poly, Poly) -> SymFrac
+
+pub fn frac_mul(SymFrac, SymFrac) -> SymFrac
+
+pub fn frac_neg(SymFrac) -> SymFrac
+
+pub fn frac_one() -> SymFrac
+
+pub fn frac_poly(Poly) -> SymFrac
+
+pub fn frac_rat(Rat) -> SymFrac
+
+pub fn frac_sub(SymFrac, SymFrac) -> SymFrac
+
+pub fn frac_var(Int32) -> SymFrac
+
+pub fn frac_zero() -> SymFrac
+
+pub fn fresh_dim(DDimEnv) -> Dim
+
+pub fn generic_iterate_module() -> ModuleDef
+
+pub fn glue_box_compatible(GlueLineVec, VecBox, VecBox, Array[Double]) -> Bool
+
+pub fn glue_comp_finite(GlueLineFinite, GlueElem, Int32) -> GlueElem?
+
+pub fn glue_comp_finite_correct(GlueLineFinite, GlueElem, Int32) -> Bool
+
+pub fn glue_comp_vec(GlueLineVec, VecBox, VecBox) -> GlueCompVecResult
+
+pub fn glue_comp_vec_sound(GlueLineVec, VecBox, VecBox, Array[Double]) -> Bool
+
+pub fn glue_data_at0(GlueLineFinite) -> GlueData
+
+pub fn glue_data_at1(GlueLineFinite) -> GlueData
+
+pub fn glue_equiv_base_of(DGlueEquivParts, DValue) -> DValue
+
+pub fn glue_equiv_collapse(DValue) -> DValue
+
+pub fn glue_equiv_domain_face(Array[DEquivBranchValue]) -> Face
+
+pub fn glue_equiv_partial_values(DGlueEquivParts, DValue) -> Array[DValue]
+
+pub fn glue_equiv_store_partial(DGlueEquivParts, Array[DValue]) -> DValue
+
+pub fn glue_equiv_systems_conv(Int32, Int32, DValue, Array[DEquivBranchValue], Array[DEquivBranchValue]) -> Bool
+
+pub fn glue_equiv_term(DTerm, Array[DEquivBranch]) -> DTerm
+
+pub fn glue_equiv_top_index(DGlueEquivParts) -> Int32
+
+pub fn glue_from_base(GlueData, PVal) -> GlueElem
+
+pub fn glue_line_coherent(GlueLineFinite) -> Bool
+
+pub fn glue_partial_values(DGlueParts, DValue) -> Array[DValue]
+
+pub fn glue_restrict(GlueData, GlueElem, Array[Bool]) -> PVal?
+
+pub fn glue_sound(GlueData, GlueElem, Int32) -> Bool
+
+pub fn glue_store_partial(DGlueParts, Array[DValue]) -> DValue
+
+pub fn glue_wf(GlueData, GlueElem, Int32) -> Bool
+
+pub fn grid() -> Array[Double]
+
+pub fn happ(HTm, HTm) -> HTm
+
+pub fn hcomp_univ_value(Int32, DSystem, DValue, Int32) -> DValue
+
+pub fn hcomp_value(DValue, DSystem, DValue, Int32) -> DValue
+
+pub fn hfill_value(DValue, DSystem, DValue, Int32) -> (Dim) -> DValue
+
+pub fn hfst(HTm) -> HTm
+
+pub fn hit_arg_type(DHitSpec, DConstructorArg, Array[DValue], Array[DValue]) -> DValue
+
+pub fn hit_case_type(DHitSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Int32, Int32) -> DValue
+
+pub fn hit_cell_result_indices(DHitSpec, Int32, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn hit_cell_value(DHitSpec, Int32, Array[DValue], Array[DValue], Array[Dim]) -> DValue
+
+pub fn hit_elim_term(DHitSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm) -> DTerm
+
+pub fn hit_index_types(DHitSpec, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn hit_index_types_cached(DSchemaRegistry, DHitSpec, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn hit_intro_term(DHitSpec, Int32, Array[DTerm], Array[DTerm], Array[Dim]) -> DTerm
+
+pub fn hit_motive_type(DHitSpec, Array[DValue]) -> DValue
+
+pub fn hit_param_types(DHitSpec, Array[DValue]) -> Array[DValue]
+
+pub fn hit_param_types_cached(DSchemaRegistry, DHitSpec, Array[DValue]) -> Array[DValue]
+
+pub fn hit_parameter_positivity(DHitSpec, Int32) -> DPositivityReport
+
+pub fn hit_plan_type_term(DHitPlan, Array[DTerm]) -> DTerm
+
+pub fn hit_result_indices(DHitCellSpec, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn hit_schema_examples() -> Array[DHitSpec]
+
+pub fn hit_schema_key(DHitSpec) -> String
+
+pub fn hit_schema_validate(DHitSpec) -> Bool
+
+pub fn hit_type_term(DHitSpec, Array[DTerm]) -> DTerm
+
+pub fn hoas_const_example() -> HTm
+
+pub fn hoas_roundtrip_hoas(HTm, Int32) -> Bool
+
+pub fn hoas_roundtrip_term(Term, Int32) -> Bool
+
+pub fn hoas_swap_example() -> HTm
+
+pub fn hoas_to_term(Int32, HTm) -> Term
+
+pub fn hou_fresh_meta(Unifier, Int32) -> UTerm
+
+pub fn hou_semantic_optimize(UTerm, Unifier) -> UTerm
+
+pub fn hou_unify(UTerm, UTerm, Int32, Unifier) -> Bool
+
+pub fn hsnd(HTm) -> HTm
+
+pub fn in_image(CMat, Array[Complex]) -> Bool
+
+pub fn in_kernel(CMat, Array[Complex]) -> Bool
+
+pub fn in_ty(PVal, Ty) -> Bool
+
+pub fn inductive_arg_type(DInductiveSpec, DConstructorArg, Array[DValue], Array[DValue]) -> DValue
+
+pub fn inductive_arg_type_full(DInductiveSpec, DConstructorArg, Array[DConstructorArg], Array[DValue], Array[DValue]) -> DValue
+
+pub fn inductive_case_type(DInductiveSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Int32) -> DValue
+
+pub fn inductive_decode_cases_validate(DInductiveSpec) -> Bool
+
+pub fn inductive_index_types(DInductiveSpec, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn inductive_index_types_cached(DSchemaRegistry, DInductiveSpec, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn inductive_motive_type(DInductiveSpec, Array[DValue]) -> DValue
+
+pub fn inductive_param_types(DInductiveSpec, Array[DValue]) -> Array[DValue]
+
+pub fn inductive_param_types_cached(DSchemaRegistry, DInductiveSpec, Array[DValue]) -> Array[DValue]
+
+pub fn inductive_parameter_positivity(DInductiveSpec, Int32) -> DPositivityReport
+
+pub fn inductive_plan_type_term(DInductivePlan, Array[DTerm]) -> DTerm
+
+pub fn inductive_result_indices(DConstructorSpec, Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn inductive_schema_key(DInductiveSpec) -> String
+
+pub fn inductive_schema_validate(DInductiveSpec) -> Bool
+
+pub fn infer_decode(DInductiveSpec, Array[DTerm], Array[DTerm], DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_equiv_projection(Int32, DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_equiv_ty(DTerm, DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_glue_equiv(DTerm, Array[DEquivBranch], DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_hit_elim(DHitSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_hit_intro(DHitSpec, Int32, Array[DTerm], Array[DTerm], Array[Dim], DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_hit_type(DHitSpec, Array[DTerm], DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_inductive_elim(DInductiveSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_inductive_type(DInductiveSpec, Array[DTerm], DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_intro(DInductiveSpec, Int32, Array[DTerm], Array[DTerm], DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_mk_equiv(DTerm, DTerm, DTerm, DTerm, DTerm, DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn infer_ua(DTerm, DEnv, DEnv, DDimEnv) -> DInfer?
+
+pub fn inner(Array[Complex], Array[Complex]) -> Complex
+
+pub fn instantiate_hit_level_scheme(DHitLevelScheme, Array[Int32]) -> DHitSpec?
+
+pub fn instantiate_inductive_level_scheme(DInductiveLevelScheme, Array[Int32]) -> DInductiveSpec?
+
+pub fn int_abs(Int32) -> Int32
+
+pub fn int_gcd(Int32, Int32) -> Int32
+
+pub fn int_pow(Int32, Int32) -> Int32
+
+pub fn int_sqrt_exact(Int32) -> Int32?
+
+pub fn int_squarefree_decomp(Int32) -> (Int32, Int32)
+
+pub fn interval_laws_hold(Array[Double]) -> Bool
+
+pub fn inv_sqrt2() -> Double
+
+pub fn is_hermitian(CMat) -> Bool
+
+pub fn is_idempotent(CMat) -> Bool
+
+pub fn is_projector(CMat) -> Bool
+
+pub fn iso_bool_not() -> Iso
+
+pub fn iso_of_wiring(Wiring) -> Iso
+
+pub fn iso_swap(Ty, Ty) -> Iso
+
+pub fn iso_to_equiv(Iso) -> Equiv
+
+pub fn iso_to_path(Iso) -> UPath
+
+pub fn iso_wf(Iso) -> Bool
+
+pub fn iso_wf_extensional(Iso) -> Bool
+
+pub fn j_elim_disc(Family, PVal, DiscPath) -> PVal?
+
+pub fn j_roundtrip(Family, PVal, DiscPath) -> Bool
+
+pub fn jacobi_certificate_sound(QCpxMat, JacobiCertificate) -> Bool
+
+pub fn jacobi_coefficients(QCpxMat, Int32, Int32, Int32) -> JacobiCoefficients?
+
+pub fn jacobi_interval_eigen(QCpxMat, max_steps? : Int32, tolerance_sq? : Rat, precision_bits? : Int32) -> JacobiCertificate?
+
+pub fn jacobi_similarity_interval(QCIntervalMat, QCIntervalMat, Int32) -> QCIntervalMat
+
+pub fn jacobi_unitary_interval(Int32, JacobiCoefficients, bits? : Int32) -> QCIntervalMat
+
+pub fn jacobi_unitary_residual_contains_zero(QCIntervalMat, Int32) -> Bool
+
+pub fn kan_comp_eigenspace(CMat, Cube, Cube, Cube) -> Cube
+
+pub fn kan_comp_path(Cube, Cube, Cube) -> Cube
+
+pub fn kan_fill_eigenspace(CMat, Cube, Cube, Cube) -> Cube
+
+pub fn karoubi_comp(CMat, CMat) -> CMat
+
+pub fn karoubi_id(CMat) -> CMat
+
+pub fn karoubi_morphism(CMat, CMat, CMat) -> Bool
+
+pub fn karoubi_wrap(CMat, CMat, CMat) -> CMat
+
+pub fn lazy_deval(DTerm, DEnv, DDimEnv) -> DValue
+
+pub fn lazy_force_count(DValue) -> Int32
+
+pub fn lazy_is_forced(DValue) -> Bool
+
+pub fn lazy_value(() -> DValue) -> DValue
+
+pub fn leaf_count(Ty) -> Int32
+
+pub fn leaves_of_ty(Ty) -> Array[LeafKind]
+
+pub fn lin_equiv_from_unit_paths((Double) -> Array[Complex], (Double) -> Array[Complex]) -> LinEquivLine
+
+pub fn list_level_scheme() -> DInductiveLevelScheme
+
+pub fn list_schema() -> DInductiveSpec
+
+pub fn lty_to_dterm(LTy) -> DTerm
+
+pub fn make_glue(GlueData, PVal, PVal, Int32) -> GlueElem?
+
+pub fn map_branches(DSystem, ((Dim) -> DValue) -> (Dim) -> DValue) -> DSystem
+
+pub fn map_cube_equiv_line(LinEquivLine, Cube, Int32) -> Cube
+
+pub fn map_cube_matrix(CMat, Cube) -> Cube
+
+pub fn mat_add(CMat, CMat) -> CMat
+
+pub fn mat_adjoint(CMat) -> CMat
+
+pub fn mat_approx_eq(CMat, CMat) -> Bool
+
+pub fn mat_commutes(CMat, CMat) -> Bool
+
+pub fn mat_from_rows(Array[Array[Complex]]) -> CMat
+
+pub fn mat_get(CMat, Int32, Int32) -> Complex
+
+pub fn mat_identity(Int32) -> CMat
+
+pub fn mat_mul(CMat, CMat) -> CMat
+
+pub fn mat_sub(CMat, CMat) -> CMat
+
+pub fn mat_trace_re(CMat) -> Double
+
+pub fn mat_vec(CMat, Array[Complex]) -> Array[Complex]
+
+pub fn mat_zero(Int32) -> CMat
+
+pub fn memo_dim_line((Dim) -> DValue) -> (Dim) -> DValue
+
+pub fn memo_family((DValue) -> DValue, DValue, Int32, Int32) -> (DValue) -> DValue
+
+pub fn mk_equiv_term(DTerm, DTerm, DTerm, DTerm, DTerm, DTerm) -> DTerm
+
+pub fn module_decl(String, DTerm, DTerm, exported? : Bool, transparent? : Bool) -> ModuleDecl
+
+pub fn module_def(String, params? : Array[DTelescopeEntry], imports? : Array[ModuleImport], opens? : Array[String], decls? : Array[ModuleDecl]) -> ModuleDef
+
+pub fn module_env_add(ModuleEnv, ModuleDef) -> Bool
+
+pub fn module_env_find(ModuleEnv, String) -> ModuleDef?
+
+pub fn module_env_new() -> ModuleEnv
+
+pub fn module_example_env() -> ModuleEnv
+
+pub fn module_import(String, args? : Array[DTerm], alias_name? : String, only? : Array[String], hiding? : Array[String], opened? : Bool, renames? : Array[ModuleRename]) -> ModuleImport
+
+pub fn module_instance_find(ModuleInstance, String) -> ModuleInstanceDecl?
+
+pub fn module_instantiate(ModuleEnv, ModuleDef, Array[DTerm]) -> ModuleInstance?
+
+pub fn module_ref(ModuleSignature, String) -> DTerm?
+
+pub fn module_rename(String, String) -> ModuleRename
+
+pub fn module_resolve(ModuleSignature, String) -> Int32?
+
+pub fn module_signature(ModuleEnv, ModuleDef) -> ModuleSignature?
+
+pub fn module_validate(ModuleEnv, ModuleDef) -> Bool
+
+pub fn mutual_ctor_index(DMutualFamily, Int32, Int32) -> Int32
+
+pub fn mutual_elim_term(DMutualFamily, DTerm, Array[DTerm], Array[DTerm], Int32, Array[DTerm], DTerm) -> DTerm
+
+pub fn mutual_intro_term(DMutualFamily, Int32, Int32, Array[DTerm], Array[DTerm]) -> DTerm
+
+pub fn mutual_intro_value(DMutualFamily, Int32, Int32, Array[DValue], Array[DValue]) -> DValue
+
+pub fn mutual_motive_function(Array[(Array[DValue], DValue) -> DValue]) -> (Array[DValue], DValue) -> DValue
+
+pub fn mutual_nat_term(Int32) -> DTerm
+
+pub fn mutual_nat_value(Int32) -> DValue
+
+pub fn mutual_type_term(DMutualFamily, Int32, Array[DTerm]) -> DTerm
+
+pub fn mutual_type_value(DMutualFamily, Int32, Array[DValue], Array[DValue]) -> DValue
+
+pub fn nat_schema() -> DInductiveSpec
+
+pub fn nat_schema_lit(Int32) -> DTerm
+
+pub fn nbe_single_valued(Array[Term], Int32) -> Bool
+
+pub fn nf(Term, Int32) -> Term
+
+pub fn nf_eta(Term, LTy, Array[LTy]) -> Term?
+
+pub fn numeric_mat_max_deviation(CMat, CMat) -> Double
+
+pub fn numeric_projector_residual(CMat) -> Double
+
+pub fn open_box_wf(Cube, Cube, Cube) -> Bool
+
+pub fn outer(Array[Complex]) -> CMat
+
+pub fn outer2(Array[Complex], Array[Complex]) -> CMat
+
+pub fn partial_domain_bdd(DPartialValue, Int32) -> Bdd
+
+pub fn partial_empty() -> DPartialValue
+
+pub fn partial_eq_at(Int32, Int32, DValue, DPartialValue, DPartialValue) -> Bool
+
+pub fn partial_normal_form(Int32, Int32, DValue, DPartialValue) -> DSystemNF
+
+pub fn partial_of(Array[DFaceValue]) -> DPartialValue
+
+pub fn partial_singleton(Face, DValue) -> DPartialValue
+
+pub fn path_end(Cube) -> Array[Complex]
+
+pub fn path_eval(Cube, Double) -> Array[Complex]
+
+pub fn path_from(DLine, Double, DValue) -> (Double) -> DValue
+
+pub fn path_line(Array[Complex], Array[Complex]) -> Cube
+
+pub fn path_refl(Array[Complex]) -> Cube
+
+pub fn path_start(Cube) -> Array[Complex]
+
+pub fn path_sym(Cube) -> Cube
+
+pub fn path_trans(Cube, Cube) -> Cube
+
+pub fn path_trans_endpoints(Cube, Cube) -> Bool
+
+pub fn pathp_canonical(UPath, PVal) -> PathPVal
+
+pub fn pathp_fst(PathPVal, Equiv) -> PathPVal
+
+pub fn pathp_prod(PathPVal, PathPVal) -> PathPVal
+
+pub fn pathp_prod_exchange_roundtrip(PathPVal, Equiv, Equiv) -> Bool
+
+pub fn pathp_snd(PathPVal, Equiv) -> PathPVal
+
+pub fn pathp_wf(PathPVal) -> Bool
+
+pub fn poly_add(Poly, Poly) -> Poly
+
+pub fn poly_const(Rat) -> Poly
+
+pub fn poly_eq(Poly, Poly) -> Bool
+
+pub fn poly_int(Int32) -> Poly
+
+pub fn poly_is_zero(Poly) -> Bool
+
+pub fn poly_mul(Poly, Poly) -> Poly
+
+pub fn poly_neg(Poly) -> Poly
+
+pub fn poly_normalize(Array[PolyTerm]) -> Poly
+
+pub fn poly_one() -> Poly
+
+pub fn poly_scale(Rat, Poly) -> Poly
+
+pub fn poly_sub(Poly, Poly) -> Poly
+
+pub fn poly_var(Int32) -> Poly
+
+pub fn poly_zero() -> Poly
+
+pub fn positive_functor_ih_type(DPositiveFunctor, Array[DValue], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue, DValue) -> DValue
+
+pub fn positive_functor_map(DPositiveFunctor, Array[DValue], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue, (Array[DValue], DValue) -> DValue, DValue) -> DValue
+
+pub fn positive_functor_type(DPositiveFunctor, Array[DValue], Array[DValue], (Array[DValue]) -> DValue) -> DValue
+
+pub fn pow2(Int32) -> Int32
+
+pub fn print_report() -> Bool
+
+pub fn projector_certificate_ok(ProjectorCertificate) -> Bool
+
+pub fn projector_from_orthonormal(Array[Array[Complex]], Int32) -> CMat
+
+pub fn prune_cube(CMat, Cube) -> Cube
+
+pub fn prune_cube_subline(SubLine, Cube, Int32) -> Cube
+
+pub fn prune_system(VecSystem, Int32) -> VecSystem
+
+pub fn prune_to_eigenspace(CMat, Array[Complex]) -> Array[Complex]
+
+pub fn pruning_is_retraction(CMat, Array[Array[Complex]]) -> Bool
+
+pub fn pruning_repairs_filler(CMat, Cube, Cube, Cube, Array[Complex], Array[Double]) -> Bool
+
+pub fn pruning_respects_quotient(VecSystem, Int32) -> Bool
+
+pub fn pval_fst(PVal) -> PVal
+
+pub fn pval_not(PVal) -> PVal
+
+pub fn pval_snd(PVal) -> PVal
+
+pub fn pval_swap(PVal) -> PVal
+
+pub fn pval_to_dvalue(PVal) -> DValue
+
+pub fn qcc_add(QuadC, QuadC) -> QuadC
+
+pub fn qcc_conj(QuadC) -> QuadC
+
+pub fn qcc_eq(QuadC, QuadC) -> Bool
+
+pub fn qcc_i() -> QuadC
+
+pub fn qcc_is_zero(QuadC) -> Bool
+
+pub fn qcc_make(QuadNum, QuadNum) -> QuadC
+
+pub fn qcc_mul(QuadC, QuadC) -> QuadC
+
+pub fn qcc_neg(QuadC) -> QuadC
+
+pub fn qcc_one() -> QuadC
+
+pub fn qcc_rat(Rat, Rat) -> QuadC
+
+pub fn qcc_real(QuadNum) -> QuadC
+
+pub fn qcc_scale_quad(QuadNum, QuadC) -> QuadC
+
+pub fn qcc_sub(QuadC, QuadC) -> QuadC
+
+pub fn qcc_to_complex(QuadC) -> Complex
+
+pub fn qcc_zero() -> QuadC
+
+pub fn qci_mat_add(QCIntervalMat, QCIntervalMat) -> QCIntervalMat
+
+pub fn qci_mat_adjoint(QCIntervalMat) -> QCIntervalMat
+
+pub fn qci_mat_contains(QCIntervalMat, QCIntervalMat) -> Bool
+
+pub fn qci_mat_contains_point(QCIntervalMat, QCpxMat) -> Bool
+
+pub fn qci_mat_from_point(QCpxMat) -> QCIntervalMat
+
+pub fn qci_mat_from_rows(Array[Array[CInterval]]) -> QCIntervalMat
+
+pub fn qci_mat_hermitian_hull(QCIntervalMat) -> QCIntervalMat
+
+pub fn qci_mat_identity(Int32) -> QCIntervalMat
+
+pub fn qci_mat_is_hermitian(QCIntervalMat) -> Bool
+
+pub fn qci_mat_midpoint(QCIntervalMat) -> QCpxMat
+
+pub fn qci_mat_mul(QCIntervalMat, QCIntervalMat) -> QCIntervalMat
+
+pub fn qci_mat_normalize(QCIntervalMat, Int32) -> QCIntervalMat
+
+pub fn qci_mat_sub(QCIntervalMat, QCIntervalMat) -> QCIntervalMat
+
+pub fn qci_mat_zero(Int32) -> QCIntervalMat
+
+pub fn qci_off_frobenius_sq_upper(QCIntervalMat) -> Rat
+
+pub fn qcpx(Rat, Rat) -> QCpx
+
+pub fn qcpx_is_zero(QCpx) -> Bool
+
+pub fn qcpx_mat_from_qmat(QMat) -> QCpxMat
+
+pub fn qcpx_mat_from_rows(Array[Array[QCpx]]) -> QCpxMat
+
+pub fn qcpx_mat_is_hermitian(QCpxMat) -> Bool
+
+pub fn qcpx_real(Rat) -> QCpx
+
+pub fn qmat_Jordan_block_sizes(QMat, Rat) -> Array[Int32]
+
+pub fn qmat_Jordan_chains(QMat, Rat) -> Array[Array[Array[Rat]]]
+
+pub fn qmat_Jordan_decomposition(QMat, Array[Rat]) -> QJordanDecomposition?
+
+pub fn qmat_Jordan_decomposition_auto(QMat) -> QJordanDecomposition?
+
+pub fn qmat_add(QMat, QMat) -> QMat
+
+pub fn qmat_charpoly(QMat) -> QPoly
+
+pub fn qmat_column_basis(QMat) -> Array[Array[Rat]]
+
+pub fn qmat_det(QMat) -> Rat
+
+pub fn qmat_diagonalizable_at(QMat, Rat) -> Bool
+
+pub fn qmat_eigen_nullities(QMat, Rat) -> Array[Int32]
+
+pub fn qmat_eigenvalue_multiplicity(QMat, Rat) -> Int32
+
+pub fn qmat_eq(QMat, QMat) -> Bool
+
+pub fn qmat_from_columns(Array[Array[Rat]]) -> QMat
+
+pub fn qmat_from_int_rows(Array[Array[Int32]]) -> QMat
+
+pub fn qmat_from_rows(Array[Array[Rat]]) -> QMat
+
+pub fn qmat_generalized_eigenspace(QMat, Rat) -> QGeneralizedEigenspace
+
+pub fn qmat_generalized_projector(QMat, Rat) -> QPrimaryProjector?
+
+pub fn qmat_identity(Int32) -> QMat
+
+pub fn qmat_inverse(QMat) -> QMat?
+
+pub fn qmat_is_diagonalizable_rational(QMat) -> Bool
+
+pub fn qmat_is_zero(QMat) -> Bool
+
+pub fn qmat_minimal_polynomial(QMat) -> QPoly
+
+pub fn qmat_mul(QMat, QMat) -> QMat
+
+pub fn qmat_nullity(QMat) -> Int32
+
+pub fn qmat_nullspace(QMat) -> Array[Array[Rat]]
+
+pub fn qmat_poly_eval(QPoly, QMat) -> QMat
+
+pub fn qmat_pow(QMat, Int32) -> QMat
+
+pub fn qmat_primary_projector(QMat, QPoly) -> QPrimaryProjector?
+
+pub fn qmat_primary_subspace_basis(QMat, QPoly) -> Array[Array[Rat]]
+
+pub fn qmat_rank(QMat) -> Int32
+
+pub fn qmat_rational_spectrum(QMat) -> QRationalSpectrum
+
+pub fn qmat_scalar(Rat, Int32) -> QMat
+
+pub fn qmat_scale(Rat, QMat) -> QMat
+
+pub fn qmat_sub(QMat, QMat) -> QMat
+
+pub fn qmat_trace(QMat) -> Rat
+
+pub fn qmat_transpose(QMat) -> QMat
+
+pub fn qmat_vec(QMat, Array[Rat]) -> Array[Rat]
+
+pub fn qmat_vector_annihilator(QMat, Array[Rat]) -> QPoly
+
+pub fn qmat_zero(Int32) -> QMat
+
+pub fn qpoly_add(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_coeff(QPoly, Int32) -> Rat
+
+pub fn qpoly_const(Rat) -> QPoly
+
+pub fn qpoly_degree(QPoly) -> Int32
+
+pub fn qpoly_derivative(QPoly) -> QPoly
+
+pub fn qpoly_div_exact(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_divmod(QPoly, QPoly) -> QPolyDiv
+
+pub fn qpoly_eq(QPoly, QPoly) -> Bool
+
+pub fn qpoly_eval(QPoly, Rat) -> Rat
+
+pub fn qpoly_extgcd(QPoly, QPoly) -> QPolyExtGcd
+
+pub fn qpoly_factor(QPoly, Int32) -> QPolyFactor
+
+pub fn qpoly_factor_rational_roots(QPoly) -> QPolyRationalFactorization
+
+pub fn qpoly_gcd(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_int(Int32) -> QPoly
+
+pub fn qpoly_integer_coeffs(QPoly) -> Array[Int32]
+
+pub fn qpoly_irreducible_upto3(QPoly) -> Bool
+
+pub fn qpoly_is_one(QPoly) -> Bool
+
+pub fn qpoly_is_squarefree(QPoly) -> Bool
+
+pub fn qpoly_is_zero(QPoly) -> Bool
+
+pub fn qpoly_leading(QPoly) -> Rat
+
+pub fn qpoly_mod(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_monic(QPoly) -> QPoly
+
+pub fn qpoly_mul(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_neg(QPoly) -> QPoly
+
+pub fn qpoly_normalize(Array[Rat]) -> QPoly
+
+pub fn qpoly_one() -> QPoly
+
+pub fn qpoly_pow(QPoly, Int32) -> QPoly
+
+pub fn qpoly_primitive_part(QPoly) -> QPoly
+
+pub fn qpoly_pseudo_remainder(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_rational_roots(QPoly) -> Array[Rat]
+
+pub fn qpoly_root_factor(Rat) -> QPoly
+
+pub fn qpoly_root_multiplicity(QPoly, Rat) -> Int32
+
+pub fn qpoly_scale(Rat, QPoly) -> QPoly
+
+pub fn qpoly_squarefree_factorization(QPoly) -> Array[QPolyFactor]
+
+pub fn qpoly_squarefree_part(QPoly) -> QPoly
+
+pub fn qpoly_sub(QPoly, QPoly) -> QPoly
+
+pub fn qpoly_x() -> QPoly
+
+pub fn qpoly_zero() -> QPoly
+
+pub fn qrows_nullspace(Array[Array[Rat]], Int32) -> Array[Array[Rat]]
+
+pub fn qrows_rank(Array[Array[Rat]], Int32) -> Int32
+
+pub fn qrows_rref(Array[Array[Rat]], Int32) -> QRref
+
+pub fn quad_add(QuadNum, QuadNum) -> QuadNum
+
+pub fn quad_compatible(QuadNum, QuadNum) -> Bool
+
+pub fn quad_conj(QuadNum) -> QuadNum
+
+pub fn quad_denested_sqrt(QuadNum) -> (QuadNum, QuadNum)?
+
+pub fn quad_div(QuadNum, QuadNum) -> QuadNum?
+
+pub fn quad_eq(QuadNum, QuadNum) -> Bool
+
+pub fn quad_int(Int32) -> QuadNum
+
+pub fn quad_inv(QuadNum) -> QuadNum?
+
+pub fn quad_is_rat(QuadNum) -> Bool
+
+pub fn quad_is_zero(QuadNum) -> Bool
+
+pub fn quad_make(Rat, Rat, Int32) -> QuadNum
+
+pub fn quad_mul(QuadNum, QuadNum) -> QuadNum
+
+pub fn quad_neg(QuadNum) -> QuadNum
+
+pub fn quad_norm(QuadNum) -> Rat
+
+pub fn quad_one() -> QuadNum
+
+pub fn quad_pow(QuadNum, Int32) -> QuadNum
+
+pub fn quad_rat(Rat) -> QuadNum
+
+pub fn quad_sqrt_int(Int32) -> QuadNum
+
+pub fn quad_sqrt_rat(Rat) -> QuadNum
+
+pub fn quad_sub(QuadNum, QuadNum) -> QuadNum
+
+pub fn quad_to_double(QuadNum) -> Double
+
+pub fn quad_to_rat(QuadNum) -> Rat?
+
+pub fn quad_trace(QuadNum) -> Rat
+
+pub fn quad_zero() -> QuadNum
+
+pub fn quote(Int32, Value) -> Term
+
+pub fn quote_at(Int32, Int32, DValue, DValue) -> DTerm
+
+pub fn quote_decode_neutral(Int32, Int32, DInductiveSpec, Array[DValue], Array[DValue], DNeutral) -> DTerm
+
+pub fn quote_dneutral(Int32, Int32, DNeutral, DValue) -> DTerm
+
+pub fn quote_eta(Int32, LTy, TValue) -> Term
+
+pub fn quote_glue_equiv_type(Int32, Int32, DGlueEquivParts) -> DTerm
+
+pub fn quote_hit_cell_at(Int32, Int32, DHitSpec, Array[DValue], DValue, DValue) -> DTerm
+
+pub fn quote_hit_elim_neutral(Int32, Int32, DHitSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral) -> DTerm
+
+pub fn quote_hit_type(Int32, Int32, DHitSpec, Array[DValue], Array[DValue]) -> DTerm
+
+pub fn quote_inductive_elim_neutral(Int32, Int32, DInductiveSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral) -> DTerm
+
+pub fn quote_inductive_type(Int32, Int32, DInductiveSpec, Array[DValue], Array[DValue]) -> DTerm
+
+pub fn quote_intro_at(Int32, Int32, DInductiveSpec, Array[DValue], DValue, DValue) -> DTerm
+
+pub fn quote_neutral(Int32, Neutral) -> Term
+
+pub fn quote_schema_args(Int32, Int32, Array[DConstructorArg], Array[DValue], (Array[DValue]) -> DValue, Array[DValue]) -> Array[DTerm]
+
+pub fn quote_schema_args_full(Int32, Int32, Array[DConstructorArg], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue, Array[DValue]) -> Array[DTerm]
+
+pub fn quote_schema_motive(Int32, Int32, Array[DTelescopeEntry], Array[DValue], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue) -> DTerm
+
+pub fn quote_telescope_values(Int32, Int32, Array[DTelescopeEntry], Array[DValue], Array[DValue], Array[DValue]) -> Array[DTerm]
+
+pub fn quote_tneutral(Int32, TNeutral, LTy) -> Term
+
+pub fn quote_tube_branches(Int32, Int32, (Dim) -> DValue, DSystem) -> Array[DTubeTerm]
+
+pub fn quote_ty(Int32, Int32, DValue) -> DTerm
+
+pub fn quotient_eq_term(Array[DTerm], DTerm, DTerm, DTerm, Dim) -> DTerm
+
+pub fn quotient_point_term(Array[DTerm], DTerm) -> DTerm
+
+pub fn quotient_schema() -> DHitSpec
+
+pub fn qvec_add(Array[Rat], Array[Rat]) -> Array[Rat]
+
+pub fn qvec_eq(Array[Rat], Array[Rat]) -> Bool
+
+pub fn qvec_in_span(Array[Array[Rat]], Array[Rat]) -> Bool
+
+pub fn qvec_independent_subset(Array[Array[Rat]]) -> Array[Array[Rat]]
+
+pub fn qvec_is_zero(Array[Rat]) -> Bool
+
+pub fn qvec_rank(Array[Array[Rat]]) -> Int32
+
+pub fn qvec_scale(Rat, Array[Rat]) -> Array[Rat]
+
+pub fn qvec_sub(Array[Rat], Array[Rat]) -> Array[Rat]
+
+pub fn qvec_zero(Int32) -> Array[Rat]
+
+pub fn rat_abs_exact(Rat) -> Rat
+
+pub fn rat_add(Rat, Rat) -> Rat
+
+pub fn rat_cmp_exact(Rat, Rat) -> Int32
+
+pub fn rat_div(Rat, Rat) -> Rat
+
+pub fn rat_eq(Rat, Rat) -> Bool
+
+pub fn rat_int(Int32) -> Rat
+
+pub fn rat_interval(Rat, Rat) -> RatInterval
+
+pub fn rat_interval_abs(RatInterval) -> RatInterval
+
+pub fn rat_interval_add(RatInterval, RatInterval) -> RatInterval
+
+pub fn rat_interval_contains(RatInterval, Rat) -> Bool
+
+pub fn rat_interval_div(RatInterval, RatInterval) -> RatInterval?
+
+pub fn rat_interval_hull(RatInterval, RatInterval) -> RatInterval
+
+pub fn rat_interval_midpoint(RatInterval) -> Rat
+
+pub fn rat_interval_mul(RatInterval, RatInterval) -> RatInterval
+
+pub fn rat_interval_neg(RatInterval) -> RatInterval
+
+pub fn rat_interval_normalize(RatInterval, Int32) -> RatInterval
+
+pub fn rat_interval_point(Rat) -> RatInterval
+
+pub fn rat_interval_recip(RatInterval) -> RatInterval?
+
+pub fn rat_interval_sqrt(RatInterval, Int32) -> RatInterval?
+
+pub fn rat_interval_sub(RatInterval, RatInterval) -> RatInterval
+
+pub fn rat_interval_subset(RatInterval, RatInterval) -> Bool
+
+pub fn rat_interval_width(RatInterval) -> Rat
+
+pub fn rat_inv(Rat) -> Rat
+
+pub fn rat_is_one(Rat) -> Bool
+
+pub fn rat_is_square(Rat) -> Bool
+
+pub fn rat_is_zero(Rat) -> Bool
+
+pub fn rat_le_exact(Rat, Rat) -> Bool
+
+pub fn rat_make(Int32, Int32) -> Rat
+
+pub fn rat_mul(Rat, Rat) -> Rat
+
+pub fn rat_neg(Rat) -> Rat
+
+pub fn rat_one() -> Rat
+
+pub fn rat_round_down_pow2(Rat, Int32) -> Rat
+
+pub fn rat_round_up_pow2(Rat, Int32) -> Rat
+
+pub fn rat_sign(Rat) -> Int32
+
+pub fn rat_sqrt_if_square(Rat) -> Rat?
+
+pub fn rat_sqrt_interval(Rat, Int32) -> RatInterval?
+
+pub fn rat_sub(Rat, Rat) -> Rat
+
+pub fn rat_zero() -> Rat
+
+pub fn refl_path(Ty, PVal) -> DiscPath
+
+pub fn restrict_face(Cube, Int32, Double) -> Cube
+
+pub fn rose_tree_schema() -> DInductiveSpec
+
+pub fn rpoly_add(RPoly, RPoly) -> RPoly
+
+pub fn rpoly_const(SymFrac) -> RPoly
+
+pub fn rpoly_degree(RPoly) -> Int32
+
+pub fn rpoly_divisible_by(RPoly, RPoly) -> Bool
+
+pub fn rpoly_divmod_monic(RPoly, RPoly) -> RPolyDiv
+
+pub fn rpoly_eq(RPoly, RPoly) -> Bool
+
+pub fn rpoly_eval(RPoly, SymFrac) -> SymFrac
+
+pub fn rpoly_eval_mat(RPoly, SymMat) -> SymMat
+
+pub fn rpoly_factor(Int32) -> RPoly
+
+pub fn rpoly_is_zero(RPoly) -> Bool
+
+pub fn rpoly_mul(RPoly, RPoly) -> RPoly
+
+pub fn rpoly_neg(RPoly) -> RPoly
+
+pub fn rpoly_normalize(Array[SymFrac]) -> RPoly
+
+pub fn rpoly_one() -> RPoly
+
+pub fn rpoly_scale(SymFrac, RPoly) -> RPoly
+
+pub fn rpoly_sub(RPoly, RPoly) -> RPoly
+
+pub fn rpoly_x() -> RPoly
+
+pub fn rpoly_zero() -> RPoly
+
+pub fn run_all_checks() -> Array[CheckResult]
+
+pub fn sample_terms() -> Array[Term]
+
+pub fn sample_vectors() -> Array[Array[Complex]]
+
+pub fn sc_add(SymC, SymC) -> SymC
+
+pub fn sc_conj(SymC) -> SymC
+
+pub fn sc_eq(SymC, SymC) -> Bool
+
+pub fn sc_i() -> SymC
+
+pub fn sc_int(Int32) -> SymC
+
+pub fn sc_is_zero(SymC) -> Bool
+
+pub fn sc_make(SymFrac, SymFrac) -> SymC
+
+pub fn sc_mul(SymC, SymC) -> SymC
+
+pub fn sc_neg(SymC) -> SymC
+
+pub fn sc_one() -> SymC
+
+pub fn sc_rat(Rat) -> SymC
+
+pub fn sc_real_frac(SymFrac) -> SymC
+
+pub fn sc_scale_frac(SymFrac, SymC) -> SymC
+
+pub fn sc_sub(SymC, SymC) -> SymC
+
+pub fn sc_var(Int32) -> SymC
+
+pub fn sc_zero() -> SymC
+
+pub fn schema_apply_constraint_proofs(DValue, Array[DConstructorConstraint], Array[DValue], Array[DValue]) -> DValue
+
+pub fn schema_arg_spec_prefix(Array[DConstructorArg], Int32) -> Array[DConstructorArg]
+
+pub fn schema_arg_type(DConstructorArg, Array[DValue], Array[DValue], (Array[DValue]) -> DValue) -> DValue
+
+pub fn schema_arg_type_full(DConstructorArg, Array[DConstructorArg], Array[DValue], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue) -> DValue
+
+pub fn schema_concat_values(Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn schema_constraint_parts(DConstructorConstraint, Array[DValue], Array[DValue]) -> (DValue, DValue, DValue)
+
+pub fn schema_constraints_hold(Int32, Int32, Array[DConstructorConstraint], Array[DValue], Array[DValue]) -> Bool
+
+pub fn schema_constraints_pi(Array[DConstructorConstraint], Array[DValue], Array[DValue], DValue) -> DValue
+
+pub fn schema_elim_term(DInductiveSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm) -> DTerm
+
+pub fn schema_examples() -> Array[DInductiveSpec]
+
+pub fn schema_intro_term(DInductiveSpec, Int32, Array[DTerm], Array[DTerm]) -> DTerm
+
+pub fn schema_motives_conv(Int32, Int32, Array[DTelescopeEntry], Array[DValue], Array[DValue], (Array[DValue]) -> DValue, (Array[DValue], DValue) -> DValue, (Array[DValue], DValue) -> DValue) -> Bool
+
+pub fn schema_registry_hit_by_id(DSchemaRegistry, Int32) -> DHitPlan?
+
+pub fn schema_registry_hit_by_name(DSchemaRegistry, String) -> DHitPlan?
+
+pub fn schema_registry_hit_plan(DSchemaRegistry, DHitSpec) -> DHitPlan?
+
+pub fn schema_registry_inductive_by_id(DSchemaRegistry, Int32) -> DInductivePlan?
+
+pub fn schema_registry_inductive_by_name(DSchemaRegistry, String) -> DInductivePlan?
+
+pub fn schema_registry_inductive_plan(DSchemaRegistry, DInductiveSpec) -> DInductivePlan?
+
+pub fn schema_registry_new() -> DSchemaRegistry
+
+pub fn schema_registry_register_hit(DSchemaRegistry, DHitSpec) -> DHitPlan
+
+pub fn schema_registry_register_inductive(DSchemaRegistry, DInductiveSpec) -> DInductivePlan
+
+pub fn schema_registry_stats(DSchemaRegistry) -> (Int32, Int32, Int32, Int32, Int32, Int32, Int32)
+
+pub fn schema_registry_validate_hit(DSchemaRegistry, DHitSpec) -> Bool
+
+pub fn schema_registry_validate_inductive(DSchemaRegistry, DInductiveSpec) -> Bool
+
+pub fn schema_telescope_family_occurs(Array[DTelescopeEntry], String) -> Bool
+
+pub fn schema_type_term(DInductiveSpec, Array[DTerm]) -> DTerm
+
+pub fn schema_value_prefix(Array[DValue], Int32) -> Array[DValue]
+
+pub fn segment_schema() -> DHitSpec
+
+pub fn sort_ints(Array[Int32]) -> Array[Int32]
+
+pub fn spec_count() -> Int32
+
+pub fn spec_covers(String) -> Bool
+
+pub fn spec_registry() -> Array[SpecEntry]
+
+pub fn spec_registry_sound() -> Bool
+
+pub fn spectral_denominator(Array[Int32], Int32) -> SymFrac
+
+pub fn spectral_minpoly(Array[Int32]) -> RPoly
+
+pub fn spectral_projector_sym(SymMat, Array[Int32], Int32) -> SymMat
+
+pub fn spectral_q(Array[Int32], Int32) -> RPoly
+
+pub fn sphere2_north_term() -> DTerm
+
+pub fn sphere2_north_value() -> DValue
+
+pub fn sphere2_schema() -> DHitSpec
+
+pub fn sphere3_meridian_term(DTerm, Dim) -> DTerm
+
+pub fn sphere3_meridian_value(DValue, Dim) -> DValue
+
+pub fn sphere3_north_term() -> DTerm
+
+pub fn sphere3_north_value() -> DValue
+
+pub fn sphere3_schema() -> DHitSpec
+
+pub fn sphere3_south_term() -> DTerm
+
+pub fn sphere3_south_value() -> DValue
+
+pub fn sphere3_type_term() -> DTerm
+
+pub fn sphere3_type_value() -> DValue
+
+pub fn sphere_schema(Int32) -> DHitSpec
+
+pub fn square_fill(Cube, Cube, Cube) -> Cube
+
+pub fn subline_const(CMat) -> SubLine
+
+pub fn subline_from_unit_path((Double) -> Array[Complex]) -> SubLine
+
+pub fn suspension_schema(String, DHitSpec) -> DHitSpec?
+
+pub fn swap_involutive_on_element() -> Bool
+
+pub fn swap_naturality(Equiv, Equiv) -> Bool
+
+pub fn sym_affine_path(Array[SymC], Array[SymC]) -> (SymFrac) -> Array[SymC]
+
+pub fn sym_bilinear_ansatz(Array[SymC], Array[SymC], Array[SymC], Array[SymC]) -> (SymFrac, SymFrac) -> Array[SymC]
+
+pub fn sym_bilinear_from_corners(Array[SymC], Array[SymC], Array[SymC], Array[SymC]) -> (SymFrac, SymFrac) -> Array[SymC]
+
+pub fn sym_det(SymMat) -> SymC
+
+pub fn sym_frac_one_minus(SymFrac) -> SymFrac
+
+pub fn sym_hermitian2(Int32, Int32, Int32, Int32) -> SymMat
+
+pub fn sym_inner(Array[SymC], Array[SymC]) -> SymC
+
+pub fn sym_is_hermitian(SymMat) -> Bool
+
+pub fn sym_is_idempotent(SymMat) -> Bool
+
+pub fn sym_mat_add(SymMat, SymMat) -> SymMat
+
+pub fn sym_mat_adjoint(SymMat) -> SymMat
+
+pub fn sym_mat_eq(SymMat, SymMat) -> Bool
+
+pub fn sym_mat_from_rows(Array[Array[SymC]]) -> SymMat
+
+pub fn sym_mat_identity(Int32) -> SymMat
+
+pub fn sym_mat_mul(SymMat, SymMat) -> SymMat
+
+pub fn sym_mat_of_qmat(QMat) -> SymMat
+
+pub fn sym_mat_scale(SymFrac, SymMat) -> SymMat
+
+pub fn sym_mat_sub(SymMat, SymMat) -> SymMat
+
+pub fn sym_mat_trace(SymMat) -> SymC
+
+pub fn sym_mat_vec(SymMat, Array[SymC]) -> Array[SymC]
+
+pub fn sym_mat_zero(Int32) -> SymMat
+
+pub fn sym_outer(Array[SymC]) -> SymMat
+
+pub fn sym_projector_rank_one(Array[SymC]) -> SymMat
+
+pub fn sym_scalar_matrix(SymFrac, Int32) -> SymMat
+
+pub fn sym_square_fill((SymFrac) -> Array[SymC], (SymFrac) -> Array[SymC], (SymFrac) -> Array[SymC]) -> (SymFrac, SymFrac) -> Array[SymC]
+
+pub fn sym_vec_add(Array[SymC], Array[SymC]) -> Array[SymC]
+
+pub fn sym_vec_eq(Array[SymC], Array[SymC]) -> Bool
+
+pub fn sym_vec_scale(SymFrac, Array[SymC]) -> Array[SymC]
+
+pub fn sym_vec_scale_c(SymC, Array[SymC]) -> Array[SymC]
+
+pub fn sym_vec_sub(Array[SymC], Array[SymC]) -> Array[SymC]
+
+pub fn system_compatible(VecSystem, Int32) -> Bool
+
+pub fn system_domain_bdd(VecSystem, Int32) -> Bdd
+
+pub fn system_eq_mod(VecSystem, VecSystem, Int32) -> Bool
+
+pub fn system_eq_mod_sym(VecSystem, VecSystem, Int32) -> Bool
+
+pub fn system_extend_top(VecSystem, Array[Complex], Int32) -> VecSystem?
+
+pub fn system_lookup(VecSystem, Array[Bool]) -> Array[Complex]?
+
+pub fn system_normal_form(VecSystem, Int32) -> SystemNF
+
+pub fn system_of(Array[VecBranch]) -> VecSystem
+
+pub fn system_union(VecSystem, VecSystem) -> VecSystem
+
+pub fn tapp(TValue, TValue, LTy) -> TValue
+
+pub fn tarski_universe_schema() -> DInductiveSpec
+
+pub fn telescope_next_type(Array[DTelescopeEntry], Array[DValue], Array[DValue], Array[DValue], Array[DValue]) -> DValue
+
+pub fn telescope_type_values(Array[DTelescopeEntry], Array[DValue], Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn telescope_type_values_cached(DSchemaRegistry, Array[DTelescopeEntry], Array[DValue], Array[DValue], Array[DValue]) -> Array[DValue]
+
+pub fn term_to_hoas(Term, Array[HTm]) -> HTm
+
+pub fn tfst(TValue, LTy) -> TValue
+
+pub fn tm_coe_swap_at(LTy, LTy) -> Term
+
+pub fn tm_comp_at(Term, Term, LTy, LTy, LTy) -> Term
+
+pub fn tm_comp_closed(Term, Term) -> Term
+
+pub fn tm_const() -> Term
+
+pub fn tm_id() -> Term
+
+pub fn tm_id_at(LTy) -> Term
+
+pub fn tm_shift(Term, Int32, Int32) -> Term
+
+pub fn tm_swap() -> Term
+
+pub fn tm_swap_at(LTy, LTy) -> Term
+
+pub fn torus_dims_of(DValue) -> (Dim, Dim)
+
+pub fn torus_point(Dim, Dim) -> DValue
+
+pub fn torus_schema() -> DHitSpec
+
+pub fn tree_forest_components() -> Array[DInductiveSpec]
+
+pub fn tree_forest_family() -> DMutualFamily?
+
+pub fn tree_schema() -> DInductiveSpec
+
+pub fn tsnd(TValue, LTy) -> TValue
+
+pub fn tube_branch(Face, (Dim) -> DValue) -> DTubeBranch
+
+pub fn tube_paths_conv_under_face(Int32, Int32, Face, (Dim) -> DValue, (Dim) -> DValue, (Dim) -> DValue) -> Bool
+
+pub fn tube_system_nf_at(Int32, Int32, (Dim) -> DValue, DSystem, Dim) -> DSystemNF
+
+pub fn ty_check(Term, LTy, Array[LTy]) -> Bool
+
+pub fn ty_infer(Term, Array[LTy]) -> LTy?
+
+pub fn ua(Equiv) -> UPath
+
+pub fn ua_line_value(DValue, DValue, DValue, Int32) -> (Dim) -> DValue
+
+pub fn ua_term(DTerm) -> DTerm
+
+pub fn ua_type_at(DValue, DValue, DValue, Int32, Dim) -> DValue
+
+pub fn ua_value(DValue, DValue, DValue, Int32) -> DValue
+
+pub fn unglue(GlueElem) -> PVal
+
+pub fn unifier_new() -> Unifier
+
+pub fn union_commutes_mod(VecSystem, VecSystem, Int32) -> Bool
+
+pub fn upath_eq(UPath, UPath) -> Bool
+
+pub fn upath_left(UPath) -> Ty
+
+pub fn upath_right(UPath) -> Ty
+
+pub fn upoly_add(UPoly, UPoly) -> UPoly
+
+pub fn upoly_const(SymC) -> UPoly
+
+pub fn upoly_eq(UPoly, UPoly) -> Bool
+
+pub fn upoly_mul(UPoly, UPoly) -> UPoly
+
+pub fn upoly_neg(UPoly) -> UPoly
+
+pub fn upoly_normalize(Array[SymC]) -> UPoly
+
+pub fn upoly_of_rpoly(RPoly) -> UPoly
+
+pub fn upoly_sub(UPoly, UPoly) -> UPoly
+
+pub fn upoly_x() -> UPoly
+
+pub fn upoly_zero() -> UPoly
+
+pub fn uterm_contains_unsolved_meta(UTerm, Unifier) -> Bool
+
+pub fn uterm_whnf(UTerm, Unifier) -> UTerm
+
+pub fn uty_arrow(UTerm, UTerm) -> UTerm
+
+pub fn uty_bool() -> UTerm
+
+pub fn uty_implicit_arrow(UTerm, UTerm) -> UTerm
+
+pub fn uty_nat() -> UTerm
+
+pub fn uty_unit() -> UTerm
+
+pub fn vapp(Value, Value) -> Value
+
+pub fn vec_add(Array[Complex], Array[Complex]) -> Array[Complex]
+
+pub fn vec_approx_eq(Array[Complex], Array[Complex]) -> Bool
+
+pub fn vec_box(Cube, Cube, Cube) -> VecBox
+
+pub fn vec_e3() -> Array[Complex]
+
+pub fn vec_lex_lt(Array[Complex], Array[Complex]) -> Bool
+
+pub fn vec_norm2(Array[Complex]) -> Double
+
+pub fn vec_normalize(Array[Complex]) -> Array[Complex]
+
+pub fn vec_orthogonal(Array[Complex], Array[Complex]) -> Bool
+
+pub fn vec_scale(Double, Array[Complex]) -> Array[Complex]
+
+pub fn vec_scale_c(Complex, Array[Complex]) -> Array[Complex]
+
+pub fn vec_schema() -> DInductiveSpec
+
+pub fn vec_sub(Array[Complex], Array[Complex]) -> Array[Complex]
+
+pub fn vec_zero(Int32) -> Array[Complex]
+
+pub fn vfst(Value) -> Value
+
+pub fn vsnd(Value) -> Value
+
+pub fn w_schema() -> DInductiveSpec
+
+pub fn wiring_apply(Wiring, PVal) -> PVal
+
+pub fn wiring_assoc(Ty, Ty, Ty) -> Wiring
+
+pub fn wiring_comp(Wiring, Wiring) -> Wiring
+
+pub fn wiring_eq(Wiring, Wiring) -> Bool
+
+pub fn wiring_id(Ty) -> Wiring
+
+pub fn wiring_inv(Wiring) -> Wiring
+
+pub fn wiring_left_unitor(Ty) -> Wiring
+
+pub fn wiring_not() -> Wiring
+
+pub fn wiring_prod(Wiring, Wiring) -> Wiring
+
+pub fn wiring_right_unitor(Ty) -> Wiring
+
+pub fn wiring_swap(Ty, Ty) -> Wiring
+
+pub fn wiring_wf(Wiring) -> Bool
+
+// Errors
+
+// Types and methods
+pub struct AlgGeneralizedEigenspace {
+  eigenvalue : AlgNum
+  algebraic_multiplicity : Int32
+  geometric_multiplicity : Int32
+  index : Int32
+  nullities : Array[Int32]
+  block_sizes : Array[Int32]
+  basis : Array[Array[AlgNum]]
+}
+
+pub struct AlgJordanDecomposition {
+  p : AlgMat
+  j : AlgMat
+  eigenvalues : Array[AlgNum]
+  block_sizes : Array[Array[Int32]]
+}
+
+pub struct AlgMat {
+  n : Int32
+  rows : Array[Array[AlgNum]]
+  modulus : QPoly
+}
+
+pub struct AlgNum {
+  modulus : QPoly
+  poly : QPoly
+} derive(Eq, @debug.Debug)
+pub fn AlgNum::equal(Self, Self) -> Bool
+pub fn AlgNum::not_equal(Self, Self) -> Bool
+pub fn AlgNum::to_repr(Self) -> @debug.Repr
+
+pub struct AlgRref {
+  rows : Array[Array[AlgNum]]
+  pivots : Array[Int32]
+  rank : Int32
+}
+
+pub enum Bdd {
+  BddZero
+  BddOne
+  BddNode(Int32, Bdd, Bdd)
+} derive(Eq, @debug.Debug)
+pub fn Bdd::equal(Self, Self) -> Bool
+pub fn Bdd::not_equal(Self, Self) -> Bool
+pub fn Bdd::to_repr(Self) -> @debug.Repr
+
+pub struct BddApplyEntry {
+  op : Int32
+  a : Int32
+  b : Int32
+  result : Int32
+}
+
+pub struct BddBestBuild {
+  built : BddDagFace
+  order : Array[Int32]
+}
+
+pub struct BddDagFace {
+  manager : BddManager
+  root : Int32
+  ok : Bool
+}
+
+pub struct BddDagNode {
+  rank : Int32
+  lo : Int32
+  hi : Int32
+}
+
+pub struct BddManager {
+  n : Int32
+  order : Array[Int32]
+  position : Array[Int32]
+  nodes : Array[BddDagNode]
+  buckets : Array[Array[Int32]]
+  apply_buckets : Array[Array[BddApplyEntry]]
+  max_nodes : Int32
+  mut exceeded : Bool
+  mut apply_hits : Int32
+  mut apply_misses : Int32
+  mut mk_calls : Int32
+}
+
+pub struct CInterval {
+  re : RatInterval
+  im : RatInterval
+} derive(Eq, @debug.Debug)
+pub fn CInterval::equal(Self, Self) -> Bool
+pub fn CInterval::not_equal(Self, Self) -> Bool
+pub fn CInterval::to_repr(Self) -> @debug.Repr
+
+pub struct CMat {
+  n : Int32
+  rows : Array[Array[Complex]]
+}
+
+pub struct CertMat {
+  n : Int32
+  rows : Array[Array[QuadC]]
+}
+
+pub struct CertPath {
+  coeffs : Array[Array[QuadC]]
+}
+
+pub struct CertSquare {
+  coeffs : Array[Array[Array[QuadC]]]
+}
+
+pub struct CheckResult {
+  name : String
+  ok : Bool
+}
+
+pub struct Complex {
+  re : Double
+  im : Double
+} derive(Eq, @debug.Debug)
+pub fn Complex::equal(Self, Self) -> Bool
+pub fn Complex::not_equal(Self, Self) -> Bool
+pub fn Complex::to_repr(Self) -> @debug.Repr
+
+pub struct Cube {
+  dim : Int32
+  cell : (Array[Double]) -> Array[Complex]
+}
+
+pub enum DArgKind {
+  DArgExternal
+  DArgRecursive
+  DArgFunction
+  DArgNested
+  DArgDecoded
+  DArgDecodedFunction
+} derive(Eq, @debug.Debug)
+pub fn DArgKind::equal(Self, Self) -> Bool
+pub fn DArgKind::not_equal(Self, Self) -> Bool
+pub fn DArgKind::to_repr(Self) -> @debug.Repr
+
+pub struct DCheckedTypeLine {
+  body : DTerm
+  ctx : DEnv
+  env : DEnv
+  denv : DDimEnv
+  level : Int32
+  constant : Bool
+  line : (Dim) -> DValue
+}
+
+pub struct DConstructorArg {
+  name : String
+  kind : DArgKind
+  ty : DTerm
+  index : Array[DTerm]
+  nested : DPositiveFunctor
+  target : Int32
+} derive(Eq, @debug.Debug)
+pub fn DConstructorArg::equal(Self, Self) -> Bool
+pub fn DConstructorArg::not_equal(Self, Self) -> Bool
+pub fn DConstructorArg::to_repr(Self) -> @debug.Repr
+
+pub struct DConstructorConstraint {
+  ty : DTerm
+  lhs : DTerm
+  rhs : DTerm
+} derive(Eq, @debug.Debug)
+pub fn DConstructorConstraint::equal(Self, Self) -> Bool
+pub fn DConstructorConstraint::not_equal(Self, Self) -> Bool
+pub fn DConstructorConstraint::to_repr(Self) -> @debug.Repr
+
+pub struct DConstructorSpec {
+  name : String
+  args : Array[DConstructorArg]
+  result_index : Array[DTerm]
+  constraints : Array[DConstructorConstraint]
+} derive(Eq, @debug.Debug)
+pub fn DConstructorSpec::equal(Self, Self) -> Bool
+pub fn DConstructorSpec::not_equal(Self, Self) -> Bool
+pub fn DConstructorSpec::to_repr(Self) -> @debug.Repr
+
+pub enum DDimEnv {
+  DDimEnvNil
+  DDimEnvCons(Dim, DDimEnv, Int32)
+}
+
+pub enum DEnv {
+  DEnvNil
+  DEnvCons(DValue, DEnv, Int32)
+}
+
+pub struct DEquivBranch {
+  face : Face
+  ty : DTerm
+  equiv : DTerm
+} derive(Eq, @debug.Debug)
+pub fn DEquivBranch::equal(Self, Self) -> Bool
+pub fn DEquivBranch::not_equal(Self, Self) -> Bool
+pub fn DEquivBranch::to_repr(Self) -> @debug.Repr
+
+pub struct DEquivBranchValue {
+  face : Face
+  ty : DValue
+  equiv : DValue
+}
+
+pub struct DEquivParts {
+  src : DValue
+  dst : DValue
+  fwd : DValue
+  bwd : DValue
+  sect : DValue
+  retr : DValue
+}
+
+pub struct DEquivTypeParts {
+  src : DValue
+  dst : DValue
+  level : Int32
+}
+
+pub struct DFaceTerm {
+  face : Face
+  body : DTerm
+} derive(Eq, @debug.Debug)
+pub fn DFaceTerm::equal(Self, Self) -> Bool
+pub fn DFaceTerm::not_equal(Self, Self) -> Bool
+pub fn DFaceTerm::to_repr(Self) -> @debug.Repr
+
+pub struct DFaceValue {
+  face : Face
+  value : DValue
+}
+
+pub struct DFamilyParts {
+  dom : DValue
+  fam : (DValue) -> DValue
+}
+
+pub struct DGlueEquivParts {
+  branches : Array[DEquivBranchValue]
+  face : Face
+  base : DValue
+  level : Int32
+}
+
+pub struct DGlueParts {
+  system : DSystem
+  face : Face
+  line : (Dim) -> DValue
+  base : DValue
+  level : Int32
+}
+
+pub struct DHitCellSpec {
+  name : String
+  dim_count : Int32
+  args : Array[DConstructorArg]
+  result_index : Array[DTerm]
+  faces : Array[DHitFaceExpr]
+  constraints : Array[DConstructorConstraint]
+} derive(Eq, @debug.Debug)
+pub fn DHitCellSpec::equal(Self, Self) -> Bool
+pub fn DHitCellSpec::not_equal(Self, Self) -> Bool
+pub fn DHitCellSpec::to_repr(Self) -> @debug.Repr
+
+pub struct DHitFaceExpr {
+  cell : Int32
+  args : Array[DTerm]
+  dims : Array[Dim]
+} derive(Eq, @debug.Debug)
+pub fn DHitFaceExpr::equal(Self, Self) -> Bool
+pub fn DHitFaceExpr::not_equal(Self, Self) -> Bool
+pub fn DHitFaceExpr::to_repr(Self) -> @debug.Repr
+
+pub struct DHitLevelScheme {
+  name : String
+  level_arity : Int32
+  result_level : DLevelExpr
+  build : (Array[Int32]) -> DHitSpec
+}
+
+pub struct DHitPlan {
+  id : Int32
+  key : String
+  spec : DHitSpec
+  valid : Bool
+  generic_param_types : Array[DValue]
+  generic_index_types : Array[DValue]
+}
+
+pub struct DHitSpec {
+  name : String
+  level : Int32
+  params : Array[DTelescopeEntry]
+  indices : Array[DTelescopeEntry]
+  cells : Array[DHitCellSpec]
+} derive(Eq, @debug.Debug)
+pub fn DHitSpec::equal(Self, Self) -> Bool
+pub fn DHitSpec::not_equal(Self, Self) -> Bool
+pub fn DHitSpec::to_repr(Self) -> @debug.Repr
+
+pub struct DInductiveLevelScheme {
+  name : String
+  level_arity : Int32
+  result_level : DLevelExpr
+  build : (Array[Int32]) -> DInductiveSpec
+}
+
+pub struct DInductivePlan {
+  id : Int32
+  key : String
+  spec : DInductiveSpec
+  valid : Bool
+  generic_param_types : Array[DValue]
+  generic_index_types : Array[DValue]
+}
+
+pub struct DInductiveSpec {
+  name : String
+  level : Int32
+  params : Array[DTelescopeEntry]
+  indices : Array[DTelescopeEntry]
+  constructors : Array[DConstructorSpec]
+  decode_cases : Array[DTerm]
+  decode_level : Int32
+} derive(Eq, @debug.Debug)
+pub fn DInductiveSpec::equal(Self, Self) -> Bool
+pub fn DInductiveSpec::not_equal(Self, Self) -> Bool
+pub fn DInductiveSpec::to_repr(Self) -> @debug.Repr
+
+pub struct DInfer {
+  value : DValue
+  ty : DValue
+}
+
+pub enum DLevelExpr {
+  DLevelConst(Int32)
+  DLevelVar(Int32)
+  DLevelSucc(DLevelExpr)
+  DLevelMax(DLevelExpr, DLevelExpr)
+} derive(Eq, @debug.Debug)
+pub fn DLevelExpr::equal(Self, Self) -> Bool
+pub fn DLevelExpr::not_equal(Self, Self) -> Bool
+pub fn DLevelExpr::to_repr(Self) -> @debug.Repr
+
+pub struct DLine {
+  at : (Double) -> DValue
+  coe_fn : (Double, Double, DValue) -> DValue
+  fill_fn : (((Double) -> DValue)?, DValue) -> (Double) -> DValue
+}
+
+pub struct DMutualFamily {
+  name : String
+  components : Array[DInductiveSpec]
+  combined : DInductiveSpec
+  ctor_offsets : Array[Int32]
+}
+
+pub enum DNeutral {
+  DNVar(Int32)
+  DNApp(DNeutral, DValue, DValue)
+  DNFst(DNeutral, (DValue) -> DValue)
+  DNSnd(DNeutral, DValue, (DValue) -> DValue)
+  DNAppDim(DNeutral, Dim)
+  DNBoolElim((DValue) -> DValue, DValue, DValue, DNeutral)
+  DNNatElim((DValue) -> DValue, DValue, DValue, DNeutral)
+  DNListElim(DValue, (DValue) -> DValue, DValue, DValue, DNeutral)
+  DNCircleElim((DValue) -> DValue, DValue, DValue, DNeutral)
+  DNTorusElim((DValue) -> DValue, (Dim, Dim) -> DValue, DNeutral)
+  DNInductiveElim(DInductiveSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral)
+  DNHitElim(DHitSpec, (Array[DValue], DValue) -> DValue, Array[DValue], Array[DValue], Array[DValue], DNeutral)
+  DNDecode(DInductiveSpec, Array[DValue], Array[DValue], DNeutral)
+  DNEquivFwd(DNeutral, DValue, DValue)
+  DNEquivBwd(DNeutral, DValue, DValue)
+  DNEquivSect(DNeutral, DValue, DValue)
+  DNEquivRetr(DNeutral, DValue, DValue)
+  DNComp((Dim) -> DValue, DSystem, DValue)
+  DNHComp(DValue, DSystem, DValue)
+}
+
+pub struct DPartialValue {
+  branches : Array[DFaceValue]
+}
+
+pub struct DPathParts {
+  line : (Dim) -> DValue
+  left : DValue
+  right : DValue
+}
+
+pub enum DPositiveFunctor {
+  DFunctorIdentity(Array[DTerm])
+  DFunctorConst(DTerm)
+  DFunctorProduct(DPositiveFunctor, DPositiveFunctor)
+  DFunctorSum(DPositiveFunctor, DPositiveFunctor)
+  DFunctorList(DPositiveFunctor)
+  DFunctorPi(DTerm, DPositiveFunctor)
+  DFunctorContainer(DTerm, DTerm, Array[DTerm])
+} derive(Eq, @debug.Debug)
+pub fn DPositiveFunctor::equal(Self, Self) -> Bool
+pub fn DPositiveFunctor::not_equal(Self, Self) -> Bool
+pub fn DPositiveFunctor::to_repr(Self) -> @debug.Repr
+
+pub struct DPositivityReport {
+  occurs : Bool
+  strictly_positive : Bool
+  positive_polarity : Bool
+  negative_polarity : Bool
+  unknown : Bool
+} derive(Eq, @debug.Debug)
+pub fn DPositivityReport::equal(Self, Self) -> Bool
+pub fn DPositivityReport::not_equal(Self, Self) -> Bool
+pub fn DPositivityReport::to_repr(Self) -> @debug.Repr
+
+pub struct DSchemaRegistry {
+  inductives : Array[DInductivePlan]
+  hits : Array[DHitPlan]
+  telescopes : Array[DTelescopeCacheEntry]
+  mut validation_hits : Int32
+  mut validation_misses : Int32
+  mut telescope_hits : Int32
+  mut telescope_misses : Int32
+}
+
+pub struct DSystem {
+  branches : Array[DTubeBranch]
+}
+
+pub struct DSystemClass {
+  region : Bdd
+  value : DValue
+}
+
+pub struct DSystemCompatibility {
+  compatible : Bool
+  reason : DSystemIncompatibility
+  branch : Int32
+  other_branch : Int32
+} derive(Eq, @debug.Debug)
+pub fn DSystemCompatibility::equal(Self, Self) -> Bool
+pub fn DSystemCompatibility::not_equal(Self, Self) -> Bool
+pub fn DSystemCompatibility::to_repr(Self) -> @debug.Repr
+
+pub enum DSystemIncompatibility {
+  DSystemOk
+  DSystemBaseIncompatible
+  DSystemBranchesIncompatible
+} derive(Eq, @debug.Debug)
+pub fn DSystemIncompatibility::equal(Self, Self) -> Bool
+pub fn DSystemIncompatibility::not_equal(Self, Self) -> Bool
+pub fn DSystemIncompatibility::to_repr(Self) -> @debug.Repr
+
+pub struct DSystemNF {
+  classes : Array[DSystemClass]
+  undefined : Bdd
+}
+
+pub struct DTelescopeCacheEntry {
+  entries : Array[DTelescopeEntry]
+  prefix_types : Array[DValue]
+  prefix_values : Array[DValue]
+  values : Array[DValue]
+  types : Array[DValue]
+}
+
+pub struct DTelescopeEntry {
+  name : String
+  ty : DTerm
+} derive(Eq, @debug.Debug)
+pub fn DTelescopeEntry::equal(Self, Self) -> Bool
+pub fn DTelescopeEntry::not_equal(Self, Self) -> Bool
+pub fn DTelescopeEntry::to_repr(Self) -> @debug.Repr
+
+pub enum DTerm {
+  DTVar(Int32)
+  DUniv(Int32)
+  DBoolTy
+  DUnitTy
+  DPi(DTerm, DTerm)
+  DSigma(DTerm, DTerm)
+  DLam(DTerm, DTerm)
+  DApp(DTerm, DTerm)
+  DPair(DTerm, DTerm)
+  DFst(DTerm)
+  DSnd(DTerm)
+  DBoolLit(Bool)
+  DBoolElim(DTerm, DTerm, DTerm, DTerm)
+  DUnitLit
+  DAnn(DTerm, DTerm)
+  DPartial(Array[DFaceTerm])
+  DPathP(DTerm, DTerm, DTerm)
+  DPath(DTerm, DTerm, DTerm)
+  DLamDim(DTerm)
+  DAppDim(DTerm, Dim)
+  DCoe(DTerm, Dim, Dim, DTerm)
+  DComp(DTerm, Array[DTubeTerm], DTerm)
+  DHComp(DTerm, Array[DTubeTerm], DTerm)
+  DHFill(DTerm, Array[DTubeTerm], DTerm, Dim)
+  DNatTy
+  DNatZero
+  DSucc(DTerm)
+  DNatElim(DTerm, DTerm, DTerm, DTerm)
+  DListTy(DTerm)
+  DNil
+  DCons(DTerm, DTerm)
+  DListElim(DTerm, DTerm, DTerm, DTerm)
+  DCircleTy
+  DCircleBase
+  DCircleLoop
+  DCircleElim(DTerm, DTerm, DTerm, DTerm)
+  DTorusTy
+  DTorusBase
+  DTorusLoopA
+  DTorusLoopB
+  DTorusSquare
+  DTorusElim(DTerm, DTerm, DTerm)
+  DInductive(DInductiveSpec, Array[DTerm])
+  DIntro(DInductiveSpec, Int32, Array[DTerm], Array[DTerm])
+  DInductiveElim(DInductiveSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm)
+  DHitType(DHitSpec, Array[DTerm])
+  DHitIntro(DHitSpec, Int32, Array[DTerm], Array[DTerm], Array[Dim])
+  DHitElim(DHitSpec, DTerm, Array[DTerm], Array[DTerm], Array[DTerm], DTerm)
+  DDecode(DInductiveSpec, Array[DTerm], Array[DTerm], DTerm)
+  DEquivTy(DTerm, DTerm)
+  DMkEquiv(DTerm, DTerm, DTerm, DTerm, DTerm, DTerm)
+  DEquivFwd(DTerm)
+  DEquivBwd(DTerm)
+  DEquivSect(DTerm)
+  DEquivRetr(DTerm)
+  DGlueEquiv(DTerm, Array[DEquivBranch])
+  DUa(DTerm)
+} derive(Eq, @debug.Debug)
+pub fn DTerm::equal(Self, Self) -> Bool
+pub fn DTerm::not_equal(Self, Self) -> Bool
+pub fn DTerm::to_repr(Self) -> @debug.Repr
+
+pub struct DThunk {
+  mut forced : DValue?
+  compute : () -> DValue
+  mut force_count : Int32
+}
+
+pub struct DTubeBranch {
+  face : Face
+  path : (Dim) -> DValue
+}
+
+pub struct DTubeNF {
+  classes : Array[DTubeNFClass]
+  undefined : Bdd
+}
+
+pub struct DTubeNFClass {
+  region : Bdd
+  path : (Dim) -> DValue
+}
+
+pub struct DTubeTerm {
+  face : Face
+  body : DTerm
+} derive(Eq, @debug.Debug)
+pub fn DTubeTerm::equal(Self, Self) -> Bool
+pub fn DTubeTerm::not_equal(Self, Self) -> Bool
+pub fn DTubeTerm::to_repr(Self) -> @debug.Repr
+
+pub struct DTypeVal {
+  value : DValue
+  level : Int32
+}
+
+pub enum DValue {
+  DVUniv(Int32)
+  DVBoolTy
+  DVUnitTy
+  DVPi(DValue, (DValue) -> DValue)
+  DVSigma(DValue, (DValue) -> DValue)
+  DVLam((DValue) -> DValue)
+  DVPair(DValue, DValue)
+  DVBool(Bool)
+  DVUnit
+  DVPathTy((Dim) -> DValue, DValue, DValue)
+  DVPathLam((Dim) -> DValue)
+  DVNatTy
+  DVZeroNat
+  DVSucc(DValue)
+  DVListTy(DValue)
+  DVNil
+  DVCons(DValue, DValue)
+  DVCircleTy
+  DVCirclePoint(Dim)
+  DVTorusTy
+  DVTorusPoint(Dim, Dim)
+  DVInductive(DInductiveSpec, Array[DValue], Array[DValue])
+  DVIntro(DInductiveSpec, Int32, Array[DValue], Array[DValue])
+  DVHitType(DHitSpec, Array[DValue], Array[DValue])
+  DVHitCell(DHitSpec, Int32, Array[DValue], Array[DValue], Array[Dim])
+  DVGlue(DSystem, DValue, Int32)
+  DVEquivTy(DValue, DValue, Int32)
+  DVEquiv(DValue, DValue, DValue, DValue, DValue, DValue)
+  DVGlueEquiv(Array[DEquivBranchValue], DValue, Int32)
+  DVPartial(DPartialValue)
+  DVThunk(DThunk)
+  DVNeutral(DNeutral)
+}
+
+pub enum Dim {
+  DZero
+  DOne
+  DVar(Int32)
+  DNeg(Dim)
+  DAnd(Dim, Dim)
+  DOr(Dim, Dim)
+} derive(Eq, @debug.Debug)
+pub fn Dim::equal(Self, Self) -> Bool
+pub fn Dim::not_equal(Self, Self) -> Bool
+pub fn Dim::to_repr(Self) -> @debug.Repr
+
+pub struct DiscPath {
+  ty : Ty
+  lo : PVal
+  hi : PVal
+  point : (Double) -> PVal
+}
+
+pub struct EigenInterval {
+  lo : Rat
+  hi : Rat
+  count : Int32
+} derive(Eq, @debug.Debug)
+pub fn EigenInterval::equal(Self, Self) -> Bool
+pub fn EigenInterval::not_equal(Self, Self) -> Bool
+pub fn EigenInterval::to_repr(Self) -> @debug.Repr
+
+pub struct ElabResult {
+  term : UTerm
+  ty : UTerm
+} derive(Eq, @debug.Debug)
+pub fn ElabResult::equal(Self, Self) -> Bool
+pub fn ElabResult::not_equal(Self, Self) -> Bool
+pub fn ElabResult::to_repr(Self) -> @debug.Repr
+
+pub struct ElabVar {
+  name : String
+  ty : UTerm
+} derive(Eq, @debug.Debug)
+pub fn ElabVar::equal(Self, Self) -> Bool
+pub fn ElabVar::not_equal(Self, Self) -> Bool
+pub fn ElabVar::to_repr(Self) -> @debug.Repr
+
+pub struct Elaborator {
+  unifier : Unifier
+  vars : Array[ElabVar]
+} derive(Eq, @debug.Debug)
+pub fn Elaborator::equal(Self, Self) -> Bool
+pub fn Elaborator::not_equal(Self, Self) -> Bool
+pub fn Elaborator::to_repr(Self) -> @debug.Repr
+
+pub struct Equiv {
+  src : Ty
+  dst : Ty
+  fwd : (PVal) -> PVal
+  bwd : (PVal) -> PVal
+  wiring : Wiring
+}
+
+pub enum Face {
+  FTop
+  FBot
+  FEq0(Dim)
+  FEq1(Dim)
+  FAnd(Face, Face)
+  FOr(Face, Face)
+} derive(Eq, @debug.Debug)
+pub fn Face::equal(Self, Self) -> Bool
+pub fn Face::not_equal(Self, Self) -> Bool
+pub fn Face::to_repr(Self) -> @debug.Repr
+
+pub enum FaceDecision {
+  FaceDecided(Bool)
+  FaceBudgetExceeded
+} derive(Eq, @debug.Debug)
+pub fn FaceDecision::equal(Self, Self) -> Bool
+pub fn FaceDecision::not_equal(Self, Self) -> Bool
+pub fn FaceDecision::to_repr(Self) -> @debug.Repr
+
+pub enum FaceSatDecision {
+  FaceSat(Array[Bool])
+  FaceUnsat
+  FaceSearchBudgetExceeded
+} derive(Eq, @debug.Debug)
+pub fn FaceSatDecision::equal(Self, Self) -> Bool
+pub fn FaceSatDecision::not_equal(Self, Self) -> Bool
+pub fn FaceSatDecision::to_repr(Self) -> @debug.Repr
+
+pub struct Family {
+  fiber : (PVal) -> Ty
+}
+
+pub struct GlueCompVecResult {
+  t_fill : Cube
+  a_fill_raw : Cube
+  t_cap : Cube
+  a_cap_raw : Cube
+  a_cap : Cube
+  correction : Cube
+}
+
+pub struct GlueData {
+  base_ty : Ty
+  partial_ty : Ty
+  equiv : Equiv
+  face : Face
+}
+
+pub struct GlueElem {
+  partial : PVal
+  base : PVal
+}
+
+pub struct GlueLineFinite {
+  a_line : UPath
+  t_line : UPath
+  e0 : Equiv
+  e1 : Equiv
+  face0 : Face
+  face1 : Face
+}
+
+pub struct GlueLineVec {
+  base_line : SubLine
+  part_line : SubLine
+  equiv : LinEquivLine
+  face_active : Bool
+}
+
+pub enum HTm {
+  HVar(Int32)
+  HBool(Bool)
+  HUnit
+  HPair(HTm, HTm)
+  HLam((HTm) -> HTm)
+  HApp(HTm, HTm)
+  HFst(HTm)
+  HSnd(HTm)
+}
+
+pub struct Iso {
+  src : Ty
+  dst : Ty
+  to_fn : (PVal) -> PVal
+  from_fn : (PVal) -> PVal
+  wiring : Wiring
+}
+
+pub struct JacobiCertificate {
+  precision_bits : Int32
+  initial : QCIntervalMat
+  final_matrix : QCIntervalMat
+  transform : QCIntervalMat
+  rotations : Array[JacobiRotationCertificate]
+  eigenvalues : Array[EigenInterval]
+} derive(Eq, @debug.Debug)
+pub fn JacobiCertificate::equal(Self, Self) -> Bool
+pub fn JacobiCertificate::not_equal(Self, Self) -> Bool
+pub fn JacobiCertificate::to_repr(Self) -> @debug.Repr
+
+pub struct JacobiCoefficients {
+  p : Int32
+  q : Int32
+  cosine : RatInterval
+  sine : RatInterval
+  phase : CInterval
+  modulus : RatInterval
+} derive(Eq, @debug.Debug)
+pub fn JacobiCoefficients::equal(Self, Self) -> Bool
+pub fn JacobiCoefficients::not_equal(Self, Self) -> Bool
+pub fn JacobiCoefficients::to_repr(Self) -> @debug.Repr
+
+pub struct JacobiRotationCertificate {
+  before : QCIntervalMat
+  after : QCIntervalMat
+  transform_before : QCIntervalMat
+  transform_after : QCIntervalMat
+  coeffs : JacobiCoefficients
+  unitary_residual_contains_zero : Bool
+  before_off_sq_upper : Rat
+  after_off_sq_upper : Rat
+} derive(Eq, @debug.Debug)
+pub fn JacobiRotationCertificate::equal(Self, Self) -> Bool
+pub fn JacobiRotationCertificate::not_equal(Self, Self) -> Bool
+pub fn JacobiRotationCertificate::to_repr(Self) -> @debug.Repr
+
+pub enum LTy {
+  LBool
+  LUnit
+  LProd(LTy, LTy)
+  LFun(LTy, LTy)
+} derive(Eq, @debug.Debug)
+pub fn LTy::equal(Self, Self) -> Bool
+pub fn LTy::not_equal(Self, Self) -> Bool
+pub fn LTy::to_repr(Self) -> @debug.Repr
+
+pub enum LeafKind {
+  LKBool
+  LKUnit
+} derive(Eq, @debug.Debug)
+pub fn LeafKind::equal(Self, Self) -> Bool
+pub fn LeafKind::not_equal(Self, Self) -> Bool
+pub fn LeafKind::to_repr(Self) -> @debug.Repr
+
+pub struct LeafMap {
+  src_index : Int32
+  neg : Bool
+} derive(Eq, @debug.Debug)
+pub fn LeafMap::equal(Self, Self) -> Bool
+pub fn LeafMap::not_equal(Self, Self) -> Bool
+pub fn LeafMap::to_repr(Self) -> @debug.Repr
+
+pub struct LinEquivLine {
+  fwd : (Double) -> CMat
+  bwd : (Double) -> CMat
+}
+
+pub struct ModuleBinding {
+  name : String
+  ordinal : Int32
+} derive(Eq, @debug.Debug)
+pub fn ModuleBinding::equal(Self, Self) -> Bool
+pub fn ModuleBinding::not_equal(Self, Self) -> Bool
+pub fn ModuleBinding::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleDecl {
+  name : String
+  ty : DTerm
+  body : DTerm
+  exported : Bool
+  transparent : Bool
+} derive(Eq, @debug.Debug)
+pub fn ModuleDecl::equal(Self, Self) -> Bool
+pub fn ModuleDecl::not_equal(Self, Self) -> Bool
+pub fn ModuleDecl::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleDef {
+  path : String
+  params : Array[DTelescopeEntry]
+  imports : Array[ModuleImport]
+  opens : Array[String]
+  decls : Array[ModuleDecl]
+} derive(Eq, @debug.Debug)
+pub fn ModuleDef::equal(Self, Self) -> Bool
+pub fn ModuleDef::not_equal(Self, Self) -> Bool
+pub fn ModuleDef::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleEntry {
+  canonical_name : String
+  local_name : String
+  source_module : String
+  ty : DTerm
+  body : DTerm?
+  exported : Bool
+  transparent : Bool
+} derive(Eq, @debug.Debug)
+pub fn ModuleEntry::equal(Self, Self) -> Bool
+pub fn ModuleEntry::not_equal(Self, Self) -> Bool
+pub fn ModuleEntry::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleEnv {
+  modules : Array[ModuleDef]
+} derive(Eq, @debug.Debug)
+pub fn ModuleEnv::equal(Self, Self) -> Bool
+pub fn ModuleEnv::not_equal(Self, Self) -> Bool
+pub fn ModuleEnv::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleExport {
+  name : String
+  ordinal : Int32
+  transparent : Bool
+} derive(Eq, @debug.Debug)
+pub fn ModuleExport::equal(Self, Self) -> Bool
+pub fn ModuleExport::not_equal(Self, Self) -> Bool
+pub fn ModuleExport::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleImport {
+  module_path : String
+  alias_name : String
+  args : Array[DTerm]
+  only : Array[String]
+  hiding : Array[String]
+  opened : Bool
+  renames : Array[ModuleRename]
+} derive(Eq, @debug.Debug)
+pub fn ModuleImport::equal(Self, Self) -> Bool
+pub fn ModuleImport::not_equal(Self, Self) -> Bool
+pub fn ModuleImport::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleInstance {
+  module_path : String
+  decls : Array[ModuleInstanceDecl]
+  bindings : Array[ModuleBinding]
+} derive(Eq, @debug.Debug)
+pub fn ModuleInstance::equal(Self, Self) -> Bool
+pub fn ModuleInstance::not_equal(Self, Self) -> Bool
+pub fn ModuleInstance::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleInstanceDecl {
+  name : String
+  canonical_name : String
+  ty : DTerm
+  body : DTerm
+  exported : Bool
+  transparent : Bool
+} derive(Eq, @debug.Debug)
+pub fn ModuleInstanceDecl::equal(Self, Self) -> Bool
+pub fn ModuleInstanceDecl::not_equal(Self, Self) -> Bool
+pub fn ModuleInstanceDecl::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleRename {
+  from_name : String
+  to_name : String
+} derive(Eq, @debug.Debug)
+pub fn ModuleRename::equal(Self, Self) -> Bool
+pub fn ModuleRename::not_equal(Self, Self) -> Bool
+pub fn ModuleRename::to_repr(Self) -> @debug.Repr
+
+pub struct ModuleSignature {
+  module_path : String
+  entries : Array[ModuleEntry]
+  bindings : Array[ModuleBinding]
+  exports : Array[ModuleExport]
+} derive(Eq, @debug.Debug)
+pub fn ModuleSignature::equal(Self, Self) -> Bool
+pub fn ModuleSignature::not_equal(Self, Self) -> Bool
+pub fn ModuleSignature::to_repr(Self) -> @debug.Repr
+
+pub enum Neutral {
+  NeVar(Int32)
+  NeApp(Neutral, Value)
+  NeFst(Neutral)
+  NeSnd(Neutral)
+}
+
+pub struct NumericProjectorCertificate {
+  exact : ProjectorCertificate
+  max_deviation : Double
+  numeric_residual : Double
+  tolerance : Double
+  ok : Bool
+}
+
+pub enum PVal {
+  PVUnit
+  PVBool(Bool)
+  PVPair(PVal, PVal)
+} derive(Eq, @debug.Debug)
+pub fn PVal::equal(Self, Self) -> Bool
+pub fn PVal::not_equal(Self, Self) -> Bool
+pub fn PVal::to_repr(Self) -> @debug.Repr
+
+pub struct PathPVal {
+  line : UPath
+  at0 : PVal
+  at1 : PVal
+  point : (Double) -> PVal
+}
+
+pub struct Poly {
+  terms : Array[PolyTerm]
+}
+
+pub struct PolyTerm {
+  mut coeff : Rat
+  exps : Array[Int32]
+}
+
+pub struct ProjectorCertificate {
+  matrix : CertMat
+  hermitian : Bool
+  idempotent : Bool
+  complement_projector : Bool
+  orthogonal_split : Bool
+  trace : QuadC
+}
+
+pub struct QCIntervalMat {
+  n : Int32
+  rows : Array[Array[CInterval]]
+} derive(Eq, @debug.Debug)
+pub fn QCIntervalMat::equal(Self, Self) -> Bool
+pub fn QCIntervalMat::not_equal(Self, Self) -> Bool
+pub fn QCIntervalMat::to_repr(Self) -> @debug.Repr
+
+pub struct QCpx {
+  re : Rat
+  im : Rat
+} derive(Eq, @debug.Debug)
+pub fn QCpx::equal(Self, Self) -> Bool
+pub fn QCpx::not_equal(Self, Self) -> Bool
+pub fn QCpx::to_repr(Self) -> @debug.Repr
+
+pub struct QCpxMat {
+  n : Int32
+  rows : Array[Array[QCpx]]
+} derive(Eq, @debug.Debug)
+pub fn QCpxMat::equal(Self, Self) -> Bool
+pub fn QCpxMat::not_equal(Self, Self) -> Bool
+pub fn QCpxMat::to_repr(Self) -> @debug.Repr
+
+pub struct QGeneralizedEigenspace {
+  eigenvalue : Rat
+  algebraic_multiplicity : Int32
+  geometric_multiplicity : Int32
+  index : Int32
+  nullities : Array[Int32]
+  block_sizes : Array[Int32]
+  basis : Array[Array[Rat]]
+}
+
+pub struct QJordanDecomposition {
+  p : QMat
+  j : QMat
+  eigenvalues : Array[Rat]
+  block_sizes : Array[Array[Int32]]
+}
+
+pub struct QMat {
+  n : Int32
+  rows : Array[Array[Rat]]
+} derive(Eq, @debug.Debug)
+pub fn QMat::equal(Self, Self) -> Bool
+pub fn QMat::not_equal(Self, Self) -> Bool
+pub fn QMat::to_repr(Self) -> @debug.Repr
+
+pub struct QPoly {
+  coeffs : Array[Rat]
+} derive(Eq, @debug.Debug)
+pub fn QPoly::equal(Self, Self) -> Bool
+pub fn QPoly::not_equal(Self, Self) -> Bool
+pub fn QPoly::to_repr(Self) -> @debug.Repr
+
+pub struct QPolyDiv {
+  quotient : QPoly
+  remainder : QPoly
+}
+
+pub struct QPolyExtGcd {
+  g : QPoly
+  s : QPoly
+  t : QPoly
+}
+
+pub struct QPolyFactor {
+  factor : QPoly
+  multiplicity : Int32
+}
+
+pub struct QPolyRationalFactorization {
+  roots : Array[Rat]
+  multiplicities : Array[Int32]
+  residual : QPoly
+}
+
+pub struct QPrimaryProjector {
+  factor : QPoly
+  cofactor : QPoly
+  polynomial : QPoly
+  projector : QMat
+  complement : QMat
+}
+
+pub struct QRationalSpectrum {
+  eigenvalues : Array[Rat]
+  multiplicities : Array[Int32]
+  residual : QPoly
+}
+
+pub struct QRref {
+  rows : Array[Array[Rat]]
+  pivots : Array[Int32]
+  rank : Int32
+}
+
+pub struct QuadC {
+  re : QuadNum
+  im : QuadNum
+} derive(Eq, @debug.Debug)
+pub fn QuadC::equal(Self, Self) -> Bool
+pub fn QuadC::not_equal(Self, Self) -> Bool
+pub fn QuadC::to_repr(Self) -> @debug.Repr
+
+pub struct QuadNum {
+  a : Rat
+  b : Rat
+  d : Int32
+} derive(Eq, @debug.Debug)
+pub fn QuadNum::equal(Self, Self) -> Bool
+pub fn QuadNum::not_equal(Self, Self) -> Bool
+pub fn QuadNum::to_repr(Self) -> @debug.Repr
+
+pub struct RPoly {
+  coeffs : Array[SymFrac]
+}
+
+pub struct RPolyDiv {
+  quotient : RPoly
+  remainder : RPoly
+}
+
+pub struct Rat {
+  num : Int32
+  den : Int32
+} derive(Eq, @debug.Debug)
+pub fn Rat::equal(Self, Self) -> Bool
+pub fn Rat::not_equal(Self, Self) -> Bool
+pub fn Rat::to_repr(Self) -> @debug.Repr
+
+pub struct RatInterval {
+  lo : Rat
+  hi : Rat
+} derive(Eq, @debug.Debug)
+pub fn RatInterval::equal(Self, Self) -> Bool
+pub fn RatInterval::not_equal(Self, Self) -> Bool
+pub fn RatInterval::to_repr(Self) -> @debug.Repr
+
+pub enum STerm {
+  SVar(String)
+  SLam(String, UTerm?, STerm)
+  SApp(STerm, STerm)
+  SPair(STerm, STerm)
+  SFst(STerm)
+  SSnd(STerm)
+  SBoolLit(Bool)
+  SUnitLit
+  SNatZero
+  SSucc(STerm)
+  SNatElim(STerm, STerm, STerm, STerm)
+  SAnn(STerm, UTerm)
+  SHole
+} derive(Eq, @debug.Debug)
+pub fn STerm::equal(Self, Self) -> Bool
+pub fn STerm::not_equal(Self, Self) -> Bool
+pub fn STerm::to_repr(Self) -> @debug.Repr
+
+pub struct SpecEntry {
+  name : String
+  kind : SpecKind
+  symbols : Array[String]
+  canonical : String
+  categorical : String
+  decision : String
+}
+
+pub enum SpecKind {
+  SpecType
+  SpecOperator
+  SpecStructure
+  SpecTheorem
+} derive(Eq, @debug.Debug)
+pub fn SpecKind::equal(Self, Self) -> Bool
+pub fn SpecKind::not_equal(Self, Self) -> Bool
+pub fn SpecKind::to_repr(Self) -> @debug.Repr
+
+pub struct SubLine {
+  proj : (Double) -> CMat
+}
+
+pub struct SymC {
+  re : SymFrac
+  im : SymFrac
+}
+
+pub struct SymFrac {
+  num : Poly
+  den : Poly
+}
+
+pub struct SymMat {
+  n : Int32
+  rows : Array[Array[SymC]]
+}
+
+pub struct SymRegion {
+  value : Array[Complex]
+  mut region : Bdd
+}
+
+pub struct SystemNF {
+  classes : Array[SymRegion]
+  undefined : Bdd
+}
+
+pub enum TNeutral {
+  TNeVar(Int32)
+  TNeApp(TNeutral, TValue, LTy)
+  TNeFst(TNeutral, LTy)
+  TNeSnd(TNeutral, LTy)
+}
+
+pub enum TValue {
+  TVUnit
+  TVBool(Bool)
+  TVPair(TValue, TValue)
+  TVClosure((TValue) -> TValue)
+  TVNeutral(TNeutral)
+}
+
+pub enum Term {
+  TmVar(Int32)
+  TmLam(Term)
+  TmApp(Term, Term)
+  TmPair(Term, Term)
+  TmFst(Term)
+  TmSnd(Term)
+  TmBool(Bool)
+  TmUnit
+  TmCoeRefl
+  TmCoeUaSwap
+  TmAnn(Term, LTy)
+} derive(Eq, @debug.Debug)
+pub fn Term::equal(Self, Self) -> Bool
+pub fn Term::not_equal(Self, Self) -> Bool
+pub fn Term::to_repr(Self) -> @debug.Repr
+
+pub enum Ty {
+  TyBool
+  TyUnit
+  TyProd(Ty, Ty)
+} derive(Eq, @debug.Debug)
+pub fn Ty::equal(Self, Self) -> Bool
+pub fn Ty::not_equal(Self, Self) -> Bool
+pub fn Ty::to_repr(Self) -> @debug.Repr
+
+pub struct TypedValue {
+  value : TValue
+  ty : LTy
+}
+
+pub struct UMetaInfo {
+  context_depth : Int32
+  mut solution : UTerm?
+} derive(Eq, @debug.Debug)
+pub fn UMetaInfo::equal(Self, Self) -> Bool
+pub fn UMetaInfo::not_equal(Self, Self) -> Bool
+pub fn UMetaInfo::to_repr(Self) -> @debug.Repr
+
+pub struct UPath {
+  equiv : Equiv
+}
+
+pub struct UPoly {
+  coeffs : Array[SymC]
+}
+
+pub enum UTerm {
+  UVar(Int32)
+  UMeta(Int32, Array[UTerm])
+  UConst(String)
+  UType(Int32)
+  ULam(UTerm, UTerm)
+  UApp(UTerm, UTerm)
+  UPi(UTerm, UTerm)
+  UImplicitPi(UTerm, UTerm)
+  USigma(UTerm, UTerm)
+  UPair(UTerm, UTerm)
+  UFst(UTerm)
+  USnd(UTerm)
+  UBoolLit(Bool)
+  UNatZero
+  USucc(UTerm)
+  UNatElim(UTerm, UTerm, UTerm, UTerm)
+} derive(Eq, @debug.Debug)
+pub fn UTerm::equal(Self, Self) -> Bool
+pub fn UTerm::not_equal(Self, Self) -> Bool
+pub fn UTerm::to_repr(Self) -> @debug.Repr
+
+pub struct Unifier {
+  metas : Array[UMetaInfo]
+  mut solved_count : Int32
+} derive(Eq, @debug.Debug)
+pub fn Unifier::equal(Self, Self) -> Bool
+pub fn Unifier::not_equal(Self, Self) -> Bool
+pub fn Unifier::to_repr(Self) -> @debug.Repr
+
+pub enum Value {
+  VUnit
+  VBool(Bool)
+  VPair(Value, Value)
+  VClosure((Value) -> Value)
+  VNeutral(Neutral)
+}
+
+pub struct VecBox {
+  bottom : Cube
+  left : Cube
+  right : Cube
+}
+
+pub struct VecBranch {
+  face : Face
+  value : Array[Complex]
+}
+
+pub struct VecSystem {
+  branches : Array[VecBranch]
+}
+
+pub struct Wiring {
+  src : Ty
+  dst : Ty
+  mapping : Array[LeafMap]
+}
+
+// Type aliases
+pub type AlgVec = Array[AlgNum]
+
+pub type CVec = Array[Complex]
+
+pub type CertVec = Array[QuadC]
+
+pub type QVec = Array[Rat]
+
+pub type SymPath = (SymFrac) -> Array[SymC]
+
+pub type SymSquare = (SymFrac, SymFrac) -> Array[SymC]
+
+pub type SymVec = Array[SymC]
+
+// Traits
