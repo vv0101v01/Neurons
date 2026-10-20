@@ -162,44 +162,6 @@ pub fn schema_registry_register_hit(
 }
 
 ///|
-pub fn schema_registry_inductive_plan(
-  registry : DSchemaRegistry,
-  spec : DInductiveSpec,
-) -> DInductivePlan? {
-  for i in 0..<registry.inductives.length() {
-    if registry.inductives[i].spec == spec {
-      return Some(registry.inductives[i])
-    }
-  }
-  None
-}
-
-///|
-pub fn schema_registry_hit_plan(
-  registry : DSchemaRegistry,
-  spec : DHitSpec,
-) -> DHitPlan? {
-  for i in 0..<registry.hits.length() {
-    if registry.hits[i].spec == spec {
-      return Some(registry.hits[i])
-    }
-  }
-  None
-}
-
-///|
-pub fn schema_registry_inductive_by_id(
-  registry : DSchemaRegistry,
-  id : Int32,
-) -> DInductivePlan? {
-  if id >= 0 && id < registry.inductives.length() {
-    Some(registry.inductives[id])
-  } else {
-    None
-  }
-}
-
-///|
 pub fn schema_registry_hit_by_id(
   registry : DSchemaRegistry,
   id : Int32,
@@ -219,19 +181,6 @@ pub fn schema_registry_inductive_by_name(
   for i in 0..<registry.inductives.length() {
     if registry.inductives[i].spec.name == name {
       return Some(registry.inductives[i])
-    }
-  }
-  None
-}
-
-///|
-pub fn schema_registry_hit_by_name(
-  registry : DSchemaRegistry,
-  name : String,
-) -> DHitPlan? {
-  for i in 0..<registry.hits.length() {
-    if registry.hits[i].spec.name == name {
-      return Some(registry.hits[i])
     }
   }
   None
@@ -263,21 +212,6 @@ pub fn inductive_schema_validate(spec : DInductiveSpec) -> Bool {
 ///|
 pub fn hit_schema_validate(spec : DHitSpec) -> Bool {
   schema_registry_validate_hit(default_schema_registry, spec)
-}
-
-///|
-pub fn schema_registry_stats(
-  registry : DSchemaRegistry,
-) -> (Int32, Int32, Int32, Int32, Int32, Int32, Int32) {
-  (
-    registry.inductives.length(),
-    registry.hits.length(),
-    registry.telescopes.length(),
-    registry.validation_hits,
-    registry.validation_misses,
-    registry.telescope_hits,
-    registry.telescope_misses,
-  )
 }
 
 ///|
@@ -401,9 +335,4 @@ pub fn inductive_plan_type_term(
   args : Array[DTerm],
 ) -> DTerm {
   DInductive(plan.spec, args)
-}
-
-///|
-pub fn hit_plan_type_term(plan : DHitPlan, args : Array[DTerm]) -> DTerm {
-  DHitType(plan.spec, args)
 }

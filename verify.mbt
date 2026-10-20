@@ -16,45 +16,6 @@ pub struct CheckResult {
 }
 
 ///|
-/// 1/√2 to double precision.
-pub fn inv_sqrt2() -> Double {
-  0.7071067811865476
-}
-
-///|
-/// Unit vector spanning the example eigenspace: v = (1, i, 0)/√2.
-pub fn example_unit() -> CVec {
-  [cx(inv_sqrt2(), 0.0), cx(0.0, inv_sqrt2()), cx_zero()]
-}
-
-///|
-/// The example Hermitian idempotent: P = v·v†.
-pub fn example_projector() -> CMat {
-  outer(example_unit())
-}
-
-///|
-pub fn vec_e3() -> CVec {
-  [cx_zero(), cx_zero(), cx_real(1.0)]
-}
-
-///|
-pub fn sample_vectors() -> Array[CVec] {
-  [
-    [cx_real(1.0), cx(0.0, 1.0), cx(2.0, -1.0)],
-    [cx_zero(), cx_zero(), cx_zero()],
-    [cx(-1.0, 2.0), cx(0.5, 0.25), cx(0.0, -3.0)],
-    example_unit(),
-    vec_e3(),
-  ]
-}
-
-///|
-pub fn grid() -> Array[Double] {
-  [0.0, 0.25, 0.5, 0.75, 1.0]
-}
-
-///|
 pub fn check_projector() -> Bool {
   let p = example_projector()
   is_hermitian(p) &&
@@ -127,27 +88,6 @@ pub fn check_systems() -> Bool {
   compatibility_respects_quotient(sys, b, 2) &&
   ext_ok &&
   ext_bad
-}
-
-///|
-pub fn check_cube_comp() -> Bool {
-  let p = example_projector()
-  let u = example_unit()
-  let u2 = vec_scale(2.0, u)
-  let u3 = vec_scale_c(cx(0.0, 1.0), u) // i·u, still in im P
-  let u4 = vec_scale(3.0, u)
-  let bottom = path_line(u, u2)
-  let left = path_line(u, u3)
-  let right = path_line(u2, u4)
-  let filler = square_fill(bottom, left, right)
-  open_box_wf(bottom, left, right) &&
-  filler_respects_box(filler, bottom, left, right, grid()) &&
-  face_maps_commute(filler, 0.0, 1.0) &&
-  face_maps_commute(filler, 1.0, 0.0) &&
-  eigenspace_kan_sound(p, bottom, left, right, grid()) &&
-  path_trans_endpoints(bottom, path_line(u2, u3)) &&
-  vec_approx_eq(path_start(path_sym(bottom)), u2) &&
-  vec_approx_eq(path_end(path_sym(bottom)), u)
 }
 
 ///|
@@ -472,6 +412,18 @@ pub fn run_all_checks() -> Array[CheckResult] {
       ok: check_hou_elaborator(),
     },
     CheckResult::{
+      name: "可計算單值性：等價可搜尋、ua 的四條計算律、截面／收縮律、路徑數 n!",
+      ok: univalence_compute_all(),
+    },
+    CheckResult::{
+      name: "重構證書：解耦手術是介面等價（符號守恆、判定可經 ua 搬運、與 univalence 判定一致）",
+      ok: refactor_certificates_sound(),
+    },
+    CheckResult::{
+      name: "n 維立方演算法：Möbius 填充滿足全部已知面、維度重標自然、成本 2^(2n−1)−1",
+      ok: check_cube_algorithm(),
+    },
+    CheckResult::{
       name: "參數化模組：函子實例化抽象整段宣告，import/open/alias/rename 與歧義拒絕",
       ok: check_module_system(),
     },
@@ -505,4 +457,93 @@ pub fn print_report() -> Bool {
   }
   println("passed \{passed}/\{results.length()}")
   passed == results.length()
+}
+
+// ---------------------------------------------------------------------------
+// Phase 8: computable univalence and the n-dimensional cube algorithm
+// ---------------------------------------------------------------------------
+
+///|
+/// The cube algorithm at dimensions 2–4: every open box built from an ambient
+/// cube is well formed, the Möbius filler restricts to all of its given faces,
+/// composition drops the missing dimension, and the cost is 2^(2n−1) − 1.
+pub fn check_cube_algorithm() -> Bool {
+  let samples = default_samples()
+  let bottom = path_line([cx_real(0.0), cx_real(1.0)], [
+    cx_real(1.0),
+    cx_real(2.0),
+  ])
+  let left = path_line([cx_real(0.0), cx_real(1.0)], [
+    cx_real(2.0),
+    cx_real(-1.0),
+  ])
+  let right = path_line([cx_real(1.0), cx_real(2.0)], [
+    cx_real(0.5),
+    cx_real(3.0),
+  ])
+  let square_ok = nbox_wf(nbox_of_square(bottom, left, right), samples) &&
+    nfill_agrees_with_square_on_given_faces(bottom, left, right, samples) &&
+    ncomp_endpoints_match_legacy_comp(bottom, left, right) &&
+    nfill_differs_from_square_fill(bottom, left, right)
+  // Ambient 3- and 4-cubes, quantified over the missing face.
+  let g3 = Cube::{
+    dim: 3,
+    cell: pt => {
+      [
+        cx_real(
+          1.0 +
+          0.3 * pt[0] -
+          0.7 * pt[1] +
+          0.5 * pt[0] * pt[1] +
+          0.2 * pt[2] * pt[0],
+        ),
+        cx_real(-0.4 + 0.9 * pt[1] * pt[2] - 0.25 * pt[0] * pt[1] * pt[2]),
+      ]
+    },
+  }
+  let g4 = Cube::{
+    dim: 4,
+    cell: pt => {
+      [
+        cx_real(pt[0] * pt[1] - 0.3 * pt[2] + 0.5 * pt[3] * pt[1]),
+        cx_real(1.0 - 0.2 * pt[3] + 0.7 * pt[0] * pt[2]),
+      ]
+    },
+  }
+  let small = [0.0, 0.5, 1.0]
+  let mut ok = square_ok
+  for k in 0..<3 {
+    let sides : Array[NBoxSide] = []
+    for d in 0..<3 {
+      for s in 0..<2 {
+        if d != k || s != 1 {
+          sides.push(nbox_side(d, s, restrict_face(g3, d, s.to_double())))
+        }
+      }
+    }
+    let b = nbox(3, k, 1, sides)
+    ok = ok &&
+      nbox_wf(b, samples) &&
+      nfill_respects_box(b, small) &&
+      ncomp(b).dim == 2 &&
+      nfill_permutation_natural(b, [2, 0, 1], small)
+  }
+  for k in 0..<2 {
+    let sides : Array[NBoxSide] = []
+    for d in 0..<4 {
+      for s in 0..<2 {
+        if d != k || s != 0 {
+          sides.push(nbox_side(d, s, restrict_face(g4, d, s.to_double())))
+        }
+      }
+    }
+    let b = nbox(4, k, 0, sides)
+    ok = ok && nbox_wf(b, small) && nfill_respects_box(b, small)
+  }
+  ok &&
+  nfill_term_count(2) == 7 &&
+  nfill_term_count(3) == 31 &&
+  nfill_term_count(4) == 127 &&
+  nfill_within_budget(3, 31) &&
+  !nfill_within_budget(4, 100)
 }

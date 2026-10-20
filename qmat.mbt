@@ -218,20 +218,6 @@ pub fn qmat_vec(a : QMat, v : QVec) -> QVec {
 }
 
 ///|
-pub fn qmat_transpose(a : QMat) -> QMat {
-  let cols = if a.rows.length() == 0 { 0 } else { a.rows[0].length() }
-  let rows : Array[Array[Rat]] = []
-  for j in 0..<cols {
-    let row : Array[Rat] = []
-    for i in 0..<a.rows.length() {
-      row.push(a.rows[i][j])
-    }
-    rows.push(row)
-  }
-  QMat::{ n: a.n, rows, }
-}
-
-///|
 pub fn qmat_eq(a : QMat, b : QMat) -> Bool {
   if a.rows.length() != b.rows.length() {
     return false

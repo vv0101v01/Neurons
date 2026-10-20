@@ -23,12 +23,6 @@ pub enum Dim {
 } derive(Debug, Eq)
 
 ///|
-pub extend Face with @moonbitlang/core/debug.Debug::{to_repr}
-
-///|
-pub extend Face with Eq::{not_equal, equal}
-
-///|
 pub extend Dim with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
@@ -106,84 +100,4 @@ pub fn interval_laws_hold(samples : Array[Double]) -> Bool {
     }
   }
   true
-}
-
-///|
-pub enum Face {
-  FTop
-  FBot
-  FEq0(Dim)
-  FEq1(Dim)
-  FAnd(Face, Face)
-  FOr(Face, Face)
-} derive(Debug, Eq)
-
-///|
-/// Does the face hold at this endpoint assignment?
-pub fn face_holds(f : Face, env : Array[Bool]) -> Bool {
-  match f {
-    FTop => true
-    FBot => false
-    FEq0(r) => !eval_dim_bool(r, env)
-    FEq1(r) => eval_dim_bool(r, env)
-    FAnd(a, b) => face_holds(a, env) && face_holds(b, env)
-    FOr(a, b) => face_holds(a, env) || face_holds(b, env)
-  }
-}
-
-///|
-pub fn pow2(n : Int32) -> Int32 {
-  let mut acc = 1
-  for _i in 0..<n {
-    acc = acc * 2
-  }
-  acc
-}
-
-///|
-/// The `mask`-th endpoint assignment of `n` dimension variables.
-pub fn assignment_of_mask(mask : Int32, n : Int32) -> Array[Bool] {
-  let env : Array[Bool] = []
-  for k in 0..<n {
-    env.push(((mask >> k) & 1) == 1)
-  }
-  env
-}
-
-///|
-/// Satisfiability of a face over n variables, decided symbolically (ROBDD ≠ ⊥; see bdd.mbt).
-pub fn face_sat(f : Face, n : Int32) -> Bool {
-  bdd_sat_face(f, n)
-}
-
-///|
-pub fn face_unsat(f : Face, n : Int32) -> Bool {
-  !face_sat(f, n)
-}
-
-///|
-/// Entailment of faces: φ ≤ ψ iff every endpoint satisfying φ satisfies ψ.
-pub fn face_le(f : Face, g : Face, n : Int32) -> Bool {
-  bdd_face_le(f, g, n)
-}
-
-///|
-/// Equality in the quotient of face formulas by semantic equivalence:
-/// decided by structural equality of canonical ROBDDs (bdd.mbt).  Syntactically different formulas
-/// (e.g. φ ∨ φ and φ) become *equal* here — the quotient that system
-/// pruning and system equivalence are taken modulo.
-pub fn face_eq_mod(f : Face, g : Face, n : Int32) -> Bool {
-  bdd_face_eq(f, g, n)
-}
-
-///|
-/// The face (i = 0) for the i-th dimension variable.
-pub fn face_var0(i : Int32) -> Face {
-  FEq0(DVar(i))
-}
-
-///|
-/// The face (i = 1) for the i-th dimension variable.
-pub fn face_var1(i : Int32) -> Face {
-  FEq1(DVar(i))
 }

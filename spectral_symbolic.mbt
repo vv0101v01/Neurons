@@ -69,11 +69,6 @@ pub fn rpoly_x() -> RPoly {
 }
 
 ///|
-pub fn rpoly_const(c : SymFrac) -> RPoly {
-  rpoly_normalize([c])
-}
-
-///|
 pub fn rpoly_is_zero(p : RPoly) -> Bool {
   p.coeffs.length() == 1 && frac_is_zero(p.coeffs[0])
 }

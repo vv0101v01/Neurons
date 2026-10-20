@@ -357,16 +357,6 @@ fn bdd_dag_apply(m : BddManager, op : Int32, a0 : Int32, b0 : Int32) -> Int32 {
 }
 
 ///|
-pub fn bdd_dag_false(_m : BddManager) -> Int32 {
-  0
-}
-
-///|
-pub fn bdd_dag_true(_m : BddManager) -> Int32 {
-  1
-}
-
-///|
 pub fn bdd_dag_var(m : BddManager, variable : Int32) -> Int32 {
   if variable < 0 || variable >= m.n {
     0
@@ -388,11 +378,6 @@ pub fn bdd_dag_and(m : BddManager, a : Int32, b : Int32) -> Int32 {
 ///|
 pub fn bdd_dag_or(m : BddManager, a : Int32, b : Int32) -> Int32 {
   bdd_dag_apply(m, 1, a, b)
-}
-
-///|
-pub fn bdd_dag_xor(m : BddManager, a : Int32, b : Int32) -> Int32 {
-  bdd_dag_apply(m, 2, a, b)
 }
 
 ///|
@@ -444,17 +429,6 @@ pub fn bdd_dag_of_face(
 ///|
 pub fn bdd_manager_node_count(m : BddManager) -> Int32 {
   m.nodes.length() - 2
-}
-
-///|
-pub fn bdd_manager_stats(m : BddManager) -> (Int32, Int32, Int32, Int32, Bool) {
-  (
-    bdd_manager_node_count(m),
-    m.apply_hits,
-    m.apply_misses,
-    m.mk_calls,
-    m.exceeded,
-  )
 }
 
 ///|
@@ -598,24 +572,6 @@ pub fn face_eq_within_budget(
     FaceDecided(a == b)
   }
 }
-
-///|
-pub fn face_sat_within_budget(
-  f : Face,
-  n : Int32,
-  max_nodes : Int32,
-) -> FaceDecision {
-  let built = bdd_dag_of_face(f, n, max_nodes~)
-  if built.ok {
-    FaceDecided(built.root != 0)
-  } else {
-    FaceBudgetExceeded
-  }
-}
-
-// ---------------------------------------------------------------------------
-// DPLL fallback for satisfiability
-// ---------------------------------------------------------------------------
 
 ///|
 pub fn face_not(f : Face) -> Face {

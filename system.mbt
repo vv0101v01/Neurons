@@ -20,17 +20,6 @@
 // the "商可交換性 / 相容性" (quotient commutativity / compatibility) laws.
 
 ///|
-pub struct VecBranch {
-  face : Face
-  value : CVec
-}
-
-///|
-pub struct VecSystem {
-  branches : Array[VecBranch]
-}
-
-///|
 pub fn system_of(branches : Array[VecBranch]) -> VecSystem {
   VecSystem::{ branches, }
 }

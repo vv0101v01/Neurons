@@ -113,11 +113,6 @@ pub fn qmat_generalized_eigenspace(
 }
 
 ///|
-pub fn qmat_Jordan_block_sizes(a : QMat, lambda : Rat) -> Array[Int32] {
-  qmat_generalized_eigenspace(a, lambda).block_sizes
-}
-
-///|
 pub fn qmat_diagonalizable_at(a : QMat, lambda : Rat) -> Bool {
   let g = qmat_generalized_eigenspace(a, lambda)
   g.geometric_multiplicity == g.algebraic_multiplicity

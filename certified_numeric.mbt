@@ -52,11 +52,6 @@ pub fn quad_to_double(x : QuadNum) -> Double {
 }
 
 ///|
-pub fn qcc_make(re : QuadNum, im : QuadNum) -> QuadC {
-  QuadC::{ re, im, }
-}
-
-///|
 pub fn qcc_zero() -> QuadC {
   QuadC::{ re: quad_zero(), im: quad_zero(), }
 }
@@ -449,11 +444,6 @@ fn cert_path_make(coeffs : Array[CertVec]) -> CertPath {
 }
 
 ///|
-pub fn cert_path_const(v : CertVec) -> CertPath {
-  cert_path_make([v])
-}
-
-///|
 pub fn cert_path_line(a : CertVec, b : CertVec) -> CertPath {
   cert_path_make([a, cert_vec_sub(b, a)])
 }
@@ -600,18 +590,6 @@ pub fn cert_square_face(s : CertSquare, face : Int32) -> CertPath {
 }
 
 ///|
-pub fn cert_square_eq(a : CertSquare, b : CertSquare) -> Bool {
-  for i in 0..<3 {
-    for j in 0..<3 {
-      if !cert_vec_eq(a.coeffs[i][j], b.coeffs[i][j]) {
-        return false
-      }
-    }
-  }
-  true
-}
-
-///|
 /// Apply a linear map to every polynomial coefficient.  For a
 /// projector this is exact pointwise pruning at every cube point.
 pub fn cert_square_apply(p : CertMat, s : CertSquare) -> CertSquare {
@@ -732,15 +710,6 @@ pub fn cert_mat_to_numeric(a : CertMat) -> CMat {
     rows.push(row)
   }
   mat_from_rows(rows)
-}
-
-///|
-pub fn cert_vec_to_numeric(v : CertVec) -> CVec {
-  let out : CVec = []
-  for i in 0..<v.length() {
-    out.push(qcc_to_complex(v[i]))
-  }
-  out
 }
 
 ///|

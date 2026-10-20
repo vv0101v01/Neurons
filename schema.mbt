@@ -74,38 +74,9 @@ pub fn dfunctor_identity(index : Array[DTerm]) -> DPositiveFunctor {
 }
 
 ///|
-pub fn dfunctor_const(ty : DTerm) -> DPositiveFunctor {
-  DFunctorConst(ty)
-}
-
-///|
-pub fn dfunctor_product(
-  a : DPositiveFunctor,
-  b : DPositiveFunctor,
-) -> DPositiveFunctor {
-  DFunctorProduct(a, b)
-}
-
-///|
-pub fn dfunctor_sum(
-  a : DPositiveFunctor,
-  b : DPositiveFunctor,
-) -> DPositiveFunctor {
-  DFunctorSum(a, b)
-}
-
-///|
 pub fn dfunctor_list(inner : DPositiveFunctor) -> DPositiveFunctor {
   DFunctorList(inner)
 }
-
-///|
-pub fn dfunctor_pi(dom : DTerm, inner : DPositiveFunctor) -> DPositiveFunctor {
-  DFunctorPi(dom, inner)
-}
-
-// A dependent polynomial (container) functor.  `positions` is checked
-// with the selected shape appended to the local schema context;
 
 ///|
 /// `index` is checked after appending that shape and one position.
@@ -1192,7 +1163,10 @@ pub fn conv_hit_elim_neutral(
 }
 
 ///|
-fn schema_split_terms(
+/// Split `terms` at `n` into (prefix, suffix); the shared body used by every
+/// telescope walker in this package (`schema`, `schema_positivity`,
+/// `schema_extensions`).
+fn split_terms_at(
   terms : Array[DTerm],
   n : Int32,
 ) -> (Array[DTerm], Array[DTerm]) {
@@ -1631,10 +1605,7 @@ pub fn eval_inductive_type_term(
   env : DEnv,
   denv : DDimEnv,
 ) -> DValue {
-  let (param_terms, index_terms) = schema_split_terms(
-    args,
-    spec.params.length(),
-  )
+  let (param_terms, index_terms) = split_terms_at(args, spec.params.length())
   let params : Array[DValue] = []
   for i in 0..<param_terms.length() {
     params.push(lazy_deval(param_terms[i], env, denv))
@@ -1713,10 +1684,7 @@ pub fn infer_inductive_type(
     args.length() != spec.params.length() + spec.indices.length() {
     return None
   }
-  let (param_terms, index_terms) = schema_split_terms(
-    args,
-    spec.params.length(),
-  )
+  let (param_terms, index_terms) = split_terms_at(args, spec.params.length())
   match
     check_telescope_terms(spec.params, param_terms, [], [], ctx, env, denv) {
     Some(params) =>
@@ -1888,10 +1856,7 @@ pub fn eval_hit_type_term(
   env : DEnv,
   denv : DDimEnv,
 ) -> DValue {
-  let (param_terms, index_terms) = schema_split_terms(
-    args,
-    spec.params.length(),
-  )
+  let (param_terms, index_terms) = split_terms_at(args, spec.params.length())
   let params : Array[DValue] = []
   for i in 0..<param_terms.length() {
     params.push(lazy_deval(param_terms[i], env, denv))
@@ -1974,10 +1939,7 @@ pub fn infer_hit_type(
     args.length() != spec.params.length() + spec.indices.length() {
     return None
   }
-  let (param_terms, index_terms) = schema_split_terms(
-    args,
-    spec.params.length(),
-  )
+  let (param_terms, index_terms) = split_terms_at(args, spec.params.length())
   match
     check_telescope_terms(spec.params, param_terms, [], [], ctx, env, denv) {
     Some(params) =>
@@ -4047,11 +4009,6 @@ fn hit_dims_eq(a : Array[Dim], b : Array[Dim]) -> Bool {
 // ---------------------------------------------------------------------------
 // Canonical generated HIT schemas and term builders
 // ---------------------------------------------------------------------------
-
-///|
-pub fn hit_type_term(spec : DHitSpec, args : Array[DTerm]) -> DTerm {
-  DHitType(spec, args)
-}
 
 ///|
 pub fn hit_intro_term(

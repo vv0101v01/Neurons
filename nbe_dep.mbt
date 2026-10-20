@@ -1449,15 +1449,6 @@ pub fn deval_dim(t : DTerm, env : DEnv, denv : DDimEnv) -> DValue {
 }
 
 ///|
-pub fn deval(t : DTerm, env : Array[DValue]) -> DValue {
-  deval_dim(t, denv_from_array(env), ddim_empty())
-}
-
-// ---------------------------------------------------------------------------
-// Eliminator computation (including commutation with formal compositions)
-// ---------------------------------------------------------------------------
-
-///|
 fn elim_over_comp(
   line : (Dim) -> DValue,
   branches : DSystem,

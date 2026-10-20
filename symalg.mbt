@@ -321,11 +321,6 @@ pub fn poly_mul(a : Poly, b : Poly) -> Poly {
 }
 
 ///|
-pub fn poly_scale(c : Rat, a : Poly) -> Poly {
-  poly_mul(poly_const(c), a)
-}
-
-///|
 pub fn poly_eq(a : Poly, b : Poly) -> Bool {
   poly_is_zero(poly_sub(a, b))
 }
@@ -464,11 +459,6 @@ pub fn sc_var(id : Int32) -> SymC {
 }
 
 ///|
-pub fn sc_i() -> SymC {
-  sc_make(frac_zero(), frac_one())
-}
-
-///|
 pub fn sc_add(a : SymC, b : SymC) -> SymC {
   sc_make(frac_add(a.re, b.re), frac_add(a.im, b.im))
 }
@@ -542,15 +532,6 @@ pub fn sym_vec_scale(f : SymFrac, a : SymVec) -> SymVec {
 }
 
 ///|
-pub fn sym_vec_scale_c(c : SymC, a : SymVec) -> SymVec {
-  let out : SymVec = []
-  for i in 0..<a.length() {
-    out.push(sc_mul(c, a[i]))
-  }
-  out
-}
-
-///|
 pub fn sym_vec_eq(a : SymVec, b : SymVec) -> Bool {
   if a.length() != b.length() {
     return false
@@ -607,19 +588,6 @@ pub fn sym_mat_identity(n : Int32) -> SymMat {
 ///|
 pub fn sym_mat_from_rows(rows : Array[Array[SymC]]) -> SymMat {
   SymMat::{ n: rows.length(), rows, }
-}
-
-///|
-pub fn sym_scalar_matrix(f : SymFrac, n : Int32) -> SymMat {
-  let rows : Array[Array[SymC]] = []
-  for i in 0..<n {
-    let row : Array[SymC] = []
-    for j in 0..<n {
-      row.push(if i == j { sc_real_frac(f) } else { sc_zero() })
-    }
-    rows.push(row)
-  }
-  SymMat::{ n, rows, }
 }
 
 ///|
@@ -703,15 +671,6 @@ pub fn sym_mat_eq(a : SymMat, b : SymMat) -> Bool {
     }
   }
   true
-}
-
-///|
-pub fn sym_mat_trace(m : SymMat) -> SymC {
-  let mut acc = sc_zero()
-  for i in 0..<m.n {
-    acc = sc_add(acc, m.rows[i][i])
-  }
-  acc
 }
 
 ///|

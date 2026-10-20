@@ -222,11 +222,6 @@ pub struct SubLine {
 }
 
 ///|
-pub fn subline_const(p : CMat) -> SubLine {
-  SubLine::{ proj: _j => p, }
-}
-
-///|
 pub fn subline_from_unit_path(unit : (Double) -> CVec) -> SubLine {
   SubLine::{ proj: j => outer(unit(j)), }
 }

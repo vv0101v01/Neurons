@@ -32,8 +32,6 @@ pub fn alg_make(QPoly, QPoly) -> AlgNum
 
 pub fn alg_minimal_polynomial(AlgNum) -> QPoly
 
-pub fn alg_modulus_irreducible_small(AlgNum) -> Bool
-
 pub fn alg_mul(AlgNum, AlgNum) -> AlgNum
 
 pub fn alg_multiplication_matrix(AlgNum) -> QMat
@@ -58,8 +56,6 @@ pub fn alg_sqrt_rat(Rat) -> AlgNum
 
 pub fn alg_sub(AlgNum, AlgNum) -> AlgNum
 
-pub fn alg_to_rat(AlgNum) -> Rat?
-
 pub fn alg_trace(AlgNum) -> Rat
 
 pub fn alg_zero(QPoly) -> AlgNum
@@ -67,8 +63,6 @@ pub fn alg_zero(QPoly) -> AlgNum
 pub fn algmat_Jordan_chains(AlgMat, AlgNum) -> Array[Array[Array[AlgNum]]]
 
 pub fn algmat_Jordan_decomposition(AlgMat, Array[AlgNum]) -> AlgJordanDecomposition?
-
-pub fn algmat_add(AlgMat, AlgMat) -> AlgMat
 
 pub fn algmat_charpoly(AlgMat) -> Array[AlgNum]
 
@@ -146,8 +140,6 @@ pub fn bdd_dag_face_eq(Face, Face, Int32) -> Bool
 
 pub fn bdd_dag_face_le(Face, Face, Int32) -> Bool
 
-pub fn bdd_dag_false(BddManager) -> Int32
-
 pub fn bdd_dag_not(BddManager, Int32) -> Int32
 
 pub fn bdd_dag_of_face(Face, Int32, max_nodes? : Int32) -> BddDagFace
@@ -160,13 +152,9 @@ pub fn bdd_dag_reachable_count(BddManager, Int32) -> Int32
 
 pub fn bdd_dag_sat_face(Face, Int32) -> Bool
 
-pub fn bdd_dag_true(BddManager) -> Int32
-
 pub fn bdd_dag_var(BddManager, Int32) -> Int32
 
 pub fn bdd_dag_witness(BddManager, Int32) -> Array[Bool]?
-
-pub fn bdd_dag_xor(BddManager, Int32, Int32) -> Int32
 
 pub fn bdd_face_eq(Face, Face, Int32) -> Bool
 
@@ -175,8 +163,6 @@ pub fn bdd_face_le(Face, Face, Int32) -> Bool
 pub fn bdd_manager_new(Int32, max_nodes? : Int32) -> BddManager
 
 pub fn bdd_manager_node_count(BddManager) -> Int32
-
-pub fn bdd_manager_stats(BddManager) -> (Int32, Int32, Int32, Int32, Bool)
 
 pub fn bdd_manager_with_order(Array[Int32], Int32, max_nodes? : Int32) -> BddManager
 
@@ -258,8 +244,6 @@ pub fn cert_open_box_wf(CertPath, CertPath, CertPath) -> Bool
 
 pub fn cert_outer(Array[QuadC]) -> CertMat
 
-pub fn cert_path_const(Array[QuadC]) -> CertPath
-
 pub fn cert_path_end(CertPath) -> Array[QuadC]
 
 pub fn cert_path_eq(CertPath, CertPath) -> Bool
@@ -286,8 +270,6 @@ pub fn cert_square_bilinear(Array[QuadC], Array[QuadC], Array[QuadC], Array[Quad
 
 pub fn cert_square_bump(CertSquare, Array[QuadC]) -> CertSquare
 
-pub fn cert_square_eq(CertSquare, CertSquare) -> Bool
-
 pub fn cert_square_face(CertSquare, Int32) -> CertPath
 
 pub fn cert_square_fill(CertPath, CertPath, CertPath) -> CertSquare
@@ -304,9 +286,19 @@ pub fn cert_vec_scale_quad(QuadNum, Array[QuadC]) -> Array[QuadC]
 
 pub fn cert_vec_sub(Array[QuadC], Array[QuadC]) -> Array[QuadC]
 
-pub fn cert_vec_to_numeric(Array[QuadC]) -> Array[Complex]
-
 pub fn cert_vec_zero(Int32) -> Array[QuadC]
+
+pub fn certificate_compose(RefactorCertificate, RefactorCertificate) -> RefactorCertificate?
+
+pub fn certificate_inverse(RefactorCertificate) -> RefactorCertificate?
+
+pub fn certificate_is_identity(RefactorCertificate) -> Bool
+
+pub fn certificate_transport_int(RefactorCertificate, Array[Int32]) -> Array[Int32]
+
+pub fn certificate_transport_roundtrip(RefactorCertificate, Array[Int32]) -> Bool
+
+pub fn certify(RefactorPlan) -> RefactorCertificate?
 
 pub fn certify_numeric_projector(CMat, CertMat, Double) -> NumericProjectorCertificate
 
@@ -363,6 +355,8 @@ pub fn check_constructor_constraints() -> Bool
 pub fn check_container_functor_tree() -> Bool
 
 pub fn check_cube3_and_moving_hit_comp() -> Bool
+
+pub fn check_cube_algorithm() -> Bool
 
 pub fn check_cube_comp() -> Bool
 
@@ -530,21 +524,13 @@ pub fn checked_constant_type_line(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLin
 
 pub fn checked_constant_type_line_closed(DTerm) -> DCheckedTypeLine?
 
-pub fn checked_fill_value(DCheckedTypeLine, DSystem, DValue, Int32) -> (Dim) -> DValue
-
 pub fn checked_line_at(DCheckedTypeLine, Dim) -> DValue
-
-pub fn checked_line_body(DCheckedTypeLine) -> DTerm
 
 pub fn checked_line_conv(Int32, Int32, DCheckedTypeLine, DCheckedTypeLine) -> Bool
 
 pub fn checked_line_endpoints(DCheckedTypeLine) -> (DValue, DValue)
 
-pub fn checked_line_fn(DCheckedTypeLine) -> (Dim) -> DValue
-
 pub fn checked_line_is_constant(DCheckedTypeLine) -> Bool
-
-pub fn checked_line_level(DCheckedTypeLine) -> Int32
 
 pub fn checked_line_of_pathp_term(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
 
@@ -559,8 +545,6 @@ pub fn checked_type_line(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
 pub fn checked_type_line_closed(DTerm) -> DCheckedTypeLine?
 
 pub fn checked_ua_line(DTerm, DEnv, DEnv, DDimEnv) -> DCheckedTypeLine?
-
-pub fn cinterval(RatInterval, RatInterval) -> CInterval
 
 pub fn cinterval_add(CInterval, CInterval) -> CInterval
 
@@ -680,7 +664,27 @@ pub fn conv_telescope_values(Int32, Int32, Array[DTelescopeEntry], Array[DValue]
 
 pub fn conv_ty(Int32, Int32, DValue, DValue) -> Bool
 
+pub fn cpath_coe(CPath, Int32, Int32, PVal) -> PVal
+
+pub fn cpath_coe_index(CPath, Int32, Int32, Int32) -> Int32
+
+pub fn cpath_comp(CPath, CPath) -> CPath
+
+pub fn cpath_eq(CPath, CPath) -> Bool
+
+pub fn cpath_refl(Ty) -> CPath
+
+pub fn cpath_sym(CPath) -> CPath
+
+pub fn cpath_to_equiv(CPath) -> FinMap
+
+pub fn cpath_type_at(CPath, Int32) -> Ty
+
+pub fn cpath_ua(FinMap) -> CPath
+
 pub fn cube3_schema() -> DHitSpec
+
+pub fn cube_approx_eq(Cube, Cube, Array[Double]) -> Bool
 
 pub fn cube_const(Array[Complex], Int32) -> Cube
 
@@ -691,6 +695,8 @@ pub fn cube_ext_eq(Cube, Cube, Array[Double]) -> Bool
 pub fn cube_in_eigenspace(CMat, Cube, Array[Double]) -> Bool
 
 pub fn cube_in_subline(SubLine, Cube, Int32, Array[Double]) -> Bool
+
+pub fn cube_permute(Cube, Array[Int32]) -> Cube
 
 pub fn cx(Double, Double) -> Complex
 
@@ -776,9 +782,21 @@ pub fn decode_term(DInductiveSpec, Array[DTerm], Array[DTerm], DTerm) -> DTerm
 
 pub fn decompose(CMat, Array[Complex]) -> (Array[Complex], Array[Complex])
 
+pub fn decouple_step(String, String, String, Array[String]) -> DecoupleStep
+
+pub fn decoupling_certified() -> Bool
+
+pub fn decoupling_conserves_names() -> Bool
+
+pub fn decoupling_preserves_families(Array[Int32]) -> Bool
+
+pub fn decoupling_steps() -> Array[DecoupleStep]
+
 pub fn def_eq(Term, Term, Int32) -> Bool
 
 pub fn def_eq_eta(Term, Term, LTy, Array[LTy]) -> Bool
+
+pub fn default_samples() -> Array[Double]
 
 pub let default_schema_registry : DSchemaRegistry
 
@@ -816,8 +834,6 @@ pub fn dep_type_val_of(DTerm) -> DTypeVal?
 
 pub fn dequiv_branch_value(Face, DValue, DValue) -> DEquivBranchValue
 
-pub fn deval(DTerm, Array[DValue]) -> DValue
-
 pub fn deval_dim(DTerm, DEnv, DDimEnv) -> DValue
 
 pub fn dface_value(Face, DValue) -> DFaceValue
@@ -826,19 +842,11 @@ pub fn dfill(DLine, ((Double) -> DValue)?, DValue) -> (Double) -> DValue
 
 pub fn dfst_typed(DValue, (DValue) -> DValue) -> DValue
 
-pub fn dfunctor_const(DTerm) -> DPositiveFunctor
-
 pub fn dfunctor_container(DTerm, DTerm, index? : Array[DTerm]) -> DPositiveFunctor
 
 pub fn dfunctor_identity(Array[DTerm]) -> DPositiveFunctor
 
 pub fn dfunctor_list(DPositiveFunctor) -> DPositiveFunctor
-
-pub fn dfunctor_pi(DTerm, DPositiveFunctor) -> DPositiveFunctor
-
-pub fn dfunctor_product(DPositiveFunctor, DPositiveFunctor) -> DPositiveFunctor
-
-pub fn dfunctor_sum(DPositiveFunctor, DPositiveFunctor) -> DPositiveFunctor
 
 pub fn dhit_cell_spec(String, Int32, Array[DConstructorArg], Array[DHitFaceExpr], result_index? : Array[DTerm], constraints? : Array[DConstructorConstraint]) -> DHitCellSpec
 
@@ -874,15 +882,7 @@ pub fn disc_path_wf(DiscPath) -> Bool
 
 pub fn disc_samples() -> Array[Double]
 
-pub fn dlevel_const(Int32) -> DLevelExpr
-
 pub fn dlevel_eval(DLevelExpr, Array[Int32]) -> Int32?
-
-pub fn dlevel_max(DLevelExpr, DLevelExpr) -> DLevelExpr
-
-pub fn dlevel_succ(DLevelExpr) -> DLevelExpr
-
-pub fn dlevel_var(Int32) -> DLevelExpr
 
 pub fn dline_at(DLine, Double) -> DValue
 
@@ -928,8 +928,6 @@ pub fn dsystem_checked(Int32, Int32, (Dim) -> DValue, DSystem, DValue) -> DSyste
 
 pub fn dsystem_checked_of(Int32, Int32, (Dim) -> DValue, Array[DTubeBranch], DValue) -> DSystem?
 
-pub fn dsystem_compatibility(Bool, DSystemIncompatibility, Int32, Int32) -> DSystemCompatibility
-
 pub fn dsystem_compatibility_report(Int32, Int32, (Dim) -> DValue, DSystem, DValue?) -> DSystemCompatibility
 
 pub fn dsystem_compatible_with_base(Int32, Int32, (Dim) -> DValue, DSystem, DValue) -> Bool
@@ -968,13 +966,9 @@ pub fn dterm_family_occurs(DTerm, String) -> Bool
 
 pub fn dterm_family_positivity(DTerm, String) -> DPositivityReport
 
-pub fn dterm_family_strictly_positive(DTerm, String) -> Bool
-
 pub fn dterm_shift(DTerm, Int32, Int32) -> DTerm
 
 pub fn dterm_substitute(DTerm, Int32, DTerm) -> DTerm
-
-pub fn dtube_nf_class(Bdd, (Dim) -> DValue) -> DTubeNFClass
 
 pub fn dv_nat_lit(Int32) -> DValue
 
@@ -1027,8 +1021,6 @@ pub fn equiv_id_value(DValue) -> DValue
 pub fn equiv_inv(Equiv) -> Equiv
 
 pub fn equiv_inv_fun_value(DValue, DValue, DValue, DValue) -> DValue
-
-pub fn equiv_inv_value(DValue, DValue, DValue) -> DValue
 
 pub fn equiv_make_value(DValue, DValue, DValue, DValue, DValue, DValue) -> DValue
 
@@ -1154,8 +1146,6 @@ pub fn face_sat(Face, Int32) -> Bool
 
 pub fn face_sat_dpll(Face, Int32, max_steps? : Int32) -> FaceSatDecision
 
-pub fn face_sat_within_budget(Face, Int32, Int32) -> FaceDecision
-
 pub fn face_simplify(Face) -> Face
 
 pub fn face_subst(Face, Int32, Bool) -> Face
@@ -1170,13 +1160,41 @@ pub fn face_vars(Face) -> Array[Int32]
 
 pub fn face_witness(Face, Int32) -> Array[Bool]?
 
+pub fn fact(Int32) -> Int32
+
 pub fn fill_subline(SubLine, VecBox) -> Cube
 
 pub fn fill_value((Dim) -> DValue, DSystem, DValue, Int32) -> (Dim) -> DValue
 
 pub fn filler_respects_box(Cube, Cube, Cube, Cube, Array[Double]) -> Bool
 
+pub fn fin_equiv_count(Ty, Ty) -> Int32
+
+pub fn fin_equiv_search(Ty, Ty) -> FinMap?
+
+pub fn fin_map(Ty, Ty, Array[Int32]) -> FinMap
+
+pub fn fin_map_comp(FinMap, FinMap) -> FinMap
+
+pub fn fin_map_count(Ty, Ty) -> Int32
+
+pub fn fin_map_id(Ty) -> FinMap
+
+pub fn fin_map_inv(FinMap) -> FinMap
+
+pub fn fin_map_is_equiv(FinMap) -> Bool
+
+pub fn fin_map_of_code(Ty, Ty, Int32) -> FinMap
+
+pub fn fin_map_table_eq(FinMap, FinMap) -> Bool
+
+pub fn fin_map_wf(FinMap) -> Bool
+
+pub fn fin_not_bool() -> FinMap
+
 pub fn fin_schema() -> DInductiveSpec
+
+pub fn fin_swap_bool_pair() -> FinMap
 
 pub fn flatten_pval(PVal) -> Array[PVal]
 
@@ -1240,8 +1258,6 @@ pub fn glue_equiv_store_partial(DGlueEquivParts, Array[DValue]) -> DValue
 
 pub fn glue_equiv_systems_conv(Int32, Int32, DValue, Array[DEquivBranchValue], Array[DEquivBranchValue]) -> Bool
 
-pub fn glue_equiv_term(DTerm, Array[DEquivBranch]) -> DTerm
-
 pub fn glue_equiv_top_index(DGlueEquivParts) -> Int32
 
 pub fn glue_from_base(GlueData, PVal) -> GlueElem
@@ -1294,8 +1310,6 @@ pub fn hit_param_types_cached(DSchemaRegistry, DHitSpec, Array[DValue]) -> Array
 
 pub fn hit_parameter_positivity(DHitSpec, Int32) -> DPositivityReport
 
-pub fn hit_plan_type_term(DHitPlan, Array[DTerm]) -> DTerm
-
 pub fn hit_result_indices(DHitCellSpec, Array[DValue], Array[DValue]) -> Array[DValue]
 
 pub fn hit_schema_examples() -> Array[DHitSpec]
@@ -1303,8 +1317,6 @@ pub fn hit_schema_examples() -> Array[DHitSpec]
 pub fn hit_schema_key(DHitSpec) -> String
 
 pub fn hit_schema_validate(DHitSpec) -> Bool
-
-pub fn hit_type_term(DHitSpec, Array[DTerm]) -> DTerm
 
 pub fn hoas_const_example() -> HTm
 
@@ -1329,6 +1341,18 @@ pub fn in_image(CMat, Array[Complex]) -> Bool
 pub fn in_kernel(CMat, Array[Complex]) -> Bool
 
 pub fn in_ty(PVal, Ty) -> Bool
+
+pub fn index_table(Array[Int32]) -> IndexTable
+
+pub fn index_table_comp(IndexTable, IndexTable) -> IndexTable
+
+pub fn index_table_identity(Int32) -> IndexTable
+
+pub fn index_table_inv(IndexTable, Int32) -> IndexTable
+
+pub fn index_table_is_bijection(IndexTable, Int32) -> Bool
+
+pub fn index_table_is_identity(IndexTable, Int32) -> Bool
 
 pub fn inductive_arg_type(DInductiveSpec, DConstructorArg, Array[DValue], Array[DValue]) -> DValue
 
@@ -1426,6 +1450,8 @@ pub fn j_elim_disc(Family, PVal, DiscPath) -> PVal?
 
 pub fn j_roundtrip(Family, PVal, DiscPath) -> Bool
 
+pub fn j_rule_on_ua(FinMap) -> Bool
+
 pub fn jacobi_certificate_sound(QCpxMat, JacobiCertificate) -> Bool
 
 pub fn jacobi_coefficients(QCpxMat, Int32, Int32, Int32) -> JacobiCoefficients?
@@ -1470,6 +1496,8 @@ pub fn list_level_scheme() -> DInductiveLevelScheme
 
 pub fn list_schema() -> DInductiveSpec
 
+pub fn log2_int(Int32) -> Int32
+
 pub fn lty_to_dterm(LTy) -> DTerm
 
 pub fn make_glue(GlueData, PVal, PVal, Int32) -> GlueElem?
@@ -1489,8 +1517,6 @@ pub fn mat_approx_eq(CMat, CMat) -> Bool
 pub fn mat_commutes(CMat, CMat) -> Bool
 
 pub fn mat_from_rows(Array[Array[Complex]]) -> CMat
-
-pub fn mat_get(CMat, Int32, Int32) -> Complex
 
 pub fn mat_identity(Int32) -> CMat
 
@@ -1554,23 +1580,61 @@ pub fn mutual_nat_value(Int32) -> DValue
 
 pub fn mutual_type_term(DMutualFamily, Int32, Array[DTerm]) -> DTerm
 
-pub fn mutual_type_value(DMutualFamily, Int32, Array[DValue], Array[DValue]) -> DValue
-
 pub fn nat_schema() -> DInductiveSpec
 
 pub fn nat_schema_lit(Int32) -> DTerm
 
 pub fn nbe_single_valued(Array[Term], Int32) -> Bool
 
+pub fn nbox(Int32, Int32, Int32, Array[NBoxSide]) -> NBox
+
+pub fn nbox_face_index(Int32, Int32) -> Int32
+
+pub fn nbox_is_given(NBox, Int32, Int32) -> Bool
+
+pub fn nbox_of_square(Cube, Cube, Cube) -> NBox
+
+pub fn nbox_permute(NBox, Array[Int32]) -> NBox
+
+pub fn nbox_point(NBox, NBoxSide, Array[Double]) -> Array[Double]
+
+pub fn nbox_side(Int32, Int32, Cube) -> NBoxSide
+
+pub fn nbox_wf(NBox, Array[Double]) -> Bool
+
+pub fn ncomp(NBox) -> Cube
+
+pub fn ncomp_endpoints_match_legacy_comp(Cube, Cube, Cube) -> Bool
+
+pub fn next_pow2(Int32) -> Int32
+
 pub fn nf(Term, Int32) -> Term
 
 pub fn nf_eta(Term, LTy, Array[LTy]) -> Term?
+
+pub fn nfill(NBox) -> Cube
+
+pub fn nfill_agrees_with_square_on_given_faces(Cube, Cube, Cube, Array[Double]) -> Bool
+
+pub fn nfill_differs_from_square_fill(Cube, Cube, Cube) -> Bool
+
+pub fn nfill_permutation_natural(NBox, Array[Int32], Array[Double]) -> Bool
+
+pub fn nfill_respects_box(NBox, Array[Double]) -> Bool
+
+pub fn nfill_term_count(Int32) -> Int32
+
+pub fn nfill_within_budget(Int32, Int32) -> Bool
 
 pub fn numeric_mat_max_deviation(CMat, CMat) -> Double
 
 pub fn numeric_projector_residual(CMat) -> Double
 
 pub fn open_box_wf(Cube, Cube, Cube) -> Bool
+
+pub fn ordered_index(Array[String], String) -> Int32
+
+pub fn ordered_items(Array[String]) -> Array[String]
 
 pub fn outer(Array[Complex]) -> CMat
 
@@ -1618,6 +1682,14 @@ pub fn pathp_snd(PathPVal, Equiv) -> PathPVal
 
 pub fn pathp_wf(PathPVal) -> Bool
 
+pub fn plan_agrees_with_univalence(RefactorPlan) -> Bool
+
+pub fn plan_of_ordered(String, Array[String], Array[String]) -> RefactorPlan?
+
+pub fn plan_preserves_symbol_set(RefactorPlan) -> Bool
+
+pub fn plan_to_fin_map(RefactorPlan) -> FinMap?
+
 pub fn poly_add(Poly, Poly) -> Poly
 
 pub fn poly_const(Rat) -> Poly
@@ -1635,8 +1707,6 @@ pub fn poly_neg(Poly) -> Poly
 pub fn poly_normalize(Array[PolyTerm]) -> Poly
 
 pub fn poly_one() -> Poly
-
-pub fn poly_scale(Rat, Poly) -> Poly
 
 pub fn poly_sub(Poly, Poly) -> Poly
 
@@ -1674,11 +1744,7 @@ pub fn pruning_respects_quotient(VecSystem, Int32) -> Bool
 
 pub fn pval_fst(PVal) -> PVal
 
-pub fn pval_not(PVal) -> PVal
-
 pub fn pval_snd(PVal) -> PVal
-
-pub fn pval_swap(PVal) -> PVal
 
 pub fn pval_to_dvalue(PVal) -> DValue
 
@@ -1691,8 +1757,6 @@ pub fn qcc_eq(QuadC, QuadC) -> Bool
 pub fn qcc_i() -> QuadC
 
 pub fn qcc_is_zero(QuadC) -> Bool
-
-pub fn qcc_make(QuadNum, QuadNum) -> QuadC
 
 pub fn qcc_mul(QuadC, QuadC) -> QuadC
 
@@ -1712,13 +1776,9 @@ pub fn qcc_to_complex(QuadC) -> Complex
 
 pub fn qcc_zero() -> QuadC
 
-pub fn qci_mat_add(QCIntervalMat, QCIntervalMat) -> QCIntervalMat
-
 pub fn qci_mat_adjoint(QCIntervalMat) -> QCIntervalMat
 
 pub fn qci_mat_contains(QCIntervalMat, QCIntervalMat) -> Bool
-
-pub fn qci_mat_contains_point(QCIntervalMat, QCpxMat) -> Bool
 
 pub fn qci_mat_from_point(QCpxMat) -> QCIntervalMat
 
@@ -1753,8 +1813,6 @@ pub fn qcpx_mat_from_rows(Array[Array[QCpx]]) -> QCpxMat
 pub fn qcpx_mat_is_hermitian(QCpxMat) -> Bool
 
 pub fn qcpx_real(Rat) -> QCpx
-
-pub fn qmat_Jordan_block_sizes(QMat, Rat) -> Array[Int32]
 
 pub fn qmat_Jordan_chains(QMat, Rat) -> Array[Array[Array[Rat]]]
 
@@ -1823,8 +1881,6 @@ pub fn qmat_scale(Rat, QMat) -> QMat
 pub fn qmat_sub(QMat, QMat) -> QMat
 
 pub fn qmat_trace(QMat) -> Rat
-
-pub fn qmat_transpose(QMat) -> QMat
 
 pub fn qmat_vec(QMat, Array[Rat]) -> Array[Rat]
 
@@ -1916,21 +1972,13 @@ pub fn qrows_rref(Array[Array[Rat]], Int32) -> QRref
 
 pub fn quad_add(QuadNum, QuadNum) -> QuadNum
 
-pub fn quad_compatible(QuadNum, QuadNum) -> Bool
-
-pub fn quad_conj(QuadNum) -> QuadNum
-
 pub fn quad_denested_sqrt(QuadNum) -> (QuadNum, QuadNum)?
-
-pub fn quad_div(QuadNum, QuadNum) -> QuadNum?
 
 pub fn quad_eq(QuadNum, QuadNum) -> Bool
 
 pub fn quad_int(Int32) -> QuadNum
 
 pub fn quad_inv(QuadNum) -> QuadNum?
-
-pub fn quad_is_rat(QuadNum) -> Bool
 
 pub fn quad_is_zero(QuadNum) -> Bool
 
@@ -1944,8 +1992,6 @@ pub fn quad_norm(QuadNum) -> Rat
 
 pub fn quad_one() -> QuadNum
 
-pub fn quad_pow(QuadNum, Int32) -> QuadNum
-
 pub fn quad_rat(Rat) -> QuadNum
 
 pub fn quad_sqrt_int(Int32) -> QuadNum
@@ -1955,8 +2001,6 @@ pub fn quad_sqrt_rat(Rat) -> QuadNum
 pub fn quad_sub(QuadNum, QuadNum) -> QuadNum
 
 pub fn quad_to_double(QuadNum) -> Double
-
-pub fn quad_to_rat(QuadNum) -> Rat?
 
 pub fn quad_trace(QuadNum) -> Rat
 
@@ -2003,8 +2047,6 @@ pub fn quote_tube_branches(Int32, Int32, (Dim) -> DValue, DSystem) -> Array[DTub
 pub fn quote_ty(Int32, Int32, DValue) -> DTerm
 
 pub fn quotient_eq_term(Array[DTerm], DTerm, DTerm, DTerm, Dim) -> DTerm
-
-pub fn quotient_point_term(Array[DTerm], DTerm) -> DTerm
 
 pub fn quotient_schema() -> DHitSpec
 
@@ -2068,13 +2110,7 @@ pub fn rat_interval_sub(RatInterval, RatInterval) -> RatInterval
 
 pub fn rat_interval_subset(RatInterval, RatInterval) -> Bool
 
-pub fn rat_interval_width(RatInterval) -> Rat
-
 pub fn rat_inv(Rat) -> Rat
-
-pub fn rat_is_one(Rat) -> Bool
-
-pub fn rat_is_square(Rat) -> Bool
 
 pub fn rat_is_zero(Rat) -> Bool
 
@@ -2102,6 +2138,14 @@ pub fn rat_sub(Rat, Rat) -> Rat
 
 pub fn rat_zero() -> Rat
 
+pub fn refactor_certificates_sound() -> Bool
+
+pub fn refactor_is_equivalence(RefactorPlan) -> Bool
+
+pub fn refactor_plan(String, Array[String], Array[String], IndexTable) -> RefactorPlan
+
+pub fn refactor_plan_size(RefactorPlan) -> Int32
+
 pub fn refl_path(Ty, PVal) -> DiscPath
 
 pub fn restrict_face(Cube, Int32, Double) -> Cube
@@ -2109,8 +2153,6 @@ pub fn restrict_face(Cube, Int32, Double) -> Cube
 pub fn rose_tree_schema() -> DInductiveSpec
 
 pub fn rpoly_add(RPoly, RPoly) -> RPoly
-
-pub fn rpoly_const(SymFrac) -> RPoly
 
 pub fn rpoly_degree(RPoly) -> Int32
 
@@ -2155,8 +2197,6 @@ pub fn sc_add(SymC, SymC) -> SymC
 pub fn sc_conj(SymC) -> SymC
 
 pub fn sc_eq(SymC, SymC) -> Bool
-
-pub fn sc_i() -> SymC
 
 pub fn sc_int(Int32) -> SymC
 
@@ -2208,23 +2248,13 @@ pub fn schema_motives_conv(Int32, Int32, Array[DTelescopeEntry], Array[DValue], 
 
 pub fn schema_registry_hit_by_id(DSchemaRegistry, Int32) -> DHitPlan?
 
-pub fn schema_registry_hit_by_name(DSchemaRegistry, String) -> DHitPlan?
-
-pub fn schema_registry_hit_plan(DSchemaRegistry, DHitSpec) -> DHitPlan?
-
-pub fn schema_registry_inductive_by_id(DSchemaRegistry, Int32) -> DInductivePlan?
-
 pub fn schema_registry_inductive_by_name(DSchemaRegistry, String) -> DInductivePlan?
-
-pub fn schema_registry_inductive_plan(DSchemaRegistry, DInductiveSpec) -> DInductivePlan?
 
 pub fn schema_registry_new() -> DSchemaRegistry
 
 pub fn schema_registry_register_hit(DSchemaRegistry, DHitSpec) -> DHitPlan
 
 pub fn schema_registry_register_inductive(DSchemaRegistry, DInductiveSpec) -> DInductivePlan
-
-pub fn schema_registry_stats(DSchemaRegistry) -> (Int32, Int32, Int32, Int32, Int32, Int32, Int32)
 
 pub fn schema_registry_validate_hit(DSchemaRegistry, DHitSpec) -> Bool
 
@@ -2284,8 +2314,6 @@ pub fn sphere_schema(Int32) -> DHitSpec
 
 pub fn square_fill(Cube, Cube, Cube) -> Cube
 
-pub fn subline_const(CMat) -> SubLine
-
 pub fn subline_from_unit_path((Double) -> Array[Complex]) -> SubLine
 
 pub fn suspension_schema(String, DHitSpec) -> DHitSpec?
@@ -2330,8 +2358,6 @@ pub fn sym_mat_scale(SymFrac, SymMat) -> SymMat
 
 pub fn sym_mat_sub(SymMat, SymMat) -> SymMat
 
-pub fn sym_mat_trace(SymMat) -> SymC
-
 pub fn sym_mat_vec(SymMat, Array[SymC]) -> Array[SymC]
 
 pub fn sym_mat_zero(Int32) -> SymMat
@@ -2339,8 +2365,6 @@ pub fn sym_mat_zero(Int32) -> SymMat
 pub fn sym_outer(Array[SymC]) -> SymMat
 
 pub fn sym_projector_rank_one(Array[SymC]) -> SymMat
-
-pub fn sym_scalar_matrix(SymFrac, Int32) -> SymMat
 
 pub fn sym_square_fill((SymFrac) -> Array[SymC], (SymFrac) -> Array[SymC], (SymFrac) -> Array[SymC]) -> (SymFrac, SymFrac) -> Array[SymC]
 
@@ -2350,9 +2374,17 @@ pub fn sym_vec_eq(Array[SymC], Array[SymC]) -> Bool
 
 pub fn sym_vec_scale(SymFrac, Array[SymC]) -> Array[SymC]
 
-pub fn sym_vec_scale_c(SymC, Array[SymC]) -> Array[SymC]
-
 pub fn sym_vec_sub(Array[SymC], Array[SymC]) -> Array[SymC]
+
+pub fn symbol_set(Array[String]) -> SymbolSet
+
+pub fn symbol_set_eq(SymbolSet, SymbolSet) -> Bool
+
+pub fn symbol_set_index(SymbolSet, String) -> Int32
+
+pub fn symbol_set_items(SymbolSet) -> Array[String]
+
+pub fn symbol_set_size(SymbolSet) -> Int32
 
 pub fn system_compatible(VecSystem, Int32) -> Bool
 
@@ -2410,6 +2442,10 @@ pub fn torus_point(Dim, Dim) -> DValue
 
 pub fn torus_schema() -> DHitSpec
 
+pub fn transport_preserves_cardinality(Ty, Ty) -> Bool
+
+pub fn transport_roundtrip(FinMap) -> Bool
+
 pub fn tree_forest_components() -> Array[DInductiveSpec]
 
 pub fn tree_forest_family() -> DMutualFamily?
@@ -2424,15 +2460,33 @@ pub fn tube_paths_conv_under_face(Int32, Int32, Face, (Dim) -> DValue, (Dim) -> 
 
 pub fn tube_system_nf_at(Int32, Int32, (Dim) -> DValue, DSystem, Dim) -> DSystemNF
 
+pub fn ty_card(Ty) -> Int32
+
 pub fn ty_check(Term, LTy, Array[LTy]) -> Bool
 
 pub fn ty_infer(Term, Array[LTy]) -> LTy?
 
+pub fn ty_of_bits(Int32) -> Ty
+
 pub fn ua(Equiv) -> UPath
+
+pub fn ua_functorial(FinMap, FinMap) -> Bool
+
+pub fn ua_inverse(FinMap) -> Bool
 
 pub fn ua_line_value(DValue, DValue, DValue, Int32) -> (Dim) -> DValue
 
-pub fn ua_term(DTerm) -> DTerm
+pub fn ua_refl_is_identity(Ty) -> Bool
+
+pub fn ua_retraction(CPath) -> Bool
+
+pub fn ua_retraction_all(Ty, Ty) -> Bool
+
+pub fn ua_section(FinMap) -> Bool
+
+pub fn ua_section_all(Ty, Ty) -> Bool
+
+pub fn ua_transport_computes(FinMap) -> Bool
 
 pub fn ua_type_at(DValue, DValue, DValue, Int32, Dim) -> DValue
 
@@ -2443,6 +2497,12 @@ pub fn unglue(GlueElem) -> PVal
 pub fn unifier_new() -> Unifier
 
 pub fn union_commutes_mod(VecSystem, VecSystem, Int32) -> Bool
+
+pub fn univalence_compute_all() -> Bool
+
+pub fn univalence_decides(Ty, Ty) -> Bool
+
+pub fn univalence_path_count(Ty, Ty) -> Int32
 
 pub fn upath_eq(UPath, UPath) -> Bool
 
@@ -2477,8 +2537,6 @@ pub fn uterm_whnf(UTerm, Unifier) -> UTerm
 pub fn uty_arrow(UTerm, UTerm) -> UTerm
 
 pub fn uty_bool() -> UTerm
-
-pub fn uty_implicit_arrow(UTerm, UTerm) -> UTerm
 
 pub fn uty_nat() -> UTerm
 
@@ -2640,6 +2698,12 @@ pub fn CInterval::to_repr(Self) -> @debug.Repr
 pub struct CMat {
   n : Int32
   rows : Array[Array[Complex]]
+}
+
+pub struct CPath {
+  src : Ty
+  dst : Ty
+  e : FinMap
 }
 
 pub struct CertMat {
@@ -3151,6 +3215,13 @@ pub enum DValue {
   DVNeutral(DNeutral)
 }
 
+pub struct DecoupleStep {
+  label : String
+  from_file : String
+  to_file : String
+  symbols : Array[String]
+}
+
 pub enum Dim {
   DZero
   DOne
@@ -3244,6 +3315,12 @@ pub struct Family {
   fiber : (PVal) -> Ty
 }
 
+pub struct FinMap {
+  src : Ty
+  dst : Ty
+  table : Array[Int32]
+}
+
 pub struct GlueCompVecResult {
   t_fill : Cube
   a_fill_raw : Cube
@@ -3290,6 +3367,10 @@ pub enum HTm {
   HApp(HTm, HTm)
   HFst(HTm)
   HSnd(HTm)
+}
+
+pub struct IndexTable {
+  table : Array[Int32]
 }
 
 pub struct Iso {
@@ -3480,6 +3561,19 @@ pub fn ModuleSignature::equal(Self, Self) -> Bool
 pub fn ModuleSignature::not_equal(Self, Self) -> Bool
 pub fn ModuleSignature::to_repr(Self) -> @debug.Repr
 
+pub struct NBox {
+  dim : Int32
+  missing_dim : Int32
+  missing_endpoint : Int32
+  sides : Array[NBoxSide]
+}
+
+pub struct NBoxSide {
+  dim : Int32
+  endpoint : Int32
+  face : Cube
+}
+
 pub enum Neutral {
   NeVar(Int32)
   NeApp(Neutral, Value)
@@ -3669,6 +3763,17 @@ pub fn RatInterval::equal(Self, Self) -> Bool
 pub fn RatInterval::not_equal(Self, Self) -> Bool
 pub fn RatInterval::to_repr(Self) -> @debug.Repr
 
+pub struct RefactorCertificate {
+  plan : RefactorPlan
+}
+
+pub struct RefactorPlan {
+  label : String
+  before : Array[String]
+  after : Array[String]
+  table : IndexTable
+}
+
 pub enum STerm {
   SVar(String)
   SLam(String, UTerm?, STerm)
@@ -3729,6 +3834,10 @@ pub struct SymMat {
 pub struct SymRegion {
   value : Array[Complex]
   mut region : Bdd
+}
+
+pub struct SymbolSet {
+  items : Array[String]
 }
 
 pub struct SystemNF {

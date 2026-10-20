@@ -280,6 +280,17 @@ pub fn check_mutual_inductives() -> Bool {
 
 ///|
 pub fn check_universe_schemes() -> Bool {
+  // The level algebra itself: successor and maximum are decided by
+  // `dlevel_eval`, so every constructor of `DLevelExpr` is reachable.
+  if dlevel_eval(DLevelSucc(DLevelConst(1)), []) != Some(2) {
+    return false
+  }
+  if dlevel_eval(DLevelMax(DLevelConst(2), DLevelVar(0)), [5]) != Some(5) {
+    return false
+  }
+  if dlevel_eval(DLevelMax(DLevelConst(2), DLevelVar(0)), [1]) != Some(2) {
+    return false
+  }
   let list2 = match
     instantiate_inductive_level_scheme(list_level_scheme(), [2]) {
     Some(spec) => spec

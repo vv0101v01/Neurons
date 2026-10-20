@@ -32,11 +32,6 @@ pub fn rat_eq(a : Rat, b : Rat) -> Bool {
 }
 
 ///|
-pub fn rat_is_one(a : Rat) -> Bool {
-  a.num == 1 && a.den == 1
-}
-
-///|
 pub fn rat_sign(a : Rat) -> Int32 {
   if a.num > 0 {
     1

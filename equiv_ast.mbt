@@ -153,12 +153,6 @@ pub fn equiv_id_value(ty : DValue) -> DValue {
 }
 
 ///|
-pub fn equiv_inv_value(e : DValue, src : DValue, dst : DValue) -> DValue {
-  let p = equiv_parts(e, src, dst)
-  DVEquiv(p.dst, p.src, p.bwd, p.fwd, p.retr, p.sect)
-}
-
-///|
 /// Build an equivalence value from its six components.
 pub fn equiv_make_value(
   src : DValue,
@@ -807,20 +801,6 @@ pub fn mk_equiv_term(
 ) -> DTerm {
   DMkEquiv(a, b, f, g, sect, retr)
 }
-
-///|
-pub fn glue_equiv_term(base : DTerm, branches : Array[DEquivBranch]) -> DTerm {
-  DGlueEquiv(base, branches)
-}
-
-///|
-pub fn ua_term(e : DTerm) -> DTerm {
-  DUa(e)
-}
-
-// ---------------------------------------------------------------------------
-// Kan composition for equivalences and Glue by equivalence
-// ---------------------------------------------------------------------------
 
 ///|
 fn glue_equiv_at(line : (Dim) -> DValue, d : Dim) -> DGlueEquivParts {

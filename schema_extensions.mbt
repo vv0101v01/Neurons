@@ -214,10 +214,7 @@ pub fn mutual_type_term(
   component : Int32,
   args : Array[DTerm],
 ) -> DTerm {
-  let (params, indices) = positivity_split_terms(
-    args,
-    family.combined.params.length(),
-  )
+  let (params, indices) = split_terms_at(args, family.combined.params.length())
   let all : Array[DTerm] = []
   for i in 0..<params.length() {
     all.push(params[i])
@@ -265,20 +262,6 @@ pub fn mutual_elim_term(
     mutual_prepend_tag(component, indices),
     scrut,
   )
-}
-
-///|
-pub fn mutual_type_value(
-  family : DMutualFamily,
-  component : Int32,
-  params : Array[DValue],
-  indices : Array[DValue],
-) -> DValue {
-  let all = [mutual_nat_value(component)]
-  for i in 0..<indices.length() {
-    all.push(indices[i])
-  }
-  DVInductive(family.combined, params, all)
 }
 
 ///|
@@ -438,26 +421,6 @@ pub extend DLevelExpr with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub extend DLevelExpr with Eq::{not_equal, equal}
-
-///|
-pub fn dlevel_const(n : Int32) -> DLevelExpr {
-  DLevelConst(n)
-}
-
-///|
-pub fn dlevel_var(n : Int32) -> DLevelExpr {
-  DLevelVar(n)
-}
-
-///|
-pub fn dlevel_succ(e : DLevelExpr) -> DLevelExpr {
-  DLevelSucc(e)
-}
-
-///|
-pub fn dlevel_max(a : DLevelExpr, b : DLevelExpr) -> DLevelExpr {
-  DLevelMax(a, b)
-}
 
 ///|
 pub fn dlevel_eval(expr : DLevelExpr, levels : Array[Int32]) -> Int32? {
@@ -622,11 +585,6 @@ pub fn quotient_schema() -> DHitSpec {
       ),
     ],
   )
-}
-
-///|
-pub fn quotient_point_term(params : Array[DTerm], value : DTerm) -> DTerm {
-  hit_intro_term(quotient_schema(), 0, params, [value], [])
 }
 
 ///|

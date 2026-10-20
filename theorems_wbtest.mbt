@@ -33,10 +33,21 @@ test "ua, PathP exchange, Glue, J" {
 }
 
 ///|
+test "computable univalence and the n-dimensional cube algorithm" {
+  assert_true(univalence_compute_all())
+  assert_true(check_cube_algorithm())
+}
+
+///|
+test "decoupling surgery is certified by univalence" {
+  assert_true(refactor_certificates_sound())
+}
+
+///|
 test "orthogonal round-trip and full registry" {
   assert_true(check_orthogonal_roundtrip())
   assert_true(all_checks_pass())
-  assert_eq(run_all_checks().length(), 40)
+  assert_eq(run_all_checks().length(), 43)
 }
 
 ///|

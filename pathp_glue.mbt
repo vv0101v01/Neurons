@@ -22,32 +22,6 @@
 // the same code path as J(p) for any well-formed (hence constant) p.
 
 ///|
-pub enum Ty {
-  TyBool
-  TyUnit
-  TyProd(Ty, Ty)
-} derive(Debug, Eq)
-
-///|
-pub extend PVal with @moonbitlang/core/debug.Debug::{to_repr}
-
-///|
-pub extend PVal with Eq::{not_equal, equal}
-
-///|
-pub extend Ty with @moonbitlang/core/debug.Debug::{to_repr}
-
-///|
-pub extend Ty with Eq::{not_equal, equal}
-
-///|
-pub enum PVal {
-  PVUnit
-  PVBool(Bool)
-  PVPair(PVal, PVal)
-} derive(Debug, Eq)
-
-///|
 /// All elements of a finite type.
 pub fn elems_of(ty : Ty) -> Array[PVal] {
   match ty {
@@ -92,26 +66,6 @@ pub fn pval_snd(v : PVal) -> PVal {
     _ => PVUnit
   }
 }
-
-///|
-pub fn pval_not(v : PVal) -> PVal {
-  match v {
-    PVBool(b) => PVBool(!b)
-    other => other
-  }
-}
-
-///|
-pub fn pval_swap(v : PVal) -> PVal {
-  match v {
-    PVPair(a, b) => PVPair(b, a)
-    other => other
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Iso, Equiv, ua
-// ---------------------------------------------------------------------------
 
 ///|
 pub struct Iso {

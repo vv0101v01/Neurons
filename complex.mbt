@@ -191,11 +191,6 @@ pub fn mat_from_rows(rows : Array[Array[Complex]]) -> CMat {
 }
 
 ///|
-pub fn mat_get(m : CMat, i : Int32, j : Int32) -> Complex {
-  m.rows[i][j]
-}
-
-///|
 pub fn mat_add(a : CMat, b : CMat) -> CMat {
   let rows : Array[Array[Complex]] = []
   for i in 0..<a.n {

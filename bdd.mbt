@@ -20,205 +20,11 @@
 // checked against; library decision paths never call it.
 
 ///|
-pub enum Bdd {
-  BddZero
-  BddOne
-  BddNode(Int32, Bdd, Bdd) // variable, low (x=0), high (x=1)
-} derive(Debug, Eq)
-
-///|
-pub extend Bdd with @moonbitlang/core/debug.Debug::{to_repr}
-
-///|
-pub extend Bdd with Eq::{not_equal, equal}
-
-///|
 fn bdd_node(vidx : Int32, lo : Bdd, hi : Bdd) -> Bdd {
   if lo == hi {
     lo // reduction rule: a test with equal outcomes is no test
   } else {
     BddNode(vidx, lo, hi)
-  }
-}
-
-///|
-pub fn sort_ints(xs : Array[Int32]) -> Array[Int32] {
-  let out : Array[Int32] = []
-  for i in 0..<xs.length() {
-    out.push(xs[i])
-  }
-  for _pass in 0..<out.length() {
-    for j in 0..<(out.length() - 1) {
-      if out[j] > out[j + 1] {
-        let tmp = out[j]
-        out[j] = out[j + 1]
-        out[j + 1] = tmp
-      }
-    }
-  }
-  out
-}
-
-///|
-pub fn contains_int(xs : Array[Int32], x : Int32) -> Bool {
-  for i in 0..<xs.length() {
-    if xs[i] == x {
-      return true
-    }
-  }
-  false
-}
-
-///|
-fn dim_vars_into(r : Dim, acc : Array[Int32]) -> Unit {
-  match r {
-    DZero | DOne => ()
-    DVar(i) => if !contains_int(acc, i) { acc.push(i) }
-    DNeg(a) => dim_vars_into(a, acc)
-    DAnd(a, b) => {
-      dim_vars_into(a, acc)
-      dim_vars_into(b, acc)
-    }
-    DOr(a, b) => {
-      dim_vars_into(a, acc)
-      dim_vars_into(b, acc)
-    }
-  }
-}
-
-///|
-fn face_vars_into(f : Face, acc : Array[Int32]) -> Unit {
-  match f {
-    FTop | FBot => ()
-    FEq0(r) | FEq1(r) => dim_vars_into(r, acc)
-    FAnd(a, b) => {
-      face_vars_into(a, acc)
-      face_vars_into(b, acc)
-    }
-    FOr(a, b) => {
-      face_vars_into(a, acc)
-      face_vars_into(b, acc)
-    }
-  }
-}
-
-///|
-/// Variables occurring in a face, sorted increasingly (the BDD order).
-pub fn face_vars(f : Face) -> Array[Int32] {
-  let acc : Array[Int32] = []
-  face_vars_into(f, acc)
-  sort_ints(acc)
-}
-
-///|
-/// Constant simplification of dimension expressions (the endpoint
-/// Boolean algebra): this rewriting is what prunes the BDD construction.
-pub fn dim_simplify(r : Dim) -> Dim {
-  match r {
-    DNeg(a) =>
-      match dim_simplify(a) {
-        DZero => DOne
-        DOne => DZero
-        DNeg(x) => x
-        x => DNeg(x)
-      }
-    DAnd(a, b) =>
-      match (dim_simplify(a), dim_simplify(b)) {
-        (DZero, _) | (_, DZero) => DZero
-        (DOne, x) => x
-        (x, DOne) => x
-        (x, y) => if x == y { x } else { DAnd(x, y) }
-      }
-    DOr(a, b) =>
-      match (dim_simplify(a), dim_simplify(b)) {
-        (DOne, _) | (_, DOne) => DOne
-        (DZero, x) => x
-        (x, DZero) => x
-        (x, y) => if x == y { x } else { DOr(x, y) }
-      }
-    other => other
-  }
-}
-
-///|
-pub fn dim_subst(r : Dim, vidx : Int32, val : Bool) -> Dim {
-  match r {
-    DVar(i) => if i == vidx { if val { DOne } else { DZero } } else { r }
-    DNeg(a) => dim_simplify(DNeg(dim_subst(a, vidx, val)))
-    DAnd(a, b) =>
-      dim_simplify(DAnd(dim_subst(a, vidx, val), dim_subst(b, vidx, val)))
-    DOr(a, b) =>
-      dim_simplify(DOr(dim_subst(a, vidx, val), dim_subst(b, vidx, val)))
-    other => other
-  }
-}
-
-///|
-pub fn face_simplify(f : Face) -> Face {
-  match f {
-    FEq0(r) =>
-      match dim_simplify(r) {
-        DZero => FTop
-        DOne => FBot
-        x => FEq0(x)
-      }
-    FEq1(r) =>
-      match dim_simplify(r) {
-        DZero => FBot
-        DOne => FTop
-        x => FEq1(x)
-      }
-    FAnd(a, b) =>
-      match (face_simplify(a), face_simplify(b)) {
-        (FBot, _) | (_, FBot) => FBot
-        (FTop, x) => x
-        (x, FTop) => x
-        (x, y) => if x == y { x } else { FAnd(x, y) }
-      }
-    FOr(a, b) =>
-      match (face_simplify(a), face_simplify(b)) {
-        (FTop, _) | (_, FTop) => FTop
-        (FBot, x) => x
-        (x, FBot) => x
-        (x, y) => if x == y { x } else { FOr(x, y) }
-      }
-    other => other
-  }
-}
-
-///|
-pub fn face_subst(f : Face, vidx : Int32, val : Bool) -> Face {
-  match f {
-    FEq0(r) => face_simplify(FEq0(dim_subst(r, vidx, val)))
-    FEq1(r) => face_simplify(FEq1(dim_subst(r, vidx, val)))
-    FAnd(a, b) =>
-      face_simplify(FAnd(face_subst(a, vidx, val), face_subst(b, vidx, val)))
-    FOr(a, b) =>
-      face_simplify(FOr(face_subst(a, vidx, val), face_subst(b, vidx, val)))
-    other => other
-  }
-}
-
-///|
-fn dim_bound(r : Dim, n : Int32) -> Dim {
-  match r {
-    DVar(i) => if i < 0 || i >= n { DZero } else { r }
-    DNeg(a) => dim_simplify(DNeg(dim_bound(a, n)))
-    DAnd(a, b) => dim_simplify(DAnd(dim_bound(a, n), dim_bound(b, n)))
-    DOr(a, b) => dim_simplify(DOr(dim_bound(a, n), dim_bound(b, n)))
-    other => other
-  }
-}
-
-///|
-/// Variable indices outside [0, n) denote 0, matching eval_dim_bool.
-pub fn face_bound(f : Face, n : Int32) -> Face {
-  match f {
-    FEq0(r) => face_simplify(FEq0(dim_bound(r, n)))
-    FEq1(r) => face_simplify(FEq1(dim_bound(r, n)))
-    FAnd(a, b) => face_simplify(FAnd(face_bound(a, n), face_bound(b, n)))
-    FOr(a, b) => face_simplify(FOr(face_bound(a, n), face_bound(b, n)))
-    other => other
   }
 }
 
@@ -325,4 +131,30 @@ pub fn check_bdd_canonical() -> Bool {
     Some(env) => face_holds(FAnd(i0, j1), env) && !env[0] && env[1]
     None => false
   }
+}
+
+///|
+/// Satisfiability of a face over n variables, decided symbolically (ROBDD ≠ ⊥; see bdd.mbt).
+pub fn face_sat(f : Face, n : Int32) -> Bool {
+  bdd_sat_face(f, n)
+}
+
+///|
+pub fn face_unsat(f : Face, n : Int32) -> Bool {
+  !face_sat(f, n)
+}
+
+///|
+/// Entailment of faces: φ ≤ ψ iff every endpoint satisfying φ satisfies ψ.
+pub fn face_le(f : Face, g : Face, n : Int32) -> Bool {
+  bdd_face_le(f, g, n)
+}
+
+///|
+/// Equality in the quotient of face formulas by semantic equivalence:
+/// decided by structural equality of canonical ROBDDs (bdd.mbt).  Syntactically different formulas
+/// (e.g. φ ∨ φ and φ) become *equal* here — the quotient that system
+/// pruning and system equivalence are taken modulo.
+pub fn face_eq_mod(f : Face, g : Face, n : Int32) -> Bool {
+  bdd_face_eq(f, g, n)
 }

@@ -20,14 +20,6 @@
 // closed elements — product η closes the gap noted in the first version.
 
 ///|
-pub enum LTy {
-  LBool
-  LUnit
-  LProd(LTy, LTy)
-  LFun(LTy, LTy)
-} derive(Debug, Eq)
-
-///|
 pub extend LTy with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|

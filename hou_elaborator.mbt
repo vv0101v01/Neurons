@@ -64,11 +64,6 @@ pub fn uty_arrow(a : UTerm, b : UTerm) -> UTerm {
 }
 
 ///|
-pub fn uty_implicit_arrow(a : UTerm, b : UTerm) -> UTerm {
-  UImplicitPi(a, uterm_shift(b, 1, 0))
-}
-
-///|
 pub struct UMetaInfo {
   context_depth : Int32
   mut solution : UTerm?

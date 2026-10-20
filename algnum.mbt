@@ -67,18 +67,6 @@ pub fn rat_sqrt_if_square(r : Rat) -> Rat? {
 }
 
 ///|
-pub fn rat_is_square(r : Rat) -> Bool {
-  match rat_sqrt_if_square(r) {
-    Some(_) => true
-    None => false
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Quadratic numbers a + b√d
-// ---------------------------------------------------------------------------
-
-///|
 pub struct QuadNum {
   a : Rat
   b : Rat
@@ -148,25 +136,6 @@ pub fn quad_sqrt_int(n : Int32) -> QuadNum {
 }
 
 ///|
-pub fn quad_is_rat(x : QuadNum) -> Bool {
-  rat_is_zero(x.b)
-}
-
-///|
-pub fn quad_to_rat(x : QuadNum) -> Rat? {
-  if rat_is_zero(x.b) {
-    Some(x.a)
-  } else {
-    None
-  }
-}
-
-///|
-pub fn quad_compatible(x : QuadNum, y : QuadNum) -> Bool {
-  rat_is_zero(x.b) || rat_is_zero(y.b) || x.d == y.d
-}
-
-///|
 fn quad_common(x : QuadNum, y : QuadNum) -> (QuadNum, QuadNum)? {
   if rat_is_zero(x.b) {
     Some((QuadNum::{ a: x.a, b: rat_zero(), d: y.d, }, y))
@@ -214,11 +183,6 @@ pub fn quad_mul(x : QuadNum, y : QuadNum) -> QuadNum {
 }
 
 ///|
-pub fn quad_conj(x : QuadNum) -> QuadNum {
-  QuadNum::{ a: x.a, b: rat_neg(x.b), d: x.d, }
-}
-
-///|
 pub fn quad_norm(x : QuadNum) -> Rat {
   rat_sub(rat_mul(x.a, x.a), rat_mul(rat_mul(x.b, x.b), rat_int(x.d)))
 }
@@ -236,28 +200,6 @@ pub fn quad_inv(x : QuadNum) -> QuadNum? {
   } else {
     Some(quad_make(rat_div(x.a, n), rat_div(rat_neg(x.b), n), x.d))
   }
-}
-
-///|
-pub fn quad_div(x : QuadNum, y : QuadNum) -> QuadNum? {
-  match quad_inv(y) {
-    Some(inv) =>
-      if quad_compatible(x, inv) {
-        Some(quad_mul(x, inv))
-      } else {
-        None
-      }
-    None => None
-  }
-}
-
-///|
-pub fn quad_pow(x : QuadNum, n : Int32) -> QuadNum {
-  let mut acc = QuadNum::{ a: rat_one(), b: rat_zero(), d: x.d, }
-  for _i in 0..<n {
-    acc = quad_mul(acc, x)
-  }
-  acc
 }
 
 ///|
@@ -466,15 +408,6 @@ pub fn alg_div(x : AlgNum, y : AlgNum) -> AlgNum? {
 }
 
 ///|
-pub fn alg_to_rat(x : AlgNum) -> Rat? {
-  if qpoly_degree(x.poly) <= 0 {
-    Some(qpoly_coeff(x.poly, 0))
-  } else {
-    None
-  }
-}
-
-///|
 pub fn alg_of_quad(x : QuadNum) -> AlgNum {
   if rat_is_zero(x.b) {
     alg_make(qpoly_root_factor(x.a), qpoly_const(x.a))
@@ -543,15 +476,6 @@ pub fn alg_minimal_polynomial(x : AlgNum) -> QPoly {
 pub fn alg_rebase_to_minimal(x : AlgNum) -> AlgNum {
   alg_generator(alg_minimal_polynomial(x))
 }
-
-///|
-pub fn alg_modulus_irreducible_small(x : AlgNum) -> Bool {
-  qpoly_irreducible_upto3(x.modulus)
-}
-
-// ---------------------------------------------------------------------------
-// Matrices over an algebraic extension
-// ---------------------------------------------------------------------------
 
 ///|
 pub type AlgVec = Array[AlgNum]
@@ -624,19 +548,6 @@ pub fn algvec_is_zero(v : AlgVec) -> Bool {
     }
   }
   true
-}
-
-///|
-pub fn algmat_add(a : AlgMat, b : AlgMat) -> AlgMat {
-  let rows : Array[Array[AlgNum]] = []
-  for i in 0..<a.rows.length() {
-    let row : Array[AlgNum] = []
-    for j in 0..<a.rows[i].length() {
-      row.push(alg_add(a.rows[i][j], b.rows[i][j]))
-    }
-    rows.push(row)
-  }
-  AlgMat::{ n: a.n, rows, modulus: a.modulus, }
 }
 
 ///|

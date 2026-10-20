@@ -345,3 +345,11 @@ pub fn hoas_swap_example() -> HTm {
 pub fn hoas_const_example() -> HTm {
   HLam(x => HLam(_y => x))
 }
+
+///|
+pub enum LTy {
+  LBool
+  LUnit
+  LProd(LTy, LTy)
+  LFun(LTy, LTy)
+} derive(Debug, Eq)

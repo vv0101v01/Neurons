@@ -136,21 +136,6 @@ pub fn checked_line_at(line : DCheckedTypeLine, d : Dim) -> DValue {
 }
 
 ///|
-pub fn checked_line_fn(line : DCheckedTypeLine) -> (Dim) -> DValue {
-  line.line
-}
-
-///|
-pub fn checked_line_body(line : DCheckedTypeLine) -> DTerm {
-  line.body
-}
-
-///|
-pub fn checked_line_level(line : DCheckedTypeLine) -> Int32 {
-  line.level
-}
-
-///|
 pub fn checked_line_is_constant(line : DCheckedTypeLine) -> Bool {
   line.constant
 }
@@ -219,16 +204,6 @@ pub fn checked_comp_value(
   dlevel : Int32,
 ) -> DValue {
   comp_value(line.line, branches, base, dlevel)
-}
-
-///|
-pub fn checked_fill_value(
-  line : DCheckedTypeLine,
-  branches : DSystem,
-  base : DValue,
-  dlevel : Int32,
-) -> (Dim) -> DValue {
-  fill_value(line.line, branches, base, dlevel)
 }
 
 ///|

@@ -187,16 +187,6 @@ pub extend DSystemCompatibility with @moonbitlang/core/debug.Debug::{to_repr}
 pub extend DSystemCompatibility with Eq::{not_equal, equal}
 
 ///|
-pub fn dsystem_compatibility(
-  compatible : Bool,
-  reason : DSystemIncompatibility,
-  branch : Int32,
-  other_branch : Int32,
-) -> DSystemCompatibility {
-  DSystemCompatibility::{ compatible, reason, branch, other_branch, }
-}
-
-///|
 /// Decide whether branches agree pairwise on every satisfiable
 /// overlap.  Bottom branches are ignored.
 pub fn dsystem_pairwise_compatible(
@@ -331,11 +321,6 @@ pub struct DTubeNFClass {
 pub struct DTubeNF {
   classes : Array[DTubeNFClass]
   undefined : Bdd
-}
-
-///|
-pub fn dtube_nf_class(region : Bdd, path : (Dim) -> DValue) -> DTubeNFClass {
-  DTubeNFClass::{ region, path, }
 }
 
 ///|

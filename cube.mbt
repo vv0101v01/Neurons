@@ -324,3 +324,24 @@ pub fn pruning_repairs_filler(
   cube_in_eigenspace(p, fixed, samples) &&
   (!bump_has_kernel_part || bump_leaves)
 }
+
+///|
+pub fn check_cube_comp() -> Bool {
+  let p = example_projector()
+  let u = example_unit()
+  let u2 = vec_scale(2.0, u)
+  let u3 = vec_scale_c(cx(0.0, 1.0), u) // i·u, still in im P
+  let u4 = vec_scale(3.0, u)
+  let bottom = path_line(u, u2)
+  let left = path_line(u, u3)
+  let right = path_line(u2, u4)
+  let filler = square_fill(bottom, left, right)
+  open_box_wf(bottom, left, right) &&
+  filler_respects_box(filler, bottom, left, right, grid()) &&
+  face_maps_commute(filler, 0.0, 1.0) &&
+  face_maps_commute(filler, 1.0, 0.0) &&
+  eigenspace_kan_sound(p, bottom, left, right, grid()) &&
+  path_trans_endpoints(bottom, path_line(u2, u3)) &&
+  vec_approx_eq(path_start(path_sym(bottom)), u2) &&
+  vec_approx_eq(path_end(path_sym(bottom)), u)
+}
