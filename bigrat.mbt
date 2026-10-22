@@ -34,13 +34,13 @@ pub fn bigrat_make(n : BigInt, d : BigInt) -> BigRat {
     abort("bigrat_make: zero denominator")
   }
   if bigint_is_zero(n) {
-    return BigRat::{ num: bigint_zero(), den: bignat_of_int(1) }
+    return BigRat::{ num: bigint_zero(), den: bignat_of_int(1), }
   }
   let sign = n.sign * d.sign
   let g = bignat_gcd(n.mag, d.mag)
   let (nn, _) = bignat_divmod(n.mag, g)
   let (dd, _) = bignat_divmod(d.mag, g)
-  BigRat::{ num: bigint_raw_pub(sign, nn), den: dd }
+  BigRat::{ num: bigint_raw_pub(sign, nn), den: dd, }
 }
 
 ///|
@@ -60,7 +60,7 @@ fn bigint_raw_pub(sign : Int32, mag : BigNat) -> BigInt {
 ///|
 /// The integer `n`, as a rational.
 pub fn bigrat_of_bigint(n : BigInt) -> BigRat {
-  BigRat::{ num: n, den: bignat_of_int(1) }
+  BigRat::{ num: n, den: bignat_of_int(1), }
 }
 
 ///|
@@ -99,7 +99,7 @@ pub fn bigrat_add(a : BigRat, b : BigRat) -> BigRat {
 ///|
 /// Negation.
 pub fn bigrat_neg(a : BigRat) -> BigRat {
-  BigRat::{ num: bigint_neg(a.num), den: a.den }
+  BigRat::{ num: bigint_neg(a.num), den: a.den, }
 }
 
 ///|

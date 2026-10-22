@@ -29,16 +29,16 @@ pub extend BigInt with Eq::{not_equal, equal}
 ///|
 fn bigint_raw(sign : Int32, mag : BigNat) -> BigInt {
   if bignat_is_zero(mag) {
-    BigInt::{ sign: 0, mag: bignat_of_int(0) }
+    BigInt::{ sign: 0, mag: bignat_of_int(0), }
   } else {
-    BigInt::{ sign, mag }
+    BigInt::{ sign, mag, }
   }
 }
 
 ///|
 /// The integer `0`.
 pub fn bigint_zero() -> BigInt {
-  BigInt::{ sign: 0, mag: bignat_of_int(0) }
+  BigInt::{ sign: 0, mag: bignat_of_int(0), }
 }
 
 ///|
@@ -47,9 +47,9 @@ pub fn bigint_of_int(x : Int32) -> BigInt {
   if x == 0 {
     bigint_zero()
   } else if x > 0 {
-    BigInt::{ sign: 1, mag: bignat_of_int(x) }
+    BigInt::{ sign: 1, mag: bignat_of_int(x), }
   } else {
-    BigInt::{ sign: -1, mag: bignat_of_int(0 - x) }
+    BigInt::{ sign: -1, mag: bignat_of_int(0 - x), }
   }
 }
 

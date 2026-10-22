@@ -293,7 +293,10 @@ test "univalence (9a): a symbolic identity layer decides section/retraction at a
   // tables and paths.
   inspect(fin_map_round_trip_identity(fin_not_bool()), content="true")
   inspect(fin_map_round_trip_identity(fin_swap_bool_pair()), content="true")
-  inspect(fin_map_round_trip_identity(fin_map(TyBool, TyBool, [0, 0])), content="true")
+  inspect(
+    fin_map_round_trip_identity(fin_map(TyBool, TyBool, [0, 0])),
+    content="true",
+  )
   inspect(cpath_round_trip_identity(cpath_ua(fin_not_bool())), content="true")
   inspect(
     cpath_round_trip_identity(cpath_ua(fin_map(TyBool, TyBool, [1, 1]))),

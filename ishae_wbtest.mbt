@@ -35,7 +35,7 @@ test "ishae: fibers, contractibility and isEquiv-via-contractible-fibers" {
 test "ishae: the triangle identity is free once eta and epsilon hold" {
   let f = fin_swap_bool_pair()
   let g = f // self-inverse
-  let h = Ishae::{ f, g }
+  let h = Ishae::{ f, g, }
   inspect(ishae_eta_holds(h), content="true")
   inspect(ishae_eps_holds(h), content="true")
   inspect(ishae_triangle_holds(h), content="true")
@@ -47,7 +47,7 @@ test "ishae: the triangle identity is free once eta and epsilon hold" {
   // ishae_eps_holds is false), matching the implication's own statement.
   let b4 = TyProd(TyBool, TyBool)
   let bad_g = fin_map(b4, b4, [0, 0, 0, 0])
-  let bad_h = Ishae::{ f, g: bad_g }
+  let bad_h = Ishae::{ f, g: bad_g, }
   inspect(ishae_eps_holds(bad_h), content="false")
   inspect(ishae_triangle_holds(bad_h), content="false")
   inspect(ishae_triangle_is_free(bad_h), content="true") // vacuously
@@ -107,7 +107,10 @@ test "ishae: the three equivalence notions agree, exhaustively" {
     fin_equiv_three_ways_agree(fin_map_id(TyProd(TyBool, TyBool))),
     content="true",
   )
-  inspect(fin_equiv_three_ways_agree(fin_sum_swap(TyBool, TyUnit)), content="true")
+  inspect(
+    fin_equiv_three_ways_agree(fin_sum_swap(TyBool, TyUnit)),
+    content="true",
+  )
   // Non-equivalences between EQUAL-cardinality types: all three still
   // agree, now on "no" — `fin_map_is_equiv`'s injectivity check is already
   // a correct bijection test here, so there is no scope-boundary case to

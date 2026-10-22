@@ -84,7 +84,6 @@ pub fn fin_ty(n : Int32) -> Ty {
   acc
 }
 
-
 ///|
 pub fn fin_map_id(ty : Ty) -> FinMap {
   let table : Array[Int32] = []
@@ -878,7 +877,7 @@ fn fin_map_witnesses(a : Ty, b : Ty) -> Array[FinMap] {
   let reversed : Array[Int32] = []
   for i in 0..<na {
     identity_like.push(i % (if nb > 0 { nb } else { 1 }))
-    reversed.push((nb - 1 - i % (if nb > 0 { nb } else { 1 })))
+    reversed.push(nb - 1 - i % (if nb > 0 { nb } else { 1 }))
   }
   out.push(FinMap::{ src: a, dst: b, table: identity_like, })
   out.push(FinMap::{ src: a, dst: b, table: reversed, })
@@ -1159,8 +1158,7 @@ pub fn univalence_compute_all() -> Bool {
   let sum_a = TyBool
   let sum_b = TySum(TyUnit, TyBool)
   let sum_swap = fin_sum_swap(sum_a, sum_b)
-  let sum_ok =
-    fin_map_is_equiv(sum_swap) &&
+  let sum_ok = fin_map_is_equiv(sum_swap) &&
     univalence_decides(sum_swap.src, sum_swap.dst) &&
     ua_section_all(sum_swap.src, sum_swap.dst) == LawHolds &&
     ua_retraction_all(sum_swap.src, sum_swap.dst) == LawHolds

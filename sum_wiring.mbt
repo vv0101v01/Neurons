@@ -147,9 +147,9 @@ pub fn sumwiring_wf(w : SumWiring) -> Bool {
     SWSum(w1, w2) => sumwiring_wf(w1) && sumwiring_wf(w2)
     SWSwap(_, _) => true
     SWComp(w1, w2) =>
-      sumwiring_wf(w1) && sumwiring_wf(w2) && sumwiring_dst(w1) == sumwiring_src(
-        w2,
-      )
+      sumwiring_wf(w1) &&
+      sumwiring_wf(w2) &&
+      sumwiring_dst(w1) == sumwiring_src(w2)
   }
 }
 

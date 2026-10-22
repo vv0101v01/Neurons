@@ -38,15 +38,16 @@ test "sumwiring_wf agrees with the extensional oracle on leaves, sums, and swaps
   // A sum nested inside a sum: TySum(TyBool, TySum(TyBool, TyProd(Bool,
   // Unit))) permuted branch-wise.
   let sw4 = sumwiring_sum(sumwiring_id(TyBool), sw3)
-  for w in [
-    leaf,
-    sw1,
-    sw2,
-    sw3,
-    sw4,
-    sumwiring_comp(sw1, sumwiring_inv(sw1)),
-    sumwiring_comp(sumwiring_inv(sw1), sw1),
-  ] {
+  for
+    w in [
+      leaf,
+      sw1,
+      sw2,
+      sw3,
+      sw4,
+      sumwiring_comp(sw1, sumwiring_inv(sw1)),
+      sumwiring_comp(sumwiring_inv(sw1), sw1),
+    ] {
     assert_true(sumwiring_wf(w) == sumwiring_wf_extensional(w))
     assert_true(sumwiring_wf(w))
   }
@@ -80,12 +81,12 @@ test "sumwiring_inv is a genuine two-sided inverse" {
 ///|
 test "sumwiring_apply dispatches PVLeft/PVRight correctly for SWSum and SWSwap" {
   let w = sumwiring_sum(SWLeaf(wiring_not()), sumwiring_id(TyUnit))
-  assert_true(
-    sumwiring_apply(w, PVLeft(PVBool(true))) == PVLeft(PVBool(false)),
-  )
+  assert_true(sumwiring_apply(w, PVLeft(PVBool(true))) == PVLeft(PVBool(false)))
   assert_true(sumwiring_apply(w, PVRight(PVUnit)) == PVRight(PVUnit))
   let sw = sumwiring_swap(TyBool, TyUnit)
-  assert_true(sumwiring_apply(sw, PVLeft(PVBool(true))) == PVRight(PVBool(true)))
+  assert_true(
+    sumwiring_apply(sw, PVLeft(PVBool(true))) == PVRight(PVBool(true)),
+  )
   assert_true(sumwiring_apply(sw, PVRight(PVUnit)) == PVLeft(PVUnit))
 }
 

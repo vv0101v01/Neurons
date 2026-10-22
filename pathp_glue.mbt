@@ -375,14 +375,8 @@ pub fn coe_computes(p : UPath) -> Bool {
   // the `SumWiring` level, so this also covers sum-aware equivalences).
   let w = p.equiv.wiring
   sumwiring_wf(w) &&
-  sumwiring_eq(
-    sumwiring_comp(w, sumwiring_inv(w)),
-    sumwiring_id(p.equiv.src),
-  ) &&
-  sumwiring_eq(
-    sumwiring_comp(sumwiring_inv(w), w),
-    sumwiring_id(p.equiv.dst),
-  )
+  sumwiring_eq(sumwiring_comp(w, sumwiring_inv(w)), sumwiring_id(p.equiv.src)) &&
+  sumwiring_eq(sumwiring_comp(sumwiring_inv(w), w), sumwiring_id(p.equiv.dst))
 }
 
 ///|

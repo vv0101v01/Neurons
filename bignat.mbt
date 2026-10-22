@@ -275,14 +275,14 @@ pub fn bignat_divmod(x : BigNat, y : BigNat) -> (BigNat, BigNat) {
     abort("bignat_divmod: division by zero")
   }
   if bignat_lt(x, y) {
-    return (BigNat::{ limbs: [] }, x)
+    return (BigNat::{ limbs: [], }, x)
   }
   let n = x.limbs.length()
   let qlimbs : Array[Int64] = []
   for _i in 0..<n {
     qlimbs.push(0L)
   }
-  let mut rem = BigNat::{ limbs: [] }
+  let mut rem = BigNat::{ limbs: [], }
   let mut i = n
   while i > 0 {
     i = i - 1

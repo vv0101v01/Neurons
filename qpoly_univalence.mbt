@@ -73,12 +73,18 @@ pub fn qpoly_root_permutation_ua(p : QPoly, table : Array[Int32]) -> CPath? {
 /// machinery as `qpoly_root_permutation_equiv` — this is what actually
 /// wires `QMat` into the computable-univalence layer (rather than
 /// `qmat.mbt`'s own Rat-vs-BigRat representation, which is orthogonal).
-pub fn qmat_eigenvalue_permutation_equiv(a : QMat, table : Array[Int32]) -> FinMap? {
+pub fn qmat_eigenvalue_permutation_equiv(
+  a : QMat,
+  table : Array[Int32],
+) -> FinMap? {
   qpoly_root_permutation_equiv(qmat_charpoly(a), table)
 }
 
 ///|
-pub fn qmat_eigenvalue_permutation_is_equiv(a : QMat, table : Array[Int32]) -> Bool {
+pub fn qmat_eigenvalue_permutation_is_equiv(
+  a : QMat,
+  table : Array[Int32],
+) -> Bool {
   qpoly_root_permutation_is_equiv(qmat_charpoly(a), table)
 }
 

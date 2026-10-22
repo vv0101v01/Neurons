@@ -65,11 +65,20 @@ test "finite universe (c): a concrete sum-commutativity equivalence transports c
   inspect(fin_map_is_equiv(swap), content="true")
   inspect(univalence_decides(ab, ba), content="true")
   let p = cpath_ua(swap)
-  inspect(cpath_coe(p, 0, 1, PVLeft(PVBool(false))) == PVRight(PVBool(false)), content="true")
-  inspect(cpath_coe(p, 0, 1, PVLeft(PVBool(true))) == PVRight(PVBool(true)), content="true")
+  inspect(
+    cpath_coe(p, 0, 1, PVLeft(PVBool(false))) == PVRight(PVBool(false)),
+    content="true",
+  )
+  inspect(
+    cpath_coe(p, 0, 1, PVLeft(PVBool(true))) == PVRight(PVBool(true)),
+    content="true",
+  )
   inspect(cpath_coe(p, 0, 1, PVRight(PVUnit)) == PVLeft(PVUnit), content="true")
   // Round trip back.
-  inspect(cpath_coe(p, 1, 0, PVRight(PVBool(false))) == PVLeft(PVBool(false)), content="true")
+  inspect(
+    cpath_coe(p, 1, 0, PVRight(PVBool(false))) == PVLeft(PVBool(false)),
+    content="true",
+  )
   inspect(transport_roundtrip(swap), content="true")
   // The groupoid laws proved for the product fragment hold here too: they
   // never inspected the type former, only the table.

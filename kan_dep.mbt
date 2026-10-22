@@ -415,7 +415,9 @@ pub fn pval_to_dvalue(v : PVal) -> DValue {
     PVBool(b) => DVBool(b)
     PVPair(a, b) => DVPair(pval_to_dvalue(a), pval_to_dvalue(b))
     PVLeft(_) | PVRight(_) =>
-      abort("pval_to_dvalue: sum-tagged values have no Kan semantics in this layer yet")
+      abort(
+        "pval_to_dvalue: sum-tagged values have no Kan semantics in this layer yet",
+      )
   }
 }
 

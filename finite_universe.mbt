@@ -20,7 +20,6 @@
 // coproduct Kan structure that does not exist yet); those two call `abort`
 // on `TySum` rather than silently mis-modelling it.
 
-
 ///|
 pub enum Ty {
   TyBool
@@ -49,4 +48,3 @@ pub enum PVal {
   PVLeft(PVal)
   PVRight(PVal)
 } derive(Debug, Eq)
-

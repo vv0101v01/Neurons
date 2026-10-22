@@ -185,7 +185,7 @@ pub fn biinv_to_ishae(f : FinMap, l : FinMap, r : FinMap) -> Ishae? {
       return None
     }
   }
-  Some(Ishae::{ f, g: l })
+  Some(Ishae::{ f, g: l, })
 }
 
 ///|
@@ -223,6 +223,6 @@ pub fn fin_equiv_three_ways_agree(f : FinMap) -> Bool {
     g_table.push(fin_map_inv_at(f, i))
   }
   let g = fin_map(f.dst, f.src, g_table)
-  let via_ishae = fin_map_wf(f) && ishae_holds(Ishae::{ f, g })
+  let via_ishae = fin_map_wf(f) && ishae_holds(Ishae::{ f, g, })
   via_table == via_fiber && via_fiber == via_ishae
 }

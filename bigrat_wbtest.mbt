@@ -14,8 +14,14 @@ test "bigrat: construction always reduces, denominator always positive" {
   inspect(b == c, content="true")
   let d = bigrat_make(bigint_of_int(-6), bigint_of_int(-8))
   inspect(bigrat_to_string(d), content="3/4")
-  inspect(bigrat_to_string(bigrat_make(bigint_of_int(0), bigint_of_int(5))), content="0")
-  inspect(bigrat_to_string(bigrat_make(bigint_of_int(4), bigint_of_int(2))), content="2")
+  inspect(
+    bigrat_to_string(bigrat_make(bigint_of_int(0), bigint_of_int(5))),
+    content="0",
+  )
+  inspect(
+    bigrat_to_string(bigrat_make(bigint_of_int(4), bigint_of_int(2))),
+    content="2",
+  )
   inspect(bigrat_is_zero(bigrat_zero()), content="true")
   inspect(bigrat_to_string(bigrat_one()), content="1")
   // bigrat_eq agrees with structural equality (both sides always reduced):

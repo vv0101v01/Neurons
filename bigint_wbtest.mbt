@@ -100,10 +100,7 @@ test "bigint: multiplication, comparison, gcd and divmod" {
 test "bigint: values far beyond Int64 stay exact" {
   // 30! as a signed BigInt, negated, doubled back.
   let huge = bigint_of_bignat(bignat_fact(30))
-  inspect(
-    bigint_to_string(huge),
-    content="265252859812191058636308480000000",
-  )
+  inspect(bigint_to_string(huge), content="265252859812191058636308480000000")
   let neg_huge = bigint_neg(huge)
   inspect(
     bigint_to_string(neg_huge),

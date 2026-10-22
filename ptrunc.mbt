@@ -29,12 +29,10 @@
 fn ptrunc_schema_unchecked(name : String) -> DHitSpec {
   dhit_spec(name, 0, [dtelescope_entry("A", DUniv(0))], [], [
     dhit_cell_spec("point", 0, [darg_external("a", DTVar(0))], []),
-    dhit_cell_spec(
-      "squash",
-      1,
-      [darg_recursive("x"), darg_recursive("y")],
-      [dhit_face_var(0, 2), dhit_face_var(1, 2)],
-    ),
+    dhit_cell_spec("squash", 1, [darg_recursive("x"), darg_recursive("y")], [
+      dhit_face_var(0, 2),
+      dhit_face_var(1, 2),
+    ]),
   ])
 }
 
