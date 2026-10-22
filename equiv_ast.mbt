@@ -152,19 +152,6 @@ pub fn equiv_id_value(ty : DValue) -> DValue {
   )
 }
 
-///|
-/// Build an equivalence value from its six components.
-pub fn equiv_make_value(
-  src : DValue,
-  dst : DValue,
-  fwd : DValue,
-  bwd : DValue,
-  sect : DValue,
-  retr : DValue,
-) -> DValue {
-  DVEquiv(src, dst, fwd, bwd, sect, retr)
-}
-
 // ---------------------------------------------------------------------------
 // Glue by equivalence: parts, packing, collapse
 // ---------------------------------------------------------------------------
@@ -782,12 +769,6 @@ pub fn quote_glue_equiv_type(
     )
   }
   DGlueEquiv(quote_ty(level, dlevel, parts.base), branches)
-}
-
-///|
-/// The AST type former for equivalences.
-pub fn equiv_type_term(a : DTerm, b : DTerm) -> DTerm {
-  DEquivTy(a, b)
 }
 
 ///|

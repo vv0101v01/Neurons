@@ -45,6 +45,15 @@ pub fn check_dsystem_compatibility() -> Bool {
     Some(_) => ()
     None => return false
   }
+  // `dsystem_checked_of` is the same checked constructor taken from raw
+  // branches instead of a pre-built `DSystem`; it must accept exactly
+  // the same inputs `dsystem_checked` does (via `dsystem_of`), and still
+  // reject an incompatible system (reusing `branch_clash` below).
+  match
+    dsystem_checked_of(0, 1, line, paths_from_zero.branches, dv_nat_lit(0)) {
+    Some(_) => ()
+    None => return false
+  }
   let branch_clash = DSystem::{
     branches: [
       tube_branch(FTop, _ => dv_nat_lit(0)),
@@ -57,6 +66,10 @@ pub fn check_dsystem_compatibility() -> Bool {
     clash.branch != 0 ||
     clash.other_branch != 1 {
     return false
+  }
+  match dsystem_checked_of(0, 1, line, branch_clash.branches, dv_nat_lit(0)) {
+    Some(_) => return false
+    None => ()
   }
   // Face-relative conversion: loop_i is the base point under i=0.
   let circle : DValue = DVCircleTy

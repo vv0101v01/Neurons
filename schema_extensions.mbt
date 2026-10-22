@@ -697,3 +697,524 @@ pub fn cube3_schema() -> DHitSpec {
     ]),
   ])
 }
+
+// ---------------------------------------------------------------------------
+// First-class universe-polymorphic declarations (一等宇宙多態宣告)
+// ---------------------------------------------------------------------------
+
+///|
+/// A body-level template reference to level-expression slot `i`: the
+/// negative encoding `-1 - i` at every level position (`DUniv`, `level`,
+/// `decode_level`).  Ordinary monomorphic levels are non-negative, so
+/// the namespaces never collide.  A template is ordinary schema *data* —
+/// inspectable, comparable (`Eq`) and quotable — and only
+/// `duniv_poly_instantiate` turns it into a validated monomorphic
+/// schema: the declaration is abstract syntax with its own level
+/// binders, not a host closure over level integers.
+pub fn dlevel_var(i : Int32) -> Int32 {
+  if i < 0 {
+    abort("dlevel_var: negative slot index")
+  }
+  -1 - i
+}
+
+///|
+/// Inverse of `dlevel_var`: `Some(i)` iff `n` references level slot `i`
+/// (every negative level position is such a reference).
+pub fn dlevel_unwrap(n : Int32) -> Int32? {
+  if n < 0 {
+    Some(-1 - n)
+  } else {
+    None
+  }
+}
+
+///|
+/// Do all level variables of the expression lie below `arity`?
+pub fn dlevel_expr_wf(expr : DLevelExpr, arity : Int32) -> Bool {
+  match expr {
+    DLevelConst(n) => n >= 0
+    DLevelVar(i) => i >= 0 && i < arity
+    DLevelSucc(e) => dlevel_expr_wf(e, arity)
+    DLevelMax(a, b) => dlevel_expr_wf(a, arity) && dlevel_expr_wf(b, arity)
+  }
+}
+
+///|
+/// Are all level positions of the schema data ordinary levels or
+/// references below `pool_size`?  (The level map records every position
+/// it touches.)
+fn dinductive_levels_wf(spec : DInductiveSpec, pool_size : Int32) -> Bool {
+  let seen : Array[Int32] = []
+  let f = (n : Int32) => {
+    seen.push(n)
+    n
+  }
+  let _ = dinductive_spec_map_levels(spec, f)
+  levels_seen_wf(seen, pool_size)
+}
+
+///|
+fn dhit_levels_wf(spec : DHitSpec, pool_size : Int32) -> Bool {
+  let seen : Array[Int32] = []
+  let f = (n : Int32) => {
+    seen.push(n)
+    n
+  }
+  let _ = dhit_spec_map_levels(spec, f)
+  levels_seen_wf(seen, pool_size)
+}
+
+///|
+fn levels_seen_wf(seen : Array[Int32], pool_size : Int32) -> Bool {
+  for i in 0..<seen.length() {
+    let n = seen[i]
+    if n < 0 {
+      match dlevel_unwrap(n) {
+        Some(v) => if v >= pool_size { return false }
+        None => return false
+      }
+    }
+  }
+  true
+}
+
+///|
+/// A first-class universe-polymorphic inductive declaration: level
+/// variables are bound by the declaration itself, and the body is a
+/// level-abstracted *template* — an ordinary `DInductiveSpec` whose
+/// level positions reference the declaration's level-expression pool
+/// (`levels`, slot `i` written `dlevel_var(i)`).  A pool entry may be a
+/// plain level variable or any `DLevelExpr` over the declaration's
+/// `level_arity` variables, so compound levels (`max`, `succ`) appear in
+/// bodies as data.  Being data, two declarations can be compared,
+/// printed and registered; the host-level `DInductiveLevelScheme`
+/// remains a presentation of the same content, and the two are
+/// cross-validated by `duniv_poly_agrees_with_scheme`.
+pub struct DUnivPolyDecl {
+  name : String
+  level_arity : Int32
+  levels : Array[DLevelExpr]
+  result_level : DLevelExpr
+  template : DInductiveSpec
+} derive(Debug, Eq)
+
+///|
+pub extend DUnivPolyDecl with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
+pub extend DUnivPolyDecl with Eq::{not_equal, equal}
+
+///|
+/// A first-class universe-polymorphic HIT declaration, likewise.
+pub struct DUnivPolyHitDecl {
+  name : String
+  level_arity : Int32
+  levels : Array[DLevelExpr]
+  result_level : DLevelExpr
+  template : DHitSpec
+} derive(Debug, Eq)
+
+///|
+pub extend DUnivPolyHitDecl with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
+pub extend DUnivPolyHitDecl with Eq::{not_equal, equal}
+
+///|
+/// The identity pool: slot `i` is level variable `i`.
+pub fn dlevel_identity_pool(arity : Int32) -> Array[DLevelExpr] {
+  let out : Array[DLevelExpr] = []
+  for i in 0..<arity {
+    out.push(DLevelVar(i))
+  }
+  out
+}
+
+///|
+pub fn duniv_poly_decl(
+  name : String,
+  level_arity : Int32,
+  result_level : DLevelExpr,
+  template : DInductiveSpec,
+) -> DUnivPolyDecl {
+  DUnivPolyDecl::{
+    name,
+    level_arity,
+    levels: dlevel_identity_pool(level_arity),
+    result_level,
+    template,
+  }
+}
+
+///|
+/// A declaration with an explicit level-expression pool for body
+/// positions (partial polymorphism, compound levels).
+pub fn duniv_poly_decl_with_levels(
+  name : String,
+  level_arity : Int32,
+  levels : Array[DLevelExpr],
+  result_level : DLevelExpr,
+  template : DInductiveSpec,
+) -> DUnivPolyDecl {
+  DUnivPolyDecl::{ name, level_arity, levels, result_level, template, }
+}
+
+///|
+pub fn duniv_poly_hit_decl(
+  name : String,
+  level_arity : Int32,
+  result_level : DLevelExpr,
+  template : DHitSpec,
+) -> DUnivPolyHitDecl {
+  DUnivPolyHitDecl::{
+    name,
+    level_arity,
+    levels: dlevel_identity_pool(level_arity),
+    result_level,
+    template,
+  }
+}
+
+///|
+pub fn duniv_poly_hit_decl_with_levels(
+  name : String,
+  level_arity : Int32,
+  levels : Array[DLevelExpr],
+  result_level : DLevelExpr,
+  template : DHitSpec,
+) -> DUnivPolyHitDecl {
+  DUnivPolyHitDecl::{ name, level_arity, levels, result_level, template, }
+}
+
+///|
+/// A declaration is well-formed when its name matches the template, its
+/// level expression and pool entries only use its own variables, and
+/// every level position of the template is either an ordinary level or a
+/// pool reference in range.
+pub fn duniv_poly_validate(decl : DUnivPolyDecl) -> Bool {
+  if decl.level_arity < 0 || decl.template.name != decl.name {
+    return false
+  }
+  if !dlevel_expr_wf(decl.result_level, decl.level_arity) {
+    return false
+  }
+  for i in 0..<decl.levels.length() {
+    if !dlevel_expr_wf(decl.levels[i], decl.level_arity) {
+      return false
+    }
+  }
+  dinductive_levels_wf(decl.template, decl.levels.length())
+}
+
+///|
+pub fn duniv_poly_hit_validate(decl : DUnivPolyHitDecl) -> Bool {
+  if decl.level_arity < 0 || decl.template.name != decl.name {
+    return false
+  }
+  if !dlevel_expr_wf(decl.result_level, decl.level_arity) {
+    return false
+  }
+  for i in 0..<decl.levels.length() {
+    if !dlevel_expr_wf(decl.levels[i], decl.level_arity) {
+      return false
+    }
+  }
+  dhit_levels_wf(decl.template, decl.levels.length())
+}
+
+///|
+/// Instantiate at a level vector: evaluate the pool, substitute body
+/// positions, then apply exactly the acceptance of
+/// `instantiate_inductive_level_scheme` (right arity, non-negative
+/// levels, displayed universe equal to `result_level`, ordinary schema
+/// validation).  Ill-formed declarations and out-of-range vectors yield
+/// `None`.
+pub fn duniv_poly_instantiate(
+  decl : DUnivPolyDecl,
+  args : Array[Int32],
+) -> DInductiveSpec? {
+  if !duniv_poly_validate(decl) || args.length() != decl.level_arity {
+    return None
+  }
+  for i in 0..<args.length() {
+    if args[i] < 0 {
+      return None
+    }
+  }
+  match dlevel_pool_eval(decl.levels, args) {
+    None => None
+    Some(pool) =>
+      match dlevel_eval(decl.result_level, args) {
+        None => None
+        Some(expected) => {
+          let spec = dinductive_spec_map_levels(decl.template, n => {
+            if n >= 0 {
+              n
+            } else {
+              pool[-1 - n]
+            }
+          })
+          if spec.name == decl.name &&
+            spec.level == expected &&
+            inductive_schema_validate(spec) {
+            Some(spec)
+          } else {
+            None
+          }
+        }
+      }
+  }
+}
+
+///|
+/// Instantiate a HIT declaration; acceptance mirrors
+/// `instantiate_hit_level_scheme`.
+pub fn duniv_poly_hit_instantiate(
+  decl : DUnivPolyHitDecl,
+  args : Array[Int32],
+) -> DHitSpec? {
+  if !duniv_poly_hit_validate(decl) || args.length() != decl.level_arity {
+    return None
+  }
+  for i in 0..<args.length() {
+    if args[i] < 0 {
+      return None
+    }
+  }
+  match dlevel_pool_eval(decl.levels, args) {
+    None => None
+    Some(pool) =>
+      match dlevel_eval(decl.result_level, args) {
+        None => None
+        Some(expected) => {
+          let spec = dhit_spec_map_levels(decl.template, n => {
+            if n >= 0 {
+              n
+            } else {
+              pool[-1 - n]
+            }
+          })
+          if spec.name == decl.name &&
+            spec.level == expected &&
+            hit_schema_validate(spec) {
+            Some(spec)
+          } else {
+            None
+          }
+        }
+      }
+  }
+}
+
+///|
+/// Evaluate a level-expression pool at a level vector.
+pub fn dlevel_pool_eval(
+  pool : Array[DLevelExpr],
+  args : Array[Int32],
+) -> Array[Int32]? {
+  let out : Array[Int32] = []
+  for i in 0..<pool.length() {
+    match dlevel_eval(pool[i], args) {
+      Some(n) => out.push(n)
+      None => return None
+    }
+  }
+  Some(out)
+}
+
+///|
+/// The first-class presentation and the host-level scheme describe the
+/// same declaration: instantiating both at any well-formed level vector
+/// yields the identical monomorphic schema (or both refuse).
+pub fn duniv_poly_agrees_with_scheme(
+  decl : DUnivPolyDecl,
+  scheme : DInductiveLevelScheme,
+  levels : Array[Int32],
+) -> Bool {
+  match
+    (
+      duniv_poly_instantiate(decl, levels),
+      instantiate_inductive_level_scheme(scheme, levels),
+    ) {
+    (Some(a), Some(b)) => a == b
+    (None, None) => true
+    _ => false
+  }
+}
+
+///|
+/// Same agreement law for HIT declarations.
+pub fn duniv_poly_hit_agrees_with_scheme(
+  decl : DUnivPolyHitDecl,
+  scheme : DHitLevelScheme,
+  levels : Array[Int32],
+) -> Bool {
+  match
+    (
+      duniv_poly_hit_instantiate(decl, levels),
+      instantiate_hit_level_scheme(scheme, levels),
+    ) {
+    (Some(a), Some(b)) => a == b
+    (None, None) => true
+    _ => false
+  }
+}
+
+///|
+/// `ListU` as first-class abstract syntax: the universe-polymorphic
+/// list over `Type ℓ`, one level variable bound by the declaration.
+pub fn list_univ_poly_decl() -> DUnivPolyDecl {
+  let l0 = dlevel_var(0)
+  duniv_poly_decl(
+    "ListU",
+    1,
+    DLevelVar(0),
+    dinductive_spec("ListU", l0, [dtelescope_entry("A", DUniv(l0))], [], [
+      dconstructor_spec("nil", []),
+      dconstructor_spec("cons", [
+        darg_external("head", DTVar(0)),
+        darg_recursive("tail"),
+      ]),
+    ]),
+  )
+}
+
+///|
+/// `CircleU` as first-class abstract syntax (the HIT presentation).
+pub fn circle_univ_poly_decl() -> DUnivPolyHitDecl {
+  let l0 = dlevel_var(0)
+  duniv_poly_hit_decl(
+    "CircleU",
+    1,
+    DLevelVar(0),
+    dhit_spec("CircleU", l0, [], [], [
+      dhit_cell_spec("base", 0, [], []),
+      dhit_cell_spec("loop", 1, [], [dhit_face(0, [], []), dhit_face(0, [], [])]),
+    ]),
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Primitive mutual declarations (原始互歸納宣告)
+// ---------------------------------------------------------------------------
+
+///|
+/// A primitive mutual declaration block: the component schemas exactly
+/// as written — cross-recursive arguments point at sibling components —
+/// before any Sum-indexed compilation.  The block is data (comparable,
+/// quotable, registrable) with its own validation; the tagged-family
+/// compilation remains the elaboration target, but the declaration no
+/// longer exists only as the arguments of a compilation call.
+pub struct DMutualDecl {
+  name : String
+  components : Array[DInductiveSpec]
+} derive(Debug, Eq)
+
+///|
+pub extend DMutualDecl with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
+pub extend DMutualDecl with Eq::{not_equal, equal}
+
+///|
+pub fn dmutual_decl(
+  name : String,
+  components : Array[DInductiveSpec],
+) -> DMutualDecl {
+  DMutualDecl::{ name, components, }
+}
+
+///|
+/// Declaration-level acceptance: non-empty block and components,
+/// distinct component names, shared parameter/index telescopes, no
+/// induction-recursive components, and every recursive/function
+/// argument targeting some declared component (or itself by `-1`).
+/// Mirrors the preconditions `compile_mutual_inductive` enforces, but
+/// reported on the declaration itself.
+pub fn dmutual_decl_validate(decl : DMutualDecl) -> Bool {
+  if decl.name.length() == 0 || decl.components.length() == 0 {
+    return false
+  }
+  let first = decl.components[0]
+  let n = decl.components.length()
+  for i in 0..<n {
+    let c = decl.components[i]
+    if c.name.length() == 0 ||
+      c.decode_cases.length() != 0 ||
+      c.params != first.params ||
+      c.indices != first.indices {
+      return false
+    }
+    for j in (i + 1)..<n {
+      if c.name == decl.components[j].name {
+        return false
+      }
+    }
+    for k in 0..<c.constructors.length() {
+      let ctor = c.constructors[k]
+      for a in 0..<ctor.args.length() {
+        let arg = ctor.args[a]
+        match arg.kind {
+          DArgExternal => if arg.target != -1 { return false }
+          DArgRecursive | DArgFunction | DArgNested => {
+            let target = if arg.target == -1 { i } else { arg.target }
+            if target < 0 || target >= n {
+              return false
+            }
+          }
+          DArgDecoded | DArgDecodedFunction => return false
+        }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// Elaborate the primitive block to the tagged single family.
+pub fn dmutual_decl_compile(decl : DMutualDecl) -> DMutualFamily? {
+  if !dmutual_decl_validate(decl) {
+    return None
+  }
+  compile_mutual_inductive(decl.name, decl.components)
+}
+
+///|
+/// The compiled family presents every declared component and
+/// constructor exactly once, at the documented offsets, under
+/// `Component.ctor` names — the primitive block and its Sum-indexed
+/// elaboration agree.
+pub fn dmutual_decl_matches_family(
+  decl : DMutualDecl,
+  fam : DMutualFamily,
+) -> Bool {
+  if fam.name != decl.name ||
+    fam.components.length() != decl.components.length() ||
+    fam.ctor_offsets.length() != decl.components.length() {
+    return false
+  }
+  let mut total = 0
+  for i in 0..<decl.components.length() {
+    if fam.ctor_offsets[i] != total {
+      return false
+    }
+    let c = decl.components[i]
+    if fam.components[i] != c {
+      return false
+    }
+    for k in 0..<c.constructors.length() {
+      let idx = mutual_ctor_index(fam, i, k)
+      if idx < 0 || idx >= fam.combined.constructors.length() {
+        return false
+      }
+      let compiled = fam.combined.constructors[idx]
+      if compiled.name != c.name + "." + c.constructors[k].name ||
+        compiled.args.length() != c.constructors[k].args.length() {
+        return false
+      }
+    }
+    total = total + c.constructors.length()
+  }
+  total == fam.combined.constructors.length()
+}

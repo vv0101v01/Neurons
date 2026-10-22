@@ -49,6 +49,7 @@ pub struct DSchemaRegistry {
   inductives : Array[DInductivePlan]
   hits : Array[DHitPlan]
   telescopes : Array[DTelescopeCacheEntry]
+  cert_validations : Array[DCertValidationEntry]
   mut validation_hits : Int32
   mut validation_misses : Int32
   mut telescope_hits : Int32
@@ -61,6 +62,7 @@ pub fn schema_registry_new() -> DSchemaRegistry {
     inductives: [],
     hits: [],
     telescopes: [],
+    cert_validations: [],
     validation_hits: 0,
     validation_misses: 0,
     telescope_hits: 0,
@@ -99,7 +101,10 @@ pub fn schema_registry_register_inductive(
     }
   }
   registry.validation_misses = registry.validation_misses + 1
-  let valid = inductive_schema_validate_uncached(spec)
+  let valid = inductive_schema_validate_uncached(
+    spec,
+    dpositivity_certs_empty(),
+  )
   let pv = schema_fresh_values(spec.params.length(), 8200)
   let param_types = if valid {
     telescope_type_values(spec.params, [], [], pv)
@@ -136,7 +141,7 @@ pub fn schema_registry_register_hit(
     }
   }
   registry.validation_misses = registry.validation_misses + 1
-  let valid = hit_schema_validate_uncached(spec)
+  let valid = hit_schema_validate_uncached(spec, dpositivity_certs_empty())
   let pv = schema_fresh_values(spec.params.length(), 8200)
   let param_types = if valid {
     telescope_type_values(spec.params, [], [], pv)
@@ -212,6 +217,105 @@ pub fn inductive_schema_validate(spec : DInductiveSpec) -> Bool {
 ///|
 pub fn hit_schema_validate(spec : DHitSpec) -> Bool {
   schema_registry_validate_hit(default_schema_registry, spec)
+}
+
+///|
+/// One cached certified validation.  The cache key includes the
+/// certificate registry, so the same descriptor may validate
+/// differently under different trust boundaries without interference.
+struct DCertValidationEntry {
+  certs : DPositivityCerts
+  inductive : DInductiveSpec?
+  hit : DHitSpec?
+  valid : Bool
+} derive(Debug, Eq)
+
+///|
+pub extend DCertValidationEntry with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
+pub extend DCertValidationEntry with Eq::{not_equal, equal}
+
+///|
+fn cert_validation_lookup(
+  entries : Array[DCertValidationEntry],
+  certs : DPositivityCerts,
+  inductive : DInductiveSpec?,
+  hit : DHitSpec?,
+) -> Bool? {
+  for i in 0..<entries.length() {
+    let e = entries[i]
+    if e.certs == certs && e.inductive == inductive && e.hit == hit {
+      return Some(e.valid)
+    }
+  }
+  None
+}
+
+///|
+/// Validate an inductive descriptor under variance certificates for
+/// opaque neutral type operators.  External constructor arguments may
+/// then mention the family when the certificate-aware analysis proves
+/// every occurrence strictly positive; function domains stay
+/// occurrence-free.  The empty registry agrees exactly with
+/// `inductive_schema_validate`.  Cached per (descriptor, certificates).
+pub fn inductive_schema_validate_with_certs(
+  spec : DInductiveSpec,
+  certs : DPositivityCerts,
+) -> Bool {
+  if certs.certs.length() == 0 {
+    return inductive_schema_validate(spec)
+  }
+  match
+    cert_validation_lookup(
+      default_schema_registry.cert_validations,
+      certs,
+      Some(spec),
+      None,
+    ) {
+    Some(v) => v
+    None => {
+      let valid = inductive_schema_validate_uncached(spec, certs)
+      default_schema_registry.cert_validations.push(DCertValidationEntry::{
+        certs,
+        inductive: Some(spec),
+        hit: None,
+        valid,
+      })
+      valid
+    }
+  }
+}
+
+///|
+/// HIT variant of `inductive_schema_validate_with_certs`; the same
+/// certified acceptance rule applies to cell arguments.
+pub fn hit_schema_validate_with_certs(
+  spec : DHitSpec,
+  certs : DPositivityCerts,
+) -> Bool {
+  if certs.certs.length() == 0 {
+    return hit_schema_validate(spec)
+  }
+  match
+    cert_validation_lookup(
+      default_schema_registry.cert_validations,
+      certs,
+      None,
+      Some(spec),
+    ) {
+    Some(v) => v
+    None => {
+      let valid = hit_schema_validate_uncached(spec, certs)
+      default_schema_registry.cert_validations.push(DCertValidationEntry::{
+        certs,
+        inductive: None,
+        hit: Some(spec),
+        valid,
+      })
+      valid
+    }
+  }
 }
 
 ///|

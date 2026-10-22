@@ -65,6 +65,17 @@ pub fn leaves_of_ty(ty : Ty) -> Array[LeafKind] {
       }
       out
     }
+    TySum(_, _) =>
+      // Wirings model every equivalence as a per-leaf assignment (a
+      // signed permutation), which only ever makes sense for the
+      // Bool/Unit/Product fragment: an element of a product fixes a value
+      // at *every* leaf, while an element of a sum picks *one* branch, so
+      // there is no fixed leaf count to assign.  Sum types are out of
+      // scope for this model (SPEC §四 item 9(c)); calling it here is a
+      // programming error, not silently wrong leaf counting.
+      abort(
+        "leaves_of_ty: TySum is outside the wiring model's product fragment",
+      )
   }
 }
 
@@ -281,6 +292,8 @@ fn build_pval(ty : Ty, leaves : Array[PVal], offset : Int32) -> (PVal, Int32) {
       let (y, nxt) = build_pval(b, leaves, mid)
       (PVPair(x, y), nxt)
     }
+    TySum(_, _) =>
+      abort("build_pval: TySum is outside the wiring model's product fragment")
   }
 }
 

@@ -66,7 +66,88 @@ fn check_checked_lines() -> Bool {
     Some(_) => false
     None => true
   }
-  invalid && constant_ok && ua_ok && reify_ok && rejected
+  // `checked_line_of_pathp_term` on a constant `DPath` matches the
+  // `DPath` branch and agrees with `checked_constant_type_line`
+  // directly; on a (here, trivially non-dependent) `DPathP` it matches
+  // the `DPathP` branch via `checked_type_line`; on a non-Path term it
+  // is `None`.
+  let pathp_of_dpath_ok = match
+    checked_line_of_pathp_term(
+      DPath(DBoolTy, DBoolLit(true), DBoolLit(false)),
+      denv_empty(),
+      denv_empty(),
+      ddim_empty(),
+    ) {
+    Some(line) => {
+      let (a, b) = checked_line_endpoints(line)
+      checked_line_is_constant(line) &&
+      conv_ty(0, 0, a, DVBoolTy) &&
+      conv_ty(0, 0, b, DVBoolTy)
+    }
+    None => false
+  }
+  let pathp_of_dpathp_ok = match
+    checked_line_of_pathp_term(
+      DPathP(DBoolTy, DBoolLit(true), DBoolLit(false)),
+      denv_empty(),
+      denv_empty(),
+      ddim_empty(),
+    ) {
+    Some(line) => {
+      let (a, b) = checked_line_endpoints(line)
+      conv_ty(0, 0, a, DVBoolTy) && conv_ty(0, 0, b, DVBoolTy)
+    }
+    None => false
+  }
+  let pathp_of_non_path_rejected = match
+    checked_line_of_pathp_term(
+      DBoolLit(true),
+      denv_empty(),
+      denv_empty(),
+      ddim_empty(),
+    ) {
+    Some(_) => false
+    None => true
+  }
+  // `checked_line_conv`: a line is convertible with itself, and the
+  // constant-`Bool` line is not convertible with the constant-`Unit`
+  // line.
+  let conv_lines_ok = match
+    (
+      checked_constant_type_line_closed(DBoolTy),
+      checked_constant_type_line_closed(DUnitTy),
+    ) {
+    (Some(bool_line), Some(unit_line)) =>
+      checked_line_conv(0, 0, bool_line, bool_line) &&
+      checked_line_conv(0, 0, unit_line, unit_line) &&
+      !checked_line_conv(0, 0, bool_line, unit_line)
+    _ => false
+  }
+  // `checked_pathp_type`: the PathP type built over a checked line
+  // agrees, endpoint for endpoint, with one built directly from the
+  // line's own semantic function.
+  let pathp_type_ok = match checked_constant_type_line_closed(DBoolTy) {
+    Some(line) =>
+      match checked_pathp_type(line, DVBool(true), DVBool(false)) {
+        DVPathTy(line_fn, l, r) =>
+          conv_ty(0, 0, line_fn(DZero), checked_line_at(line, DZero)) &&
+          conv_ty(0, 0, line_fn(DOne), checked_line_at(line, DOne)) &&
+          equiv_bool_is(l, true) &&
+          equiv_bool_is(r, false)
+        _ => false
+      }
+    None => false
+  }
+  invalid &&
+  constant_ok &&
+  ua_ok &&
+  reify_ok &&
+  rejected &&
+  pathp_of_dpath_ok &&
+  pathp_of_dpathp_ok &&
+  pathp_of_non_path_rejected &&
+  conv_lines_ok &&
+  pathp_type_ok
 }
 
 ///|

@@ -454,19 +454,27 @@ otherwise a formal neutral composition is kept. Examples include
 
 **可計算單值性。** `pathp_glue.mbt` 只是*陳述*單值性（`ua e` 包住一個等價，
 `coe` 讀回端點）；`univalence_compute.mbt` 把它*變成可判定*。可計算的等價是一張
-表（`FinMap`：`elems_of` 的索引列），所以全部以窮舉判定，不抽樣：
+表（`FinMap`：`elems_of` 的索引列）。計數以 `BigNat`（`bignat.mbt`，base-10⁹
+limbs）精確決算，搜尋剪枝、窮舉帶預算 —— 全部判定、不抽樣，16 元素不溢位：
 
 - `fin_map_is_equiv` 判等價（在所有元素上單射＋滿射）；`fin_equiv_search`
-  按字典序掃表*搜出*一個等價，故「A ≃ B」是判定問題；
+  在單射前綴上剪枝*搜出*字典序第一個等價（n! 搜索樹，非 `|B|^|A|` 表掃描），
+  故「A ≃ B」在任何大小都是判定問題；
+- `fin_map_count`（`|B|^|A|`）、`fact`（`n!`）、`fin_equiv_count`、
+  `univalence_path_count` 全為 `BigNat` 精確值：舊 `Int32` 算式 13! 起回繞、
+  16 元素時 `16^16 ≡ 0` 令判定變空洞；`fin_equiv_count` 在 n ≤ 18 由搜索樹
+  記憶化枚舉算出、與閉式 n! 交叉驗證；
 - `cpath_ua` / `cpath_to_equiv` 是單值性映射的兩個方向；
 - `ua_transport_computes`（沿 `ua e` 搬運即 `e`）、`ua_refl_is_identity`
   （`ua id = refl`）、`ua_functorial`（`ua (g∘f) = ua g ∘ ua f`）、
   `ua_inverse`（`ua e⁻¹ = ¬(ua e)`）是四條計算律；
 - `ua_section` / `ua_retraction` 逐元素驗證兩條互逆律，`ua_section_all` /
-  `ua_retraction_all` 對兩型之間**每一張表**窮舉 —— 這就是「單值性本身是等價」，且被判定；
-- `univalence_decides`：等價存在 ⟺ 基數相同；`univalence_path_count` 數路徑：
-  n 元素型的恆等型別有 **n!** 個元素，正是等價型別的基數（`Bool × Bool` 為 24）。
-  `univalence_compute_all` 是定理表的登記入口。
+  `ua_retraction_all` 在預算內窮舉（小空間逐表、退一級逐等價）—— 這就是
+  「單值性本身是等價」，且被判定；超預算回三值 `LawVerdict` 的
+  `LawUndecided`（與 BDD 節點預算同一慣例），絕不抽樣；
+- `univalence_decides`：等價存在 ⟺ 基數相同 ∧ 個數 = n!；`univalence_path_count`
+  數路徑：n 元素型的恆等型別有 **n!** 個元素（`Bool × Bool` 為 24，16 元素型
+  為 20922789888000）。`univalence_compute_all` 是定理表的登記入口。
 
 **立方體演算法。** `cube.mbt` 手寫了二維開盒；`cube_algorithm.mbt` 用面格的
 Möbius 和，導出**任意維度、任意缺失面**的填充：
@@ -494,22 +502,33 @@ Möbius 填充對各維度是**對稱**的，而手寫的方形填充是**以底
 **Computable univalence.** `pathp_glue.mbt` *states* univalence — `ua e` wraps
 an equivalence and `coe` reads it back. `univalence_compute.mbt` *decides* it.
 A computable equivalence is a table (`FinMap`: an array of indices into
-`elems_of`), so everything is decided by enumeration, never by sampling:
+`elems_of`).  Counts are exact `BigNat` (`bignat.mbt`, base-10⁹ limbs), search
+is pruned, exhaustion is budgeted — decided, never sampled, no overflow at 16
+elements:
 
 - `fin_map_is_equiv` decides equivalence (injective + surjective on all
-  elements); `fin_equiv_search` *finds* one by scanning tables in lexicographic
-  order, so "A ≃ B" is a decision problem;
+  elements); `fin_equiv_search` *finds* the lexicographically first one by
+  pruning on injective prefixes (the n! search tree, not the `|B|^|A|` table
+  scan), so "A ≃ B" is a decision problem at every size;
+- `fin_map_count` (`|B|^|A|`), `fact` (`n!`), `fin_equiv_count` and
+  `univalence_path_count` are exact `BigNat` values: the old `Int32` formulas
+  wrapped from 13! on and at 16 elements `16^16 ≡ 0` made the decision
+  vacuous; `fin_equiv_count` is computed by memoised enumeration of the search
+  tree up to `n ≤ 18` and cross-checked against the closed form n!;
 - `cpath_ua` / `cpath_to_equiv` are the two directions of the univalence map;
 - `ua_transport_computes` (transport along `ua e` is `e`), `ua_refl_is_identity`
   (`ua id = refl`), `ua_functorial` (`ua (g∘f) = ua g ∘ ua f`) and `ua_inverse`
   (`ua e⁻¹ = ¬(ua e)`) are the computation rules;
 - `ua_section` / `ua_retraction` verify the two inverse laws elementwise, and
-  `ua_section_all` / `ua_retraction_all` exhaust every table between two types —
-  this is "univalence is an equivalence", decided;
-- `univalence_decides` says an equivalence exists iff the cardinalities agree,
-  and `univalence_path_count` counts paths: for a type of size n the identity
-  type has **n!** elements, the cardinality of the type of equivalences
-  (24 for `Bool × Bool`). `univalence_compute_all` is the registry entry.
+  `ua_section_all` / `ua_retraction_all` exhaust within budgets (table-by-table
+  for small spaces, equivalences otherwise) — this is "univalence is an
+  equivalence", decided; over budget the three-valued `LawVerdict` reports
+  `LawUndecided` (the BDD-node-budget convention), never a sample;
+- `univalence_decides` says an equivalence exists iff the cardinalities agree
+  and the count is n!, and `univalence_path_count` counts paths: for a type of
+  size n the identity type has **n!** elements (24 for `Bool × Bool`,
+  20922789888000 for a 16-element type). `univalence_compute_all` is the
+  registry entry.
 
 **The cube algorithm.** `cube.mbt` hand-writes the 2-dimensional open box.
 `cube_algorithm.mbt` derives a filler for arbitrary dimension and arbitrary

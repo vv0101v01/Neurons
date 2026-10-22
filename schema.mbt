@@ -381,7 +381,16 @@ pub fn dinductive_recursive_spec(
 }
 
 ///|
-/// Instantiate another cell as one face of a HIT cell.
+/// Instantiate another cell as one face of a HIT cell, *or* — when
+/// `cell == hit_face_var_sentinel()` — refer directly to one of this very
+/// cell's own bound arguments (SPEC §四 item 3: propositional truncation's
+/// `squash : ∀ x y : ∥A∥. x ≡ y` needs its two endpoints to *be* its own
+/// two arguments, not an instantiation of some other, already-defined
+/// cell, which is all the `cell >= 0` form could express).  In that case
+/// `args` holds exactly one `DTerm` (built by `dhit_face_var`, a de Bruijn
+/// reference into the source cell's own argument telescope) and `dims` is
+/// empty; see `dhit_face_var`, `hit_face_instantiate` and
+/// `hit_validate_face` for the three places this sentinel is interpreted.
 pub struct DHitFaceExpr {
   cell : Int32
   args : Array[DTerm]
@@ -401,6 +410,32 @@ pub fn dhit_face(
   dims : Array[Dim],
 ) -> DHitFaceExpr {
   DHitFaceExpr::{ cell, args, dims, }
+}
+
+///|
+/// The reserved `cell` value marking a "self-variable" face (see
+/// `DHitFaceExpr`'s doc comment) rather than an instantiation of another
+/// cell.  Exposed as a function (not a `let`) so it reads as "ask", not as
+/// a magic literal, at every call site.
+pub fn hit_face_var_sentinel() -> Int32 {
+  -1
+}
+
+///|
+/// A face that is literally the cell's own `arg_index`-th argument (0
+/// means the first argument in declaration order), out of `total_args`
+/// arguments total — e.g. propositional truncation's `squash` cell, with
+/// two recursive arguments `x` (index 0) and `y` (index 1), uses
+/// `dhit_face_var(0, 2)` and `dhit_face_var(1, 2)` as its two faces.
+/// Converts the declaration-order index to the de Bruijn index that
+/// `deval_dim`/`d_check` expect (the last-declared argument is index 0 —
+/// the same convention `suspension_parameter_terms` uses).
+pub fn dhit_face_var(arg_index : Int32, total_args : Int32) -> DHitFaceExpr {
+  DHitFaceExpr::{
+    cell: hit_face_var_sentinel(),
+    args: [DTVar(total_args - 1 - arg_index)],
+    dims: [],
+  }
 }
 
 ///|
@@ -682,6 +717,27 @@ fn schema_check_index_terms(
 }
 
 ///|
+fn schema_context_names(
+  params : Array[DTelescopeEntry],
+  prior : Array[DConstructorArg],
+) -> Array[String] {
+  // de Bruijn order: index 0 is the innermost binder of the context
+  // (the last prior argument, else the last parameter).
+  let out : Array[String] = []
+  let mut i = prior.length() - 1
+  while i >= 0 {
+    out.push(prior[i].name)
+    i = i - 1
+  }
+  let mut j = params.length() - 1
+  while j >= 0 {
+    out.push(params[j].name)
+    j = j - 1
+  }
+  out
+}
+
+///|
 fn schema_arg_type_for_validation(
   arg : DConstructorArg,
   prior_specs : Array[DConstructorArg],
@@ -691,10 +747,25 @@ fn schema_arg_type_for_validation(
   indices : Array[DTelescopeEntry],
   prefix_types : Array[DValue],
   prefix_values : Array[DValue],
+  certs : DPositivityCerts,
 ) -> DValue? {
   match arg.kind {
     DArgExternal => {
-      if schema_term_mentions_family(arg.ty, family_name) {
+      if certs.certs.length() == 0 {
+        if schema_term_mentions_family(arg.ty, family_name) {
+          return None
+        }
+      } else if !schema_positivity_accepts(
+          dterm_family_positivity_with(
+            arg.ty,
+            family_name,
+            schema_context_names(params, prior_specs),
+            certs,
+          ),
+        ) {
+        // Certified mode: occurrences are admitted exactly when the
+        // certificate-aware analysis proves them strictly positive;
+        // unknown and negative occurrences are still rejected.
         return None
       }
       match
@@ -722,7 +793,25 @@ fn schema_arg_type_for_validation(
         None
       }
     DArgFunction => {
-      if arg.target != -1 || schema_term_mentions_family(arg.ty, family_name) {
+      if arg.target != -1 {
+        return None
+      }
+      if certs.certs.length() == 0 {
+        if schema_term_mentions_family(arg.ty, family_name) {
+          return None
+        }
+      } else if !schema_positivity_accepts(
+          dterm_family_positivity_with(
+            DPi(arg.ty, DUnitTy),
+            family_name,
+            schema_context_names(params, prior_specs),
+            certs,
+          ),
+        ) {
+        // The domain of a function argument is a negative position:
+        // walking `arg.ty -> Unit` flips domain occurrences, so the
+        // certified rule keeps function domains occurrence-free exactly
+        // as the conservative rule does.
         return None
       }
       match
@@ -814,6 +903,7 @@ fn schema_validate_args(
   result_index : Array[DTerm],
   constraints : Array[DConstructorConstraint],
   decode_available : Bool,
+  certs : DPositivityCerts,
 ) -> Bool {
   let param_values = schema_fresh_values(params.length(), 8000)
   if !telescope_elaborates(params, [], [], param_values) {
@@ -837,6 +927,7 @@ fn schema_validate_args(
         indices,
         prefix_types,
         prefix_values,
+        certs,
       ) {
       Some(ty) => {
         prefix_types.push(ty)
@@ -902,7 +993,10 @@ fn schema_names_unique(names : Array[String]) -> Bool {
 }
 
 ///|
-fn inductive_schema_validate_uncached(spec : DInductiveSpec) -> Bool {
+fn inductive_schema_validate_uncached(
+  spec : DInductiveSpec,
+  certs : DPositivityCerts,
+) -> Bool {
   let ctor_names : Array[String] = []
   for i in 0..<spec.constructors.length() {
     ctor_names.push(spec.constructors[i].name)
@@ -935,6 +1029,7 @@ fn inductive_schema_validate_uncached(spec : DInductiveSpec) -> Bool {
         c.constraints,
         spec.decode_cases.length() == spec.constructors.length() &&
         spec.decode_cases.length() > 0,
+        certs,
       ) {
       return false
     }
@@ -2546,10 +2641,21 @@ pub fn conv_hit_cell_at(
         c1 < spec.cells.length() &&
         dims1.length() == dims2.length() &&
         conv_telescope_values(level, dlevel, spec.params, [], [], p1, p2)
-      for i in 0..<dims1.length() {
-        if !dim_eq_sem(dims1[i], dims2[i]) {
-          ok = false
+      // `dims1.length() == dims2.length()` above is only checked as one
+      // conjunct of a short-circuited `&&` chain: if an earlier conjunct
+      // (e.g. `c1 == c2`) is already false, the lengths are never actually
+      // compared, so this loop must re-guard on the lengths itself before
+      // indexing — otherwise cells with mismatched dim_count (a perfectly
+      // normal `ok == false` case, not a malformed value) index out of
+      // bounds instead of just contributing to `ok == false`.
+      if dims1.length() == dims2.length() {
+        for i in 0..<dims1.length() {
+          if !dim_eq_sem(dims1[i], dims2[i]) {
+            ok = false
+          }
         }
+      } else {
+        ok = false
       }
       ok &&
       conv_schema_args(
@@ -3228,6 +3334,12 @@ fn hit_face_instantiate(
   let values = schema_concat_values(params, args)
   let term_env = schema_env(values)
   let dim_env = schema_dim_env(dims)
+  if face.cell == hit_face_var_sentinel() {
+    // Self-variable face (`dhit_face_var`): the face *is* one of this
+    // cell's own bound arguments, evaluated directly — there is no other
+    // cell to instantiate (propositional truncation's `squash`).
+    return deval_dim(face.args[0], term_env, dim_env)
+  }
   let face_args : Array[DValue] = []
   for i in 0..<face.args.length() {
     face_args.push(deval_dim(face.args[i], term_env, dim_env))
@@ -3836,19 +3948,6 @@ fn hit_validate_face(
   face : DHitFaceExpr,
 ) -> Bool {
   let source = spec.cells[source_index]
-  if face.cell < 0 || face.cell >= spec.cells.length() {
-    return false
-  }
-  let target = spec.cells[face.cell]
-  if face.args.length() != target.args.length() ||
-    face.dims.length() != target.dim_count {
-    return false
-  }
-  for i in 0..<face.dims.length() {
-    if schema_dim_nvars(face.dims[i]) > source.dim_count {
-      return false
-    }
-  }
   let param_values = schema_fresh_values(spec.params.length(), 8000)
   let param_types = hit_param_types(spec, param_values)
   let source_values = schema_fresh_values(source.args.length(), 8100)
@@ -3862,6 +3961,48 @@ fn hit_validate_face(
   }
   let local_types = schema_concat_values(param_types, source_types)
   let local_values = schema_concat_values(param_values, source_values)
+  if face.cell == hit_face_var_sentinel() {
+    // Self-variable face (`dhit_face_var`): well-formed exactly when it
+    // is a single term that type-checks at the HIT's own (semantic) type
+    // in the source cell's own argument context — e.g. propositional
+    // truncation's `squash` endpoints, each one of `squash`'s own two
+    // recursive arguments.
+    if face.args.length() != 1 || face.dims.length() != 0 {
+      return false
+    }
+    // The expected type uses the *source* cell's own result indices (for
+    // the unindexed propositional-truncation fragment, `spec.indices` is
+    // empty, so this is `DVHitType(spec, param_values, [])` regardless of
+    // `source_values` — getting this right matters once self-var faces
+    // are used inside an indexed HIT family, even though no such example
+    // exists yet).
+    let source_result = hit_result_indices(source, param_values, source_values)
+    let expected = DVHitType(spec, param_values, source_result)
+    match
+      d_check(
+        face.args[0],
+        expected,
+        schema_env(local_types),
+        schema_env(local_values),
+        schema_dim_env([]),
+      ) {
+      Some(_) => return true
+      None => return false
+    }
+  }
+  if face.cell < 0 || face.cell >= spec.cells.length() {
+    return false
+  }
+  let target = spec.cells[face.cell]
+  if face.args.length() != target.args.length() ||
+    face.dims.length() != target.dim_count {
+    return false
+  }
+  for i in 0..<face.dims.length() {
+    if schema_dim_nvars(face.dims[i]) > source.dim_count {
+      return false
+    }
+  }
   let fresh_dims : Array[Dim] = []
   for i in 0..<source.dim_count {
     fresh_dims.push(DVar(9200 + i))
@@ -3907,7 +4048,10 @@ fn hit_validate_face(
 }
 
 ///|
-fn hit_schema_validate_uncached(spec : DHitSpec) -> Bool {
+fn hit_schema_validate_uncached(
+  spec : DHitSpec,
+  certs : DPositivityCerts,
+) -> Bool {
   let names : Array[String] = []
   for i in 0..<spec.cells.length() {
     names.push(spec.cells[i].name)
@@ -3931,6 +4075,7 @@ fn hit_schema_validate_uncached(spec : DHitSpec) -> Bool {
         cell.result_index,
         cell.constraints,
         false,
+        certs,
       ) {
       return false
     }

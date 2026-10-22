@@ -39,6 +39,16 @@ FAMILIES = {
     "依賴語義系統與 partial 值": ("DSystem 分支去 ⊥、按值合併同 body 並以引文排序；DPartialValue 的 BDD 有效區域分割 DSystemNF", "面格切片中的偏元素；多分支 Glue 為 partial type 系統與 base 的極限式配對", "BDD 區域運算＋分支 body 的型別導向轉換/引文鍵"),
     "通用歸納族 schema": ("telescope＋完整 DTerm 引數型別（外部、直接/巢狀/函數遞迴與約束）；值為 DVIntro，中性消去按生成 case 型別引文", "結構化嚴格正性函子的依賴初始代數；消去子是 motive 截面，comp 沿先前引數 filler 遞迴", "schema 結構相等、telescope elaboration、極性正性判定與生成檢查"),
     "通用 HIT schema": ("任意有限維 cell；任一端點按 face expression 逐維化簡；case 為逐維巢狀 PathP", "帶 face 映射的胞腔型高階初始代數；消去子保存各維 cells", "face 引數/索引檢查、多維角落雙路化簡轉換與維度語義相等"),
+    "命題截斷 HIT（squash）": (
+        "sentinel cell=-1 標記「face 即本次呼叫的第 k 個參數」（dhit_face_var），"
+        "不實例化任何 cell；Squash schema：cell 0 為 point(a:A)，cell 1 為 "
+        "squash(x,y) 兩端恰為該次呼叫的 x、y",
+        "命題截斷 ‖A‖：對任意 x y:‖A‖ 皆有 path squash x y；"
+        "是通用 HIT schema 的一個合法實例，face 以「自身引數」而非「另一 cell」為目標",
+        "hit_validate_face 新分支：face.args 長度為 1 且型別經 d_check 對齊 "
+        "DVHitType(spec,params,hit_result_indices(...))；hit_face_instantiate 新分支："
+        "cell==sentinel 時直接 deval_dim(face.args[0]) 取代 cell 實例化",
+    ),
     "依賴 Kan 線（coe/comp）": ("DLine{at, coe, fill}，comp=fill(1)；coe 在 Π 定義域反向、在 Σ 沿第一分量路徑", "型別即 Kan 纖維化結構；依賴族為 (路徑)→DLine；與子空間/Glue 線共同覆蓋全型別族", "按型別構造子遞迴；coe(r,r) 定義恆等"),
     "精確符號代數": ("Q 上多變量多項式規範形（合併去零排序）；分式；複符號量 (re,im)", "多項式戒與分式體承載矩陣代數；共軛為對合", "多項式恆等／分式交叉相乘（精確）"),
     "譜投影與仿射唯一填充": ("Pₖ=qₖ(A)/qₖ(λₖ)；雙線性角插值 k00+i k10+j k01+ij k11", "單位分解與譜分解；雙線性是兩仿射方向的張量黏合", "首一整除（模最小多項式）與在原子 i,j 的恆等"),
@@ -74,10 +84,26 @@ FAMILIES = {
         "移動宣告＝同一個 package 命名空間內的介面等價；證書是路徑，判定向量沿路徑傳輸（coe），複合是路徑複合（ua 函子性）",
         "索引表以 `index_table_is_bijection` 判定置換性；`plan_agrees_with_univalence` 把計劃補齊到 2 的冪後拉回有限宇宙，故判定即 `fin_map_is_equiv`；丟失／改名／非置換一律拒絕",
     ),
+    "精確自然數計數": (
+        "base-10⁹ limbs 的非負整數 BigNat（規範形：無尾隨零 limb，零為空陣列）；"
+        "符號-量值 BigInt（sign∈{-1,0,1} ＋ BigNat 量值）；BigRat（BigInt 分子／"
+        "BigNat 分母，恆約分、分母恆正）",
+        "自然數物件 (ℕ,+,×)、整數環 (ℤ,+,×,−) 與有理數體 (ℚ,+,×,÷) 的任意精度實現；"
+        "到機器整數／既有 Int32-界 Rat 的轉換為部分函數（bigrat_of_rat／rat_of_bigrat"
+        "雙向橋接）",
+        "limb 進位算術、長除法與輾轉相除 gcd；相等＝規範形結構相等；溢出時轉換回 "
+        "None 而非回繞",
+    ),
     "可計算單值性與 n 維立方演算法": (
-        "FinMap 為 |A| 長的目標索引列（可枚舉的表）；CPath 為 ua 像 (src, dst, 等價表)；NBox 為 2n−1 個 (n−1)-面立方體加一個缺失面，nfill 為面子格上的 Möbius 交錯和，ncomp 取缺失面",
-        "等價的類型（表）與 ua 像（路徑）互為逆，兩方向逆律在全部元素上判決；開盒到填充是邊界限制映射的截面，且與維度重標交換",
-        "表可枚舉故『ua 是等價』為窮舉判定（路徑數 = n!）；nfill 在樣本網格逐面核對，成本 2^(2n−1)−1 可作預算判決",
+        "FinMap 為 |A| 長的目標索引列（可枚舉的表，有限宇宙含 TySum 餘元）；CPath 為 ua 像 (src, dst, 等價表)；"
+        "Ishae 為半伴隨等價封裝 (f, g)，η/ε/三角律皆以表格命中計算而非儲存證明項；"
+        "NBox 為 2n−1 個 (n−1)-面立方體加一個缺失面，nfill 為面子格上的 Möbius 交錯和，ncomp 取缺失面",
+        "等價的類型（表）與 ua 像（路徑）互為逆，兩方向逆律在全部元素上判決（窮舉或符號化恆等層皆可）；"
+        "isEquiv(f):=Πy.isContr(fiber f y) 與「表為雙射」兩種等價定義一致；"
+        "biinv 的左右逆可併為單一 ishae（代換鏈推導，非假設）；開盒到填充是邊界限制映射的截面，且與維度重標交換",
+        "計數（|B|^|A|、n!、等價數）以 BigNat 精確決算（枚舉 DP 決定 n≤20，閉式 n! 遞升）；搜尋以單射前綴剪枝決定『A ≃ B』（n! 節點空間，非 |B|^|A| 表空間）；"
+        "全稱逆律窮舉至預算止或由符號化恆等層（fin_map_round_trip_identity／cpath_round_trip_identity）任意大小即時判定，超預算且無法走符號化層者回報 LawUndecided 而不抽樣；"
+        "纖維可縮性以計算 fiber 命中數判定；nfill 在樣本網格逐面核對，成本 2^(2n−1)−1 可作預算判決",
     ),
 }
 
@@ -105,6 +131,7 @@ EN_FAMILY_NAMES = {
     "依賴語義系統與 partial 值": "Dependent semantic systems and partial values",
     "通用歸納族 schema": "Generic inductive-family schemas",
     "通用 HIT schema": "Generic HIT schemas",
+    "命題截斷 HIT（squash）": "Propositional truncation HIT (squash)",
     "依賴 Kan 線（coe/comp）": "Dependent Kan lines (coe/comp)",
     "精確符號代數": "Exact symbolic algebra",
     "譜投影與仿射唯一填充": "Spectral projectors and unique affine filling",
@@ -135,6 +162,7 @@ EN_FAMILY_NAMES = {
     "定理登記與範例": "Theorem registry and examples",
     "規格登記": "Specification registry",
     "輔助工具": "Utilities",
+    "精確自然數計數": "Exact natural numbers, integers and rationals",
     "可計算單值性與 n 維立方演算法": "Computable univalence and the n-dimensional cube algorithm",
     "重構證書與介面等價": "Refactor certificates and interface equivalence",
 }
@@ -151,6 +179,7 @@ TYPE_FAMILY = {
     "TValue": "型別化 NbE 與 η", "TypedValue": "型別化 NbE 與 η",
     "Ty": "有限宇宙型別與值", "PVal": "有限宇宙型別與值",
     "LeafKind": "Wiring 符號等價", "LeafMap": "Wiring 符號等價", "Wiring": "Wiring 符號等價",
+    "SumWiring": "Wiring 符號等價",
     "Iso": "同構、等價、ua、coe", "Equiv": "同構、等價、ua、coe", "UPath": "同構、等價、ua、coe",
     "PathPVal": "PathP、離散路徑與 J", "DiscPath": "PathP、離散路徑與 J", "Family": "PathP、離散路徑與 J",
     "GlueData": "有限 Glue", "GlueElem": "有限 Glue",
@@ -187,7 +216,19 @@ TYPE_FAMILY = {
     "SymbolSet": "重構證書與介面等價", "IndexTable": "重構證書與介面等價",
     "RefactorPlan": "重構證書與介面等價", "RefactorCertificate": "重構證書與介面等價",
     "DecoupleStep": "重構證書與介面等價",
+    "BigNat": "精確自然數計數",
+    "BigInt": "精確自然數計數",
+    "BigRat": "精確自然數計數",
+    "DVariance": "Schema 擴展：互歸納、商與宇宙多態",
+    "DPositivityCert": "Schema 擴展：互歸納、商與宇宙多態",
+    "DPositivityCerts": "Schema 擴展：互歸納、商與宇宙多態",
+    "DCertValidationEntry": "Schema 擴展：互歸納、商與宇宙多態",
+    "DUnivPolyDecl": "Schema 擴展：互歸納、商與宇宙多態",
+    "DUnivPolyHitDecl": "Schema 擴展：互歸納、商與宇宙多態",
+    "DMutualDecl": "Schema 擴展：互歸納、商與宇宙多態",
     "FinMap": "可計算單值性與 n 維立方演算法", "CPath": "可計算單值性與 n 維立方演算法",
+    "LawVerdict": "可計算單值性與 n 維立方演算法",
+    "Ishae": "可計算單值性與 n 維立方演算法",
     "NBox": "可計算單值性與 n 維立方演算法", "NBoxSide": "可計算單值性與 n 維立方演算法",
     "DSystemCompatibility": "原始 DSystem 相容性與 first-match 範形",
     "DSystemIncompatibility": "原始 DSystem 相容性與 first-match 範形",
@@ -237,6 +278,15 @@ TYPE_FAMILY = {
 EXACT = {
     "bool_ops_module": "參數化模組與名字空間", "generic_iterate_module": "參數化模組與名字空間",
     "container_tree_schema": "Schema 函子、正性與歸納遞迴",
+    "qpoly_roots_ty": "可計算單值性與 n 維立方演算法",
+    "qpoly_root_permutation_equiv": "可計算單值性與 n 維立方演算法",
+    "qpoly_root_permutation_is_equiv": "可計算單值性與 n 維立方演算法",
+    "qpoly_root_permutation_ua": "可計算單值性與 n 維立方演算法",
+    "qpoly_all_root_permutations_are_equivalences": "可計算單值性與 n 維立方演算法",
+    "qmat_eigenvalue_permutation_equiv": "可計算單值性與 n 維立方演算法",
+    "qmat_eigenvalue_permutation_is_equiv": "可計算單值性與 n 維立方演算法",
+    "qmat_eigenvalue_permutation_ua": "可計算單值性與 n 維立方演算法",
+    "all_permutations": "可計算單值性與 n 維立方演算法",
     "as_equiv_type": "AST 一等 Equiv 與 GlueEquiv", "as_glue_equiv": "AST 一等 Equiv 與 GlueEquiv",
     "bool_not_equiv_term": "AST 一等 Equiv 與 GlueEquiv", "bool_not_term": "AST 一等 Equiv 與 GlueEquiv",
     "comp_equiv_value": "AST 一等 Equiv 與 GlueEquiv", "comp_glue_equiv_value": "AST 一等 Equiv 與 GlueEquiv",
@@ -429,6 +479,11 @@ PREFIXES = [
     ("decoupling_conserves_names", "重構證書與介面等價"),
     ("decoupling_preserves_families", "重構證書與介面等價"),
     ("refactor_certificates_sound", "重構證書與介面等價"),
+    ("bignat_", "精確自然數計數"),
+    ("bigint_", "精確自然數計數"),
+    ("bigrat_", "精確自然數計數"),
+    ("ishae_", "可計算單值性與 n 維立方演算法"),
+    ("biinv_to_ishae", "可計算單值性與 n 維立方演算法"),
     ("fin_", "可計算單值性與 n 維立方演算法"),
     ("fin", "可計算單值性與 n 維立方演算法"),
     ("ua_", "可計算單值性與 n 維立方演算法"),
@@ -441,6 +496,7 @@ PREFIXES = [
     ("ncomp", "可計算單值性與 n 維立方演算法"),
     ("cube_approx_eq", "可計算單值性與 n 維立方演算法"),
     ("sphere", "球面與懸掛 HIT"), ("suspension_", "球面與懸掛 HIT"),
+    ("ptrunc_", "命題截斷 HIT（squash）"), ("squash_", "命題截斷 HIT（squash）"),
     ("rat_interval", "Jacobi 區間譜迭代"), ("rat_sqrt_interval", "Jacobi 區間譜迭代"),
     ("rat_cmp_exact", "Jacobi 區間譜迭代"), ("rat_le_exact", "Jacobi 區間譜迭代"),
     ("rat_abs_exact", "Jacobi 區間譜迭代"), ("rat_round_", "Jacobi 區間譜迭代"),
@@ -515,6 +571,7 @@ PREFIXES = [
     ("elems_of", "有限宇宙型別與值"), ("in_ty", "有限宇宙型別與值"),
     ("pval_", "有限宇宙型別與值"), ("flatten_pval", "Wiring 符號等價"),
     ("leaf_", "Wiring 符號等價"), ("leaves_", "Wiring 符號等價"), ("wiring_", "Wiring 符號等價"),
+    ("sumwiring_", "Wiring 符號等價"),
     ("iso_", "同構、等價、ua、coe"), ("equiv_", "同構、等價、ua、coe"),
     ("ua", "同構、等價、ua、coe"), ("upath_", "同構、等價、ua、coe"),
     ("coe_upath", "同構、等價、ua、coe"), ("coe_computes", "同構、等價、ua、coe"),
@@ -563,6 +620,15 @@ PREFIXES = [
     ("cube_permute", "可計算單值性與 n 維立方演算法"),
     ("default_samples", "可計算單值性與 n 維立方演算法"),
     ("fact", "可計算單值性與 n 維立方演算法"),
+    ("dpositivity_cert", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("dpositivity_certs", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("dterm_family_positivity", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("inductive_schema_validate", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("hit_schema_validate", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("duniv_poly_", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("dmutual_decl", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("list_univ_poly_decl", "Schema 擴展：互歸納、商與宇宙多態"),
+    ("circle_univ_poly_decl", "Schema 擴展：互歸納、商與宇宙多態"),
     ("print_report", "定理登記與範例"),
 ]
 

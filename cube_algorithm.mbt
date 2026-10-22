@@ -118,28 +118,6 @@ pub fn default_samples() -> Array[Double] {
 }
 
 ///|
-/// Pointwise equality of two cubes of the same dimension on a grid.
-pub fn cube_approx_eq(a : Cube, b : Cube, samples : Array[Double]) -> Bool {
-  if a.dim != b.dim {
-    return false
-  }
-  let m = samples.length()
-  let total = int_pow(m, a.dim)
-  for code in 0..<total {
-    let pt : Array[Double] = []
-    let mut rest = code
-    for _d in 0..<a.dim {
-      pt.push(samples[rest % m])
-      rest = rest / m
-    }
-    if !vec_approx_eq(cube_eval(a, pt), cube_eval(b, pt)) {
-      return false
-    }
-  }
-  true
-}
-
-///|
 /// Make a point of the full cube out of coordinates on the face `side`:
 /// the side's own dimension is fixed to its endpoint.
 pub fn nbox_point(
@@ -188,7 +166,7 @@ pub fn nbox_wf(b : NBox, samples : Array[Double]) -> Bool {
           nbox_face_index(sj.dim, si.dim),
           si.endpoint.to_double(),
         )
-        if !cube_approx_eq(f1, f2, samples) {
+        if !cube_ext_eq(f1, f2, samples) {
           return false
         }
       }
@@ -422,7 +400,7 @@ pub fn nfill_permutation_natural(
   perm : Array[Int32],
   samples : Array[Double],
 ) -> Bool {
-  cube_approx_eq(
+  cube_ext_eq(
     nfill(nbox_permute(b, perm)),
     cube_permute(nfill(b), perm),
     samples,

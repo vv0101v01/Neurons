@@ -245,6 +245,37 @@ pub fn check_mutual_inductives() -> Bool {
   if !dv_is_nat(length, 2) {
     return false
   }
+  // The same "depth" computation, built as an AST term via
+  // `mutual_elim_term` instead of the value-level `eval_mutual_elim`,
+  // must type-check and reduce to the same answer: this cross-checks
+  // the term-level mutual eliminator (tag-prepending + dispatch to the
+  // generic `DInductiveElim`) against the already-verified value-level
+  // one on the very same scrutinee.
+  let scrut_ty = DInductive(eo.combined, [DTVar(1), DTVar(0)])
+  let elim_motive = DLam(DNatTy, DLam(DNatTy, DLam(scrut_ty, DNatTy)))
+  let odd_at_pred = DInductive(eo.combined, [mutual_nat_term(1), DTVar(0)])
+  let even_at_pred = DInductive(eo.combined, [mutual_nat_term(0), DTVar(0)])
+  let zero_case = DNatZero
+  let succ_odd_case = DLam(
+    DNatTy,
+    DLam(odd_at_pred, DLam(DNatTy, DSucc(DTVar(0)))),
+  )
+  let succ_even_case = DLam(
+    DNatTy,
+    DLam(even_at_pred, DLam(DNatTy, DSucc(DTVar(0)))),
+  )
+  let length_term = mutual_elim_term(
+    eo,
+    elim_motive,
+    [zero_case, succ_odd_case, succ_even_case],
+    [],
+    0,
+    [d_nat_lit(2)],
+    even2_term,
+  )
+  if dep_nf_closed(length_term, DNatTy) != Some(d_nat_lit(2)) {
+    return false
+  }
   // Tree/Forest: mutual recursion through two unindexed components.
   let tf = match tree_forest_family() {
     Some(f) => f
@@ -275,7 +306,40 @@ pub fn check_mutual_inductives() -> Bool {
     root,
     0,
   )
-  dv_is_nat(nodes, 2)
+  if !dv_is_nat(nodes, 2) {
+    return false
+  }
+  // `darg_mutual_function`: a constructor argument that is a *function*
+  // into another component of the mutual block (the function-valued
+  // analogue of `darg_mutual`'s plain recursive occurrence).  A minimal
+  // two-component family where component 1's constructor takes a
+  // `Bool -> component 0` function must compile and validate (generic
+  // strict positivity accepts `DArgFunction` just as it does for the
+  // non-mutual `darg_function`/W-type case); routing the same argument
+  // at an out-of-range target component must be rejected.
+  let fn_components = [
+    dinductive_spec("FnBaseS", 0, [], [], [dconstructor_spec("base", [])]),
+    dinductive_spec("FnChoiceS", 0, [], [], [
+      dconstructor_spec("choice", [darg_mutual_function("pick", 0, DBoolTy)]),
+    ]),
+  ]
+  let fn_family_ok = match
+    compile_mutual_inductive("FnChoiceFamilyS", fn_components) {
+    Some(family) => family.combined.constructors.length() == 2
+    None => false
+  }
+  let fn_components_bad = [
+    dinductive_spec("FnBaseS", 0, [], [], [dconstructor_spec("base", [])]),
+    dinductive_spec("FnChoiceS", 0, [], [], [
+      dconstructor_spec("choice", [darg_mutual_function("pick", 5, DBoolTy)]),
+    ]),
+  ]
+  let fn_family_bad_rejected = match
+    compile_mutual_inductive("FnChoiceBadFamilyS", fn_components_bad) {
+    Some(_) => false
+    None => true
+  }
+  fn_family_ok && fn_family_bad_rejected
 }
 
 ///|

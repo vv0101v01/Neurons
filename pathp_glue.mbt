@@ -38,6 +38,21 @@ pub fn elems_of(ty : Ty) -> Array[PVal] {
       }
       out
     }
+    TySum(a, b) => {
+      // Left-tagged elements of `a` first, then right-tagged elements of
+      // `b`: a fixed, deterministic order, so `ty_card = elems_of(_).length`
+      // and code-based indexing (`fin_map_of_code`) stay well-defined.
+      let out : Array[PVal] = []
+      let xs = elems_of(a)
+      let ys = elems_of(b)
+      for i in 0..<xs.length() {
+        out.push(PVLeft(xs[i]))
+      }
+      for j in 0..<ys.length() {
+        out.push(PVRight(ys[j]))
+      }
+      out
+    }
   }
 }
 
@@ -47,6 +62,8 @@ pub fn in_ty(v : PVal, ty : Ty) -> Bool {
     (PVUnit, TyUnit) => true
     (PVBool(_), TyBool) => true
     (PVPair(a, b), TyProd(x, y)) => in_ty(a, x) && in_ty(b, y)
+    (PVLeft(a), TySum(x, _)) => in_ty(a, x)
+    (PVRight(b), TySum(_, y)) => in_ty(b, y)
     _ => false
   }
 }
@@ -73,7 +90,7 @@ pub struct Iso {
   dst : Ty
   to_fn : (PVal) -> PVal
   from_fn : (PVal) -> PVal
-  wiring : Wiring // canonical form; to_fn/from_fn are its evaluation
+  wiring : SumWiring // canonical form; to_fn/from_fn are its evaluation
 }
 
 ///|
@@ -82,7 +99,7 @@ pub struct Equiv {
   dst : Ty
   fwd : (PVal) -> PVal
   bwd : (PVal) -> PVal
-  wiring : Wiring // canonical form; fwd/bwd are its evaluation
+  wiring : SumWiring // canonical form; fwd/bwd are its evaluation
 }
 
 ///|
@@ -99,7 +116,7 @@ pub fn iso_of_wiring(w : Wiring) -> Iso {
     dst: w.dst,
     to_fn: v => wiring_apply(w, v),
     from_fn: v => wiring_apply(winv, v),
-    wiring: w,
+    wiring: SWLeaf(w),
   }
 }
 
@@ -111,6 +128,34 @@ pub fn equiv_of_wiring(w : Wiring) -> Equiv {
     dst: w.dst,
     fwd: v => wiring_apply(w, v),
     bwd: v => wiring_apply(winv, v),
+    wiring: SWLeaf(w),
+  }
+}
+
+///|
+/// The `SumWiring`-level counterpart of `iso_of_wiring`/`equiv_of_wiring`,
+/// for equivalences that genuinely need the sum combinators (`SWSum`/
+/// `SWSwap`) and not just the product/bool/unit fragment (SPEC §四 item
+/// 9(c), wiring layer).
+pub fn iso_of_sumwiring(w : SumWiring) -> Iso {
+  let winv = sumwiring_inv(w)
+  Iso::{
+    src: sumwiring_src(w),
+    dst: sumwiring_dst(w),
+    to_fn: v => sumwiring_apply(w, v),
+    from_fn: v => sumwiring_apply(winv, v),
+    wiring: w,
+  }
+}
+
+///|
+pub fn equiv_of_sumwiring(w : SumWiring) -> Equiv {
+  let winv = sumwiring_inv(w)
+  Equiv::{
+    src: sumwiring_src(w),
+    dst: sumwiring_dst(w),
+    fwd: v => sumwiring_apply(w, v),
+    bwd: v => sumwiring_apply(winv, v),
     wiring: w,
   }
 }
@@ -148,9 +193,12 @@ pub fn iso_wf_extensional(i : Iso) -> Bool {
 
 ///|
 /// Isomorphism laws, decided symbolically: the wiring is a signed
-/// permutation between the stated types.
+/// permutation between the stated types (or, for a sum-aware wiring, a
+/// well-formed `SumWiring` — see `sumwiring_wf`).
 pub fn iso_wf(i : Iso) -> Bool {
-  i.wiring.src == i.src && i.wiring.dst == i.dst && wiring_wf(i.wiring)
+  sumwiring_src(i.wiring) == i.src &&
+  sumwiring_dst(i.wiring) == i.dst &&
+  sumwiring_wf(i.wiring)
 }
 
 ///|
@@ -167,7 +215,7 @@ pub fn iso_to_equiv(i : Iso) -> Equiv {
 
 ///|
 pub fn equiv_id(ty : Ty) -> Equiv {
-  equiv_of_wiring(wiring_id(ty))
+  equiv_of_sumwiring(sumwiring_id(ty))
 }
 
 ///|
@@ -181,25 +229,62 @@ pub fn equiv_bool_not() -> Equiv {
 }
 
 ///|
-/// Product of equivalences: (e₁ × e₂) : A×C ≃ B×D.
+/// Product of equivalences: (e₁ × e₂) : A×C ≃ B×D. Both operands must be
+/// in the pure product/bool/unit fragment (`SWLeaf`) — a `TySum` nested
+/// inside a `TyProd` is outside `Wiring`'s leaf model (see sum_wiring.mbt's
+/// module comment), so this aborts rather than silently miscounting if
+/// either operand uses a sum combinator (`SWSum`/`SWSwap`/`SWComp`).
 pub fn equiv_prod(e1 : Equiv, e2 : Equiv) -> Equiv {
-  equiv_of_wiring(wiring_prod(e1.wiring, e2.wiring))
+  match (e1.wiring, e2.wiring) {
+    (SWLeaf(w1), SWLeaf(w2)) => equiv_of_wiring(wiring_prod(w1, w2))
+    _ =>
+      abort(
+        "equiv_prod: sum-type equivalences cannot be nested inside a product (SPEC §四 item 9(c))",
+      )
+  }
+}
+
+///|
+/// Sum of equivalences: (e₁ ⊎ e₂) : A+C ≃ B+D, tag-preserving (SPEC §四
+/// item 9(c)): `inl a` maps through `e1` and `inr c` maps through `e2`.
+pub fn equiv_sum(e1 : Equiv, e2 : Equiv) -> Equiv {
+  equiv_of_sumwiring(sumwiring_sum(e1.wiring, e2.wiring))
+}
+
+///|
+/// The canonical swap equivalence A+B ≃ B+A.
+pub fn equiv_sum_swap(a : Ty, b : Ty) -> Equiv {
+  equiv_of_sumwiring(sumwiring_swap(a, b))
+}
+
+///|
+/// Isomorphism counterparts of `equiv_sum`/`equiv_sum_swap`.
+pub fn iso_sum(i1 : Iso, i2 : Iso) -> Iso {
+  iso_of_sumwiring(sumwiring_sum(i1.wiring, i2.wiring))
+}
+
+///|
+pub fn iso_sum_swap(a : Ty, b : Ty) -> Iso {
+  iso_of_sumwiring(sumwiring_swap(a, b))
 }
 
 ///|
 pub fn equiv_comp(e1 : Equiv, e2 : Equiv) -> Equiv {
-  equiv_of_wiring(wiring_comp(e1.wiring, e2.wiring))
+  equiv_of_sumwiring(sumwiring_comp(e1.wiring, e2.wiring))
 }
 
 ///|
 pub fn equiv_inv(e : Equiv) -> Equiv {
-  equiv_of_wiring(wiring_inv(e.wiring))
+  equiv_of_sumwiring(sumwiring_inv(e.wiring))
 }
 
 ///|
-/// Equivalence laws, decided symbolically on the wiring normal form.
+/// Equivalence laws, decided symbolically on the wiring normal form (or,
+/// for a sum-aware wiring, the `SumWiring` normal form).
 pub fn equiv_wf(e : Equiv) -> Bool {
-  e.wiring.src == e.src && e.wiring.dst == e.dst && wiring_wf(e.wiring)
+  sumwiring_src(e.wiring) == e.src &&
+  sumwiring_dst(e.wiring) == e.dst &&
+  sumwiring_wf(e.wiring)
 }
 
 ///|
@@ -240,7 +325,7 @@ pub fn equiv_ext_eq_oracle(e1 : Equiv, e2 : Equiv) -> Bool {
 /// (For this fragment it coincides with extensional equality, as the
 /// oracle-based differential tests confirm — hence the name is kept.)
 pub fn equiv_ext_eq(e1 : Equiv, e2 : Equiv) -> Bool {
-  wiring_eq(e1.wiring, e2.wiring)
+  sumwiring_eq(e1.wiring, e2.wiring)
 }
 
 ///|
@@ -286,11 +371,18 @@ pub fn coe_upath(p : UPath, r : Int32, s : Int32, x : PVal) -> PVal {
 pub fn coe_computes(p : UPath) -> Bool {
   // Symbolic form of the statement: coe 0 1 is equivFun *by the definition
   // of coe_upath*, coe r r is id by the same definition, and the
-  // forth-and-back round-trip is the wiring identity w ; w⁻¹ = id.
+  // forth-and-back round-trip is the wiring identity w ; w⁻¹ = id (now at
+  // the `SumWiring` level, so this also covers sum-aware equivalences).
   let w = p.equiv.wiring
-  wiring_wf(w) &&
-  wiring_eq(wiring_comp(w, wiring_inv(w)), wiring_id(p.equiv.src)) &&
-  wiring_eq(wiring_comp(wiring_inv(w), w), wiring_id(p.equiv.dst))
+  sumwiring_wf(w) &&
+  sumwiring_eq(
+    sumwiring_comp(w, sumwiring_inv(w)),
+    sumwiring_id(p.equiv.src),
+  ) &&
+  sumwiring_eq(
+    sumwiring_comp(sumwiring_inv(w), w),
+    sumwiring_id(p.equiv.dst),
+  )
 }
 
 ///|
@@ -614,7 +706,7 @@ pub fn glue_sound(g : GlueData, e : GlueElem, nvars : Int32) -> Bool {
   // concrete instance at e.base.  unglue(glue_from_base(a)) = a holds by
   // definition (it is the base field).
   let w = g.equiv.wiring
-  wiring_eq(wiring_comp(wiring_inv(w), w), wiring_id(g.base_ty)) &&
+  sumwiring_eq(sumwiring_comp(sumwiring_inv(w), w), sumwiring_id(g.base_ty)) &&
   glue_wf(g, glue_from_base(g, e.base), nvars) &&
   unglue(glue_from_base(g, e.base)) == e.base
 }

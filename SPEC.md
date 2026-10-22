@@ -841,6 +841,34 @@ HIT cells 推廣至任意有限維：任一坐標到端點時遞迴代入 face e
 消去 case 是逐維巢狀 `PathP`；沿移動維度的 comp 在端點與目標維度可精確
 判定時刻逐引數計算，否則保留有範形地位的形式中性合成。
 
+宇宙多態宣告與互歸納宣告皆為 first-class 資料：`DUnivPolyDecl`/
+`DUnivPolyHitDecl` 收合名稱、level-arity、一組 level 表式（至
+`DLevelExpr` 池；模板 body 的 level 位置以 `dlevel_var` 編碼為池入，
+複合 level 表式可見於宣告資料）、結果 level 與脫離參數鏈的 template；
+`duniv_poly_validate` 檢查名稱與 level 引用良構，`duniv_poly_instantiate`
+對安全的 level 向量以 `dlevel_pool_eval`+`dlevel_eval` 計算全體 level 後
+經既有 schema 驗證（拒越界引用、負 level、錯 arity），與宿主端
+level-scheme 閉包的一致性由 `duniv_poly_agrees_with_scheme`（HIT 版同）
+律檢查。`DMutualDecl` 把 `compile_mutual_inductive` 的格式前提提煉為
+宣告時的 `dmutual_decl_validate`（參數/索引字尾一致、命名一致、適用
+目標在塊內、拒 induction-recursive），並以 `dmutual_decl_matches_family`
+後證編譯與宣告同義。
+
+正性判定對不透明中性型別算子應用提供顯式信任邊界：`DVariance`
+（`VarianceStrict`/`VariancePositive`/`VarianceNegative`）標記一個算子
+每個引數位的變異性，`DPositivityCert` 收合一個算子名與其變異性序列，
+`DPositivityCerts` 是登記表（按算子名新增/覆寫/查詢）。正性走訪認得
+應用脊：多引數透明別名一次性歸約至其身，算子式參數使用（如
+`(F : Type -> Type) -> F Nat -> ...` 的 `F`）經既有族遞迴證成為嚴格正，
+中性應用 `f a₁ … aₙ`（`f` 為去 de-Bruijn 索引的脈絡變量）若其名在
+registry 中有證書且引數數不超過證書長度，則逐位依變異性判定（嚴格位
+保持強度，正/負位轉為非嚴格並視需要翻轉極性）；未登記或超出證書長度
+的中性應用仍回報保守的 unknown。`inductive_schema_validate_with_certs`/
+`hit_schema_validate_with_certs` 是持證驗證入口：外部引數位接受族的
+全嚴格正出現、函數引數的定義域仍需無出現（負位規則不變），驗證結果
+按 `(descriptor, certs)` 快取，故同一描述子在不同信任邊界下可有不同
+判決而不互相污染；空證書表精確等於既有（保守）驗證規則。
+
 #### 1.9.2 原始 `DSystem` 的相容性與 first-match 範形
 
 宿主直接建立的 `DSystem` 不再假定相容。`conv_at_under_face` 把面轉成
@@ -929,6 +957,46 @@ coordinate the face expression is substituted recursively, elimination cases are
 nested `PathP`s by dimension, and comp along a moving dimension computes argument
 by argument exactly when endpoints and target dimension can be decided — otherwise
 a formal neutral composition with normal-form status is kept.
+
+Universe-polymorphic and mutual declarations are first-class data.
+`DUnivPolyDecl`/`DUnivPolyHitDecl` collect a name, a level arity, a pool of
+`DLevelExpr`s (level positions in the template body are encoded with
+`dlevel_var`; compound level expressions are visible as declaration data), a
+result level, and a template off the parameter chain; `duniv_poly_validate`
+checks name and level-reference well-formedness, and `duniv_poly_instantiate`
+computes all levels from a safe level vector via `dlevel_pool_eval`+`dlevel_eval`
+and reuses the existing schema validation (refusing out-of-range references,
+negative levels, and wrong arities); agreement with the host-level level-scheme
+closures is checked by the `duniv_poly_agrees_with_scheme` law (and the HIT
+variant). `DMutualDecl` distils the format preconditions of
+`compile_mutual_inductive` into `dmutual_decl_validate` at the declaration
+(matching parameter/index tails, consistent naming, targets within the block,
+no induction-recursive components), and `dmutual_decl_matches_family`
+post-checks that the elaboration is the declared one.
+
+Positivity checking offers an explicit trust boundary for opaque neutral
+type-operator applications: `DVariance` (`VarianceStrict`/`VariancePositive`/
+`VarianceNegative`) marks the variance of one argument position of an
+operator, `DPositivityCert` collects an operator name with its sequence of
+variances, and `DPositivityCerts` is the registry (add/replace/look up by
+operator name). The positivity walk handles application spines: multi-
+argument transparent aliases reduce in one step to their body, operator-style
+parameter uses (such as the `F` in `(F : Type -> Type) -> F Nat -> ...`) are
+certified strictly positive by recursing on the family's own constructors as
+before, and a neutral application `f a₁ … aₙ` (`f` a context variable at a
+resolved de Bruijn index) is judged positionally by its certified variance
+when its name has a certificate in the registry covering at least `n`
+positions (strict positions keep strictness, positive/negative positions lose
+strictness and flip polarity as needed); unregistered operators and arity
+overflows still report the conservative `unknown`.
+`inductive_schema_validate_with_certs`/`hit_schema_validate_with_certs` are the
+certified validation entry points: external arguments admit all-strictly-
+positive occurrences of the family, function-argument domains must still have
+no occurrence (the negative-position rule is unchanged), and validation
+results are cached by `(descriptor, certs)`, so the same descriptor can
+validate differently under different trust boundaries without
+cross-contamination; the empty certificate registry agrees exactly with the
+existing (conservative) validation rule.
 
 **1.9.2 Compatibility of raw `DSystem`s and first-match normal forms.**
 
@@ -1138,11 +1206,18 @@ block can be abstracted and instantiated at different types.
 | `FinMap` | `elems_of(dst)` 的 `\|A\|` 長索引列；`fin_map_wf` 檢查長度與值域 | 表結構相等 |
 | 等價 | 良構且單射的表（同基數時即雙射） | `fin_map_is_equiv` 在全元素上判定 |
 | `CPath` | `(src, dst, e)`，即表的 ua 像 | `cpath_eq`：端點相同且 0→1、1→0 的傳輸在每個元素上相同 |
+| `BigNat` | base-10⁹ limbs 的非負整數（規範形），承載一切計數 | limb 進位算術全精確；到機器整數的轉換溢出時回 `None` |
+| `LawVerdict` | `LawHolds` / `LawFails(反例表)` / `LawUndecided` | 窮舉檢查的三值判決；超預算回 `LawUndecided`，不抽樣 |
 
-*判定程序。* `fin_equiv_search` 按 `|B|` 進位字典序掃表，回傳第一個等價，故
-「A ≃ B」是判定問題（回 `Option[FinMap]`）；`fin_equiv_count` 數個數（同基數時 n!，
-否則 0）；`univalence_decides` 把定理寫成可判定形式：(等價存在) ⟺ (基數相同) ∧
-(個數 = n!)。
+*判定程序。* `fin_equiv_search` 在**單射前綴**上剪枝搜尋（訪問 n! 雙射的搜索樹，
+不是 `\|B\|^\|A\|` 的表空間），按 `|B|` 進位字典序回傳第一個等價（與舊的編碼升序掃描
+同一序），故「A ≃ B」在任何大小都是判定問題（回 `Option[FinMap]`）；`fin_equiv_count`
+數個數（同基數時 n!，否則 0），n ≤ 18 由同一搜索樹的記憶化枚舉**算出**（DP 對 used
+位罩），更大時由閉式 n! 續算，兩者在共跑處交叉驗證；`univalence_decides` 把定理寫成
+可判定形式：(等價存在) ⟺ (基數相同) ∧ (個數 = n!)。計數公式一律以 `BigNat` 決算：
+舊 `Int32` 算式在 13! 起溢位、`\|B\|^\|A\|` 在 16 元素時 `16^16 ≡ 0 (mod 2^32)` 靜默歸零，
+令判定變空洞——現已根除（`fact(16) = 20922789888000`、`16^16 = 18446744073709551616`
+精確可得，`univalence_decides` 於 16 元素型上真確運算）。
 
 *計算律。* `ua_transport_computes`：`coe^{ua e} 0 1 = e`、`coe^{ua e} 1 0 = e⁻¹`，
 且 `coe r r = id`，全部在元素上成立；`ua_refl_is_identity`：`ua id = refl`；
@@ -1152,9 +1227,12 @@ block can be abstracted and instantiated at different types.
 *單值性本身是等價。* `cpath_ua : (A ≃ B) → (A = B)` 與
 `cpath_to_equiv : (A = B) → (A ≃ B)`（沿路徑傳輸）是兩個方向；`ua_section`
 （`ua⁻¹(ua e) = e`）與 `ua_retraction`（`ua(ua⁻¹ p) = p`）驗證互逆。
-`ua_section_all`／`ua_retraction_all` 對兩型之間**每一張表**窮舉，故這是判定而非抽樣。
-`univalence_path_count` 數路徑型別的元素個數：n 元素型恰有 **n!** 個，正是等價型別的基數
-（`Bool × Bool` 給 24）。
+`ua_section_all`／`ua_retraction_all` 窮舉兩型之間的**每一張表**（小空間連非等價表
+一併檢查，是對舊行為的嚴格加強）、退一級窮舉**每一個等價**（剪枝搜索樹），二級預算
+（表預算、節點預算，與 BDD 節點預算同一慣例）之內是判定而非抽樣；超預算誠實回報
+`LawUndecided`，絕不以樣本充數。`univalence_path_count` 數路徑型別的元素個數：
+n 元素型恰有 **n!** 個，正是等價型別的基數（`Bool × Bool` 給 24，16 元素型給
+20922789888000）。
 
 **(b) n 維立方體演算法。** `cube.mbt` 手寫二維開盒；`cube_algorithm.mbt` 用面格上的
 Möbius 和，導出任意維度 `n`、任意缺失面 `(k, ε)` 的 Kan 填充。記 `L` 為已知面集合、
@@ -1203,12 +1281,23 @@ universe: `ua e` wraps an equivalence and `coe_upath` reads it back. This module
 | `FinMap` | an array of `\|A\|` indices into `elems_of(dst)`; `fin_map_wf` requires the length and range | structural table equality |
 | equivalence | a well-formed injective table; on finite types of equal size this is a bijection | `fin_map_is_equiv` on all elements |
 | `CPath` | `(src, dst, e)` — the ua image of a table | `cpath_eq`: same endpoints and the same transport 0→1 and 1→0 on every element |
+| `BigNat` | non-negative integers as canonical base-10⁹ limbs, carrying every count | exact limb arithmetic; conversions to machine integers return `None` on overflow |
+| `LawVerdict` | `LawHolds` / `LawFails(counterexample)` / `LawUndecided` | three-valued verdict of an exhaustive check; over budget reports `LawUndecided`, never a sample |
 
-*Decision procedures.* `fin_equiv_search` scans tables in base-`|B|`
-lexicographic order and returns the first equivalence, so `A ≃ B` is decided
-(`Option[FinMap]`); `fin_equiv_count` counts them (n! when the sizes agree, 0
-otherwise); `univalence_decides` states the theorem in decidable form:
-(an equivalence exists) ⟺ (cardinalities agree) ∧ (the count is n!).
+*Decision procedures.* `fin_equiv_search` prunes on **injective prefixes**
+(walking the n! search tree of bijections, not the `\|B\|^\|A\|` table space)
+and returns the first equivalence in base-`|B|` lexicographic order — the same
+order the old code-ascending scan produced — so `A ≃ B` is decided at every
+size (`Option[FinMap]`); `fin_equiv_count` counts them (n! when the sizes agree,
+0 otherwise), *computed* by memoised enumeration of that same search tree (a DP
+over used-value bitmasks) up to `n ≤ 18` and continued by the closed form n!
+beyond, the two cross-checked wherever both run; `univalence_decides` states the
+theorem in decidable form: (an equivalence exists) ⟺ (cardinalities agree) ∧
+(the count is n!).  Every counting formula is exact in `BigNat`: the old `Int32`
+formulas wrapped from 13! on, and at 16 elements `16^16 ≡ 0 (mod 2^32)` silently
+zeroed `\|B\|^\|A\|`, making the decision vacuous — now eradicated (`fact(16) =
+20922789888000`, `16^16 = 18446744073709551616`, and `univalence_decides`
+genuinely computes on 16-element types).
 
 *Computation rules.* `ua_transport_computes` — `coe^{ua e} 0 1 = e` and
 `coe^{ua e} 1 0 = e⁻¹`, with `coe r r = id`, on all elements;
@@ -1221,10 +1310,16 @@ otherwise); `univalence_decides` states the theorem in decidable form:
 `cpath_to_equiv : (A = B) → (A ≃ B)` (transport along the path) are the two
 directions; `ua_section` (`ua⁻¹(ua e) = e`) and `ua_retraction`
 (`ua(ua⁻¹ p) = p`) verify they are mutually inverse. `ua_section_all` and
-`ua_retraction_all` exhaust **every table** between two types, so the statement
-is decided rather than sampled. `univalence_path_count` counts the type of
+`ua_retraction_all` exhaust **every table** between two types (for small
+spaces, including non-equivalence tables — a strict strengthening of the old
+behaviour), fall back to exhausting **every equivalence** (the pruned search
+tree), and do so within two explicit budgets (table budget, node budget — the
+same convention as BDD node budgets): within the budgets the statement is
+decided rather than sampled, and beyond them the verdict is honestly
+`LawUndecided`, never a sample. `univalence_path_count` counts the type of
 paths: for a type of size n it has exactly **n!** elements — the cardinality of
-the type of equivalences (`Bool × Bool` gives 24).
+the type of equivalences (`Bool × Bool` gives 24, a 16-element type gives
+20922789888000).
 
 **(b) The n-dimensional cube algorithm.** `cube.mbt` hand-writes the
 two-dimensional open box. `cube_algorithm.mbt` derives a Kan filler for an
@@ -1472,141 +1567,742 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 
 </details>
 
-## 四、第六期後仍保留的邊界
+## 四、仍保留的邊界（流水式待辦清單 / running todo list）
 
-- Schema 片斷仍是有限、可檢查的描述子語言：宇宙多態以宿主層 level
-  scheme 呈現，而非 AST 內的一等宇宙多態宣告/抽象語法；互歸納經
-  Sum-indexed 編譯而非原始互宣告，正性只認得透明別名與
-  `DPositiveFunctor`（現含依賴 container 節點）所生成的間接用法。
-  「任意函子」在此精確指任意有限依賴多項式/container 呈現；不能
-  表為此類正性函子、或遞迴時改變族參數的非均勻巢狀型別（如 Bush）
-  仍不在片斷內，不透明的中性型別算子應用仍被保守拒絕。HIT 的移動維度 comp 只在端點與目標維度可精確決定時化簡，
-  其餘情形以形式中性合成為範形，而非宣稱定義性計算；歸納—遞迴涵蓋
-  `DDecode` 的 Tarski 形式，不是任意同時遞迴定義語言。
-- 原始 `DSystem` 相容性如今可精確回報，但判定要枚舉面的 BDD cubes，
-  成本最壞仍隨維度變量指數增長；它判定的是給定型別線下、在這些面脈絡
-  中的轉換相容。first-match 不交化只消除優先序重疊，不能修復有效分支
-  在維度 0 與 base 的實質不合，此時 checked 提升正確地回 `None`。
-- AST `Equiv` 是 section/retraction 型的一等等價，不是帶高階相干的
-  adjoint equivalence，也沒有命題截斷或「所有等價皆由路徑分類」的
-  單價公理陳述；`ua` 與 `GlueEquiv` 的計算規則已實作，但不主張邏輯上
-  的完備刻畫。GlueEquiv 在 quote 時把面正規化為 BDD 面，故 re-elaboration
-  後以轉換相等為準，而非原始句法相等。
-- `DCheckedTypeLine` 劃定了可信邊界，但底層 `DLine` 與其他語義封閉仍可
-  由宿主函數構成；未經 checked 入口的裸宿主線仍不自動尊重維度代換。
-  schema registry 是進程內、鍵值式的共享與快取（鍵含 Debug 表示與語義
-  快照），不是持久化、增量式或全域 hash-consing 的生產級內核。
-- 精確代數以 `Int32` 有理係數運算：加/乘先約分以延緩溢出，但大型輸入
-  仍可能溢出，沒有任意精度整數。`QPoly` 不做 Q 上一般不可約因式分解；
-  有理譜/Jordan 分解只在特徵多項式於 Q（或所選單一 `AlgNum` 擴張）中
-  分裂時完備，未自動構造分裂域或隔離所有複根。根式去巢只涵蓋二次片斷。
-- 原 `Double` 數值 API 仍屬近似診斷：精確結論只對能表示為 `QuadC`
-  與低次多項式立方體的影子成立；任意宿主函數 `Cube` 仍只能在網格上
-  觀察。ROBDD 對某些布林函數/變量次序有固有指數下界，節點預算耗盡與
-  DPLL 步數耗盡會回報「未決定」；把 DAG 展開回樹形 BDD、或把 BDD
-  轉回 DNF 面公式時，大小亦可指數增長。
+> 本節為**流水簿式待辦清單**，條目編號 1–10 穩定，逐回合更新（「第 N 條」以本編號為準）。
+> 工作完成後改寫該條為現況＋剩餘待辦（✅），進行中的標 🔄，未動的標 ⏳；
+> 新發現的待辦事項隨時補入對應條目。
+>
+> 本回合（2026-10-21）：**第 9 條完成**（計數溢位根除、搜尋剪枝、預算窮舉），
+> **第 1 條（scheme）(a)(b) 完成**；續回合：**第 1 條 (c)+(e) 變異性證書
+> registry 完成**，**第 9 條再強化**（路徑群胚定律 + DP/逆元優化）。
+>
+> 本回合（2026-10-22）：**第 9 條 (a)(b)(c)(d) 四子項全部完成**
+> （符號化恆等層去 `LawUndecided` 天花板、枚舉上界 18→20、有限宇宙擴充
+> `TySum`、`BigInt`/`BigRat` 精確有理層）；**第 3 條非截斷部分完成**
+> （`ishae.mbt`：ishae 結構、biinv→ishae、可縮纖維、三者一致定理），
+> 命題截斷仍待（schema 擴充範圍大）。
+>
+> 本回合（2026-10-22，同日續）：**第 9 條 (a) 再強化至「公開 API 本身絕不
+> 回報 `LawUndecided`」**（`ua_section_all`／`ua_retraction_all` 兩函數
+> 本身，而非僅並行的 `_proved` 變體，在任意大小下必判 `LawHolds`）；
+> **第 9 條 (c) 完成（範圍：僅 wiring.mbt，不動 kan_dep.mbt）**——新檔
+> `sum_wiring.mbt` 的 `SumWiring` 型別把 `TySum` 接上 AST 一等
+> `Equiv`/`Iso`（`pathp_glue.mbt`）；`equiv_sum`/`equiv_sum_swap`
+> 新構造子落地。經使用者澄清後，**「BigRat 接上 qpoly/qmat」一事的真正
+> 要求是「單值性能用到 qpoly/qmat」，途徑非重點**——新檔
+> `qpoly_univalence.mbt` 已完成此接線（有理根集／有理譜上的置換皆為
+> `ua` 見證的等價）；`Int32`→`BigRat` 型別遷移本身仍是另一件獨立待辦。
+>
+> 本回合（2026-10-22，同日再續）：**第 3 條命題截斷（squash）完成**——
+> schema.mbt 新增 `hit_face_var_sentinel`/`dhit_face_var`，讓
+> `DHitFaceExpr` 可表「端點即本次呼叫的第 k 個引數」而非只能「實例化另一
+> 已定義 cell」；新檔 `ptrunc.mbt`（`squash_schema`/`ptrunc_schema` 及
+> 便利封裝）與 `ptrunc_wbtest.mbt`（5 測試）；過程中順手修正
+> `conv_hit_cell_at` 一個既有的維度長度不匹配越界讀取錯誤（與本次新功能
+> 無關，屬既有缺陷）。`moon test`：118/118（原113＋新增5）；
+> `moon run cmd/main`：43/43；`tools/audit_spec.py --write`：2565 符號，
+> 零警告。
+>
+> 本回合（2026-10-22，全代碼健檢）：**找錯、去重、減債、清死碼專項**——
+> 以全符號引用計數掃描找出 11 個「定義後從未被引用」的 `pub fn`；其中
+> `equiv_make_value`／`equiv_type_term`（equiv_ast.mbt）純屬對
+> `DVEquiv`/`DEquivTy` 構造子的一行包裝，且兩個構造子本身在別處皆已被
+> 直接呼叫，判定為真死碼並**刪除**；其餘 9 個（`cert_projector_of_vector`、
+> `checked_line_conv`、`checked_line_of_pathp_term`、`checked_pathp_type`、
+> `darg_mutual_function`、`dsystem_checked_of`、`mutual_elim_term`、
+> `qmat_rational_spectrum`、`sym_mat_of_qmat`）皆為語意完整、與既有同族
+> API（如 `darg_mutual`、`checked_line_at`、`schema_elim_term`）對稱的
+> 合理函式，判定為「缺測試」而非死碼，逐一加入行為測試（`mutual_elim_term`
+> 一例並以 AST 項求值結果與既有 `eval_mutual_elim` 的值級計算互相印證，
+> 確認兩條路徑語意一致）。另以函式體正規化雜湊掃描找出一處真實重複：
+> `cube_ext_eq`（categories.mbt）與 `cube_approx_eq`（cube_algorithm.mbt）
+> 逐字元相同，判定後者為前者的誤重造，**刪除 `cube_approx_eq`，呼叫端
+> 改用 `cube_ext_eq`**；`inductive_param_types_cached`/`hit_param_types_cached`
+> 一對雖函式體文字相同，但分屬不同型別（`DInductiveSpec`/`DHitSpec`）參數，
+> 屬型別所迫的合理重複，不合併。另掃描所有 `let mut ok = ...; for ... { 索引
+> 另一陣列 }` 模式，確認除已於上一回合修正的 `conv_hit_cell_at` 外，其餘
+> 皆已在迴圈內正確以 `i < other.length()` 二次防呆，無其他同類潛伏錯誤。
+> 本輪共刪除 3 個符號、新增 9 組測試斷言（不新增測試函式，掛載於既有
+> `check_*` 系列）。`moon test`：118/118（不變）；`moon run cmd/main`：
+> 43/43（不變）；`tools/audit_spec.py --write`：2562 符號（原 2565，淨減
+> 3），零警告。
 
-- S³ 是懸掛 HIT 的生成呈現，本專案不計算其同倫群、Hopf 不變量或
-  與其他球面呈現之間的等價。Jacobi 區間層仍以 Int32 有理端點運算：
-  dyadic 外向捨入控制分母，但極大矩陣元仍可能溢出；其證書驗證所
-  表示的旋轉鏈，Gershgorin 簇在譜接近時可能只給合併簇而非逐一分離。
-- 高階合一只實作可判定的 Miller pattern 片斷及閉項 fallback；完整
-  HOU 不可判定，非 pattern 的 flex-flex/flex-rigid 問題會失敗而非
-  猜測。參數化模組是 elaboration 期的 DTerm telescope，不是分離
-  編譯/連結系統：宣告必須有 body，import 引數只能用參數與較早
-  imports，且沒有二進位介面或增量重編譯。
+1. **Schema 片斷（scheme）** — 🔄 進行中
+   - 現況：宇宙多態已有 AST 一等宣告 `DUnivPolyDecl`/`DUnivPolyHitDecl`
+     （level 池 + `dlevel_var` body 編碼 + `duniv_poly_instantiate` 經
+     `dlevel_pool_eval`+既有 schema 驗證），互歸納亦有原始 `DMutualDecl`
+     宣告（Sum-indexed 編譯為其語義，格式前提提煉為宣告時驗證）；
+     正性判定認得透明別名（含多引數歸約）、`DPositiveFunctor`
+     （現含依賴 container 節點）與算子式參數使用所生的間接用法，
+     並可經變異性證書判定持證的不透明中性算子應用；其餘邊界仍在：
+     「任意函子」在此精確指任意有限依賴多項式/container 呈現；不能
+     表為此類正性函子、或遞迴時改變族參數的非均勻巢狀型別（如 Bush）
+     仍不在片斷內；未登記證書的不透明中性型別算子應用仍被保守拒絕，
+     登記後則按證書判定。HIT 的移動維度 comp 只在端點與目標維度可精確決定時化簡，
+     其餘情形以形式中性合成為範形，而非宣稱定義性計算；歸納—遞迴涵蓋
+     `DDecode` 的 Tarski 形式，不是任意同時遞迴定義語言。
+   - 進度：(a) ✅ `DUnivPolyDecl`/`DUnivPolyHitDecl` 一等宇宙多態宣告
+     （level 池 + `dlevel_var` body 編碼 + `duniv_poly_instantiate` 經
+     `dlevel_pool_eval`+既有 schema 驗證 + 與宿主 level-scheme 全 level
+     一致律）；(b) ✅ `DMutualDecl` 原始互宣告（`dmutual_decl_validate`/
+     `compile`/`matches_family`）；(c)+(e) ✅ 變異性證書 registry——
+     `DVariance`（嚴格正/正/負）+ `DPositivityCert`/`DPositivityCerts`
+     顯式登記中性算子各參數位；正性走訪處理應用脊（多引數透明別名歸約、
+     算子式參數使用認證為嚴格正、持證中性算子按證書判定取代保守 unknown），
+     `inductive_schema_validate_with_certs`/`hit_schema_validate_with_certs`
+     持證驗證（外部引數僅收全嚴格正出現；函數定義域仍禁出現），快取鍵含
+     證書；嵌入描述子的推斷仍走預設（保守）規則，屬分層邊界。待辦：
+     (d) 非均勻巢狀（Bush）統一 `NestedTree`；
+     (f) HIT 移動維度 comp 更廣化簡；(g) IR 超出 Tarski `DDecode`（remaining）。
+
+2. **原始 `DSystem` 相容性** — ⏳
+   - 原始 `DSystem` 相容性如今可精確回報，但判定要枚舉面的 BDD cubes，
+     成本最壞仍隨維度變量指數增長；它判定的是給定型別線下、在這些面脈絡
+     中的轉換相容。first-match 不交化只消除優先序重疊，不能修復有效分支
+     在維度 0 與 base 的實質不合，此時 checked 提升正確地回 `None`。
+   - 待辦：面 cube 枚舉的指數成本（符號化/增量判定）；有效分支與 base 在
+     維度 0 不合時的診斷資料。
+
+3. **AST `Equiv` 的高階相干** — 🔄 非截斷部分本回合完成，餘待辦見下
+   - 現況：AST `Equiv`（pathp_glue.mbt）本身建於 `Wiring`（帶號排列），
+     `fwd`/`bwd` 定義上互逆，故在此呈現下沒有獨立的 section/retraction
+     相干可言；更一般的有限表格層 `FinMap`（允許非單射/非滿射的任意函數）
+     才是能區分 biinv 與 adjoint equivalence（ishae）的恰當之處。
+     新檔 `ishae.mbt`（依研究 HoTT book Def 4.2.1/4.3.1、Coq HoTT 庫、
+     cubical fiber 形式化）實作：`fin_fiber`/`fin_is_contr_fiber`/
+     `fin_is_equiv_via_contr`（`isEquiv(f) := Πy. isContr(fiber f y)`，
+     以計表格命中數判定，非搜尋）；`Ishae` 結構（g/η/ε/三角律 τ）與
+     `ishae_eta_holds`/`ishae_eps_holds`/`ishae_triangle_holds`；
+     `ishae_triangle_is_free` 證明並檢驗「在此嚴格相等（hSet）模型中，
+     三角律是 ε 在 `f(x)` 處的特例，非獨立資料」（呼應 Coq HoTT 庫「另一
+     三角律可證不可假設為資料」）；`biinv_to_ishae(f,l,r)` 把 biinv 的
+     左右逆構造為單一 ishae（`g:=l` 並以代換鏈推導 `f∘g~id`，而非假設）；
+     `fin_equiv_three_ways_agree` 證成「雙射＝可縮纖維＝存在 ishae」三者
+     窮舉一致定理（HoTT book Thm 4.2.3/4.3.2 的具體化）。過程中發現
+     `fin_map_is_equiv` 只驗單射（其文件已載明僅在來源/目標基數相等時
+     等於雙射，現有呼叫端皆已守衛此前提）——`fin_equiv_three_ways_agree`
+     對任意 `FinMap`（含跨基數）額外併入基數相等檢查以成立普適定理；
+     新檔 `ishae_wbtest.mbt`（5 測試）含明確示範此一範圍邊界的對照測試。
+     `ua`／`GlueEquiv` 的計算規則已實作，但仍不主張邏輯上的完備刻畫；
+     GlueEquiv 在 quote 時把面正規化為 BDD 面，故 re-elaboration 後以
+     轉換相等為準，而非原始句法相等。
+   - ✅ 命題截斷（squash）完成：`∥A∥` 式 HIT 需兩個建構子 `∣_∣:A→∥A∥` 與
+     `squash:∀x y:∥A∥. x≡y`；原本 `DHitFaceExpr{cell,args,dims}`
+     （schema.mbt）只能表「實例化另一已定義 cell」為面，無法表 squash
+     這種端點本身即為（本次呼叫的、繫於自身型別的）引數之面——新增
+     sentinel `hit_face_var_sentinel()=-1` 與智慧建構子
+     `dhit_face_var(arg_index, total_args)`：面之 `cell` 等於此 sentinel
+     時不實例化任何 cell，而是直接取用本次呼叫第 `arg_index` 個引數
+     （經 `DTVar(total_args-1-arg_index)` 編碼）；`hit_face_instantiate`
+     新增早退分支直接 `deval_dim` 該引數；`hit_validate_face` 重構為先
+     算好 `param_values`/`source_values` 再分流，sentinel 分支以
+     `DVHitType(spec, param_values, hit_result_indices(source,
+     param_values, source_values))` 為期望型別對 `face.args[0]` 做
+     `d_check`。新檔 `ptrunc.mbt`：`squash_schema()`（cell 0 `point(a:A)`
+     零維，cell 1 `squash(x,y)` 一維兩面 `[dhit_face_var(0,2),
+     dhit_face_var(1,2)]`）、`ptrunc_schema(name)`（具名、空字串或驗證
+     失敗回 `None`）及 `squash_type_term`/`squash_type_value`/
+     `squash_point_value`/`squash_path_value` 便利封裝。新檔
+     `ptrunc_wbtest.mbt`（5 測試：schema 合法性、兩端點化簡、開放維不
+     誤化簡、引數互換對稱、自反、`d_check` 型別檢查）過程中順帶揪出
+     `conv_hit_cell_at`（schema.mbt）既有缺陷——`dims1.length()==
+     dims2.length()` 只在短路 `&&` 鏈中參與判定，之後的逐維 `dim_eq_sem`
+     迴圈卻無條件按 `dims1.length()` 索引 `dims2`，當兩個 cell 的
+     `dim_count` 不同（squash 的 cell 1 對 point 的 cell 0）即會越界——
+     已修正為先行再檢查一次長度相等才進入迴圈，否則直接判不等；此修正
+     與 `dhit_face_var` 本身無關，是通用 HIT 轉換判定的獨立既有錯誤。
+     單價公理的一等 `Equiv(Path U A B, Equiv A B)` 陳述仍未包裝成單一
+     具名物件（其內容已由 `cpath_ua`/`cpath_to_equiv` +
+     `ua_section_proved`/`ua_retraction_proved` 構成的雙向證成覆蓋，缺的
+     只是封裝）——優先度低，暫不展開。
+
+4. **受檢邊界與註冊表** — ⏳
+   - `DCheckedTypeLine` 劃定了可信邊界，但底層 `DLine` 與其他語義封閉仍可
+     由宿主函數構成；未經 checked 入口的裸宿主線仍不自動尊重維度代換。
+     schema registry 是進程內、鍵值式的共享與快取（鍵含 Debug 表示與語義
+     快照），不是持久化、增量式或全域 hash-consing 的生產級內核。
+   - 待辦：裸宿主線的封閉化/檢查；registry 持久化與 hash-consing。
+
+5. **精確代數的整數寬度** — ⏳
+   - 精確代數以 `Int32` 有理係數運算：加/乘先約分以延緩溢出，但大型輸入
+     仍可能溢出，沒有任意精度整數。`QPoly` 不做 Q 上一般不可約因式分解；
+     有理譜/Jordan 分解只在特徵多項式於 Q（或所選單一 `AlgNum` 擴張）中
+     分裂時完備，未自動構造分裂域或隔離所有複根。根式去巢只涵蓋二次片斷。
+   - 待辦：**以本回合新增的 `BigNat` 置換 `Int32` 有理層**（工具已備，見
+     第 9 條成果）；一般不可約因式分解；分裂域構造；複根隔離；更高次根式
+     去巢。
+
+6. **`Double` 數值 API 與 ROBDD 下界** — ⏳
+   - 原 `Double` 數值 API 仍屬近似診斷：精確結論只對能表示為 `QuadC`
+     與低次多項式立方體的影子成立；任意宿主函數 `Cube` 仍只能在網格上
+     觀察。ROBDD 對某些布林函數/變量次序有固有指數下界，節點預算耗盡與
+     DPLL 步數耗盡會回報「未決定」；把 DAG 展開回樹形 BDD、或把 BDD
+     轉回 DNF 面公式時，大小亦可指數增長。
+   - 待辦：更多精確影子類；變量次序啟發式的進一步最小化。
+
+7. **S³ 與 Jacobi 包絡** — ⏳
+   - S³ 是懸掛 HIT 的生成呈現，本專案不計算其同倫群、Hopf 不變量或
+     與其他球面呈現之間的等價。Jacobi 區間層仍以 Int32 有理端點運算：
+     dyadic 外向捨入控制分母，但極大矩陣元仍可能溢出；其證書驗證所
+     表示的旋轉鏈，Gershgorin 簇在譜接近時可能只給合併簇而非逐一分離。
+   - 待辦：同倫群/Hopf 不變量；Jacobi 端點改用 `BigNat` 有理（同第 5 條）；
+     譜簇分離的精細化。
+
+8. **高階合一與模組連結** — ⏳
+   - 高階合一只實作可判定的 Miller pattern 片斷及閉項 fallback；完整
+     HOU 不可判定，非 pattern 的 flex-flex/flex-rigid 問題會失敗而非
+     猜測。參數化模組是 elaboration 期的 DTerm telescope，不是分離
+     編譯/連結系統：宣告必須有 body，import 引數只能用參數與較早
+     imports，且沒有二進位介面或增量重編譯。
+   - 待辦：非 pattern 問題的合理近似；分離編譯/連結；二進位介面。
+
+9. **可計算單值性** — ✅ 本回合完成（溢位根除），剩餘待辦如下
+   - ✅ 已完成：計數公式全部改以 `BigNat` 精確決算（`bignat.mbt`）——
+     `fin_map_count = |B|^|A|`、`fact = n!`、`fin_equiv_count`、
+     `univalence_path_count` 在任何大小不溢位（舊 `Int32` 在 13! 起回繞、
+     16 元素時 `16^16 ≡ 0 (mod 2^32)` 令判定變空洞）；`fin_equiv_search`
+     改為單射前綴剪枝搜尋（n! 搜索樹，非 `|B|^|A|` 表掃描），任何大小
+     即時判定「A ≃ B」且與舊字典序一致；`fin_equiv_count` 在 n ≤ 18 由
+     搜索樹記憶化枚舉算出（DP），與閉式 n! 交叉驗證；`univalence_decides`
+     在 16 元素型上真確運算（`fact(16) = 20922789888000`、
+     `16^16 = 18446744073709551616`）；`ua_section_all`／`ua_retraction_all`
+     改為預算窮舉並回三值 `LawVerdict`（小空間逐表窮舉——連非等價表一併
+     檢查；退一級逐等價窮舉；超預算回報 `LawUndecided`，絕不抽樣）。
+   - ✅ 續強化（2026-10-21 第二回合）：路徑群胚定律補全——左右單位元
+     （`cpath_comp_left/right_unit`）、對合（`cpath_sym_involutive`）、
+     `¬refl = refl`、反同態（`cpath_sym_comp`）、結合（`cpath_comp_assoc`）、
+     複合輸運計算（`transport_comp_computes`：`coe (p∙q) = coe q ∘ coe p`
+     雙向）、`transport_refl_identity`；全部進 `univalence_compute_all`
+     電池與白盒測試（含端點不合的拒絕）。優化：計數 DP 改位元遮罩＋自由位
+     走訪（單一狀態成本 k 而非 n、免重算冪），`cpath_coe_index` 逆向經
+     `fin_map_inv_at` 逐點語義（與 `fin_map_inv` 同一 last-write-wins，去重）
+     免每次分配逆表；全套測試快約 7 秒。
+   - ✅ 第三回合（本回合，2026-10-22）四子項全部完成：
+     (a) **符號化恆等層根除 `LawUndecided` 天花板**——`cpath_coe_index`
+     恆等 `cpath_coe_index(p,0,1,i)=p.e.table[i]` 使
+     `cpath_to_equiv(cpath_ua(e))` 的表literally就是`e.table`本身，對任意
+     `e`/`p`（不論是否雙射）均成立，是 O(n) 事實而非 n! 搜索；新增
+     `fin_map_round_trip_identity`/`cpath_round_trip_identity`（O(n) 計算核）
+     與 `ua_section_proved`/`ua_retraction_proved`（在數個 `fin_map_witnesses`
+     見證表上核驗，任意大小即時判定，無預算天花板）——16 元素（舊版
+     `LawUndecided`）與 256 元素均即時判 `LawHolds`，與窮舉版本在可窮舉
+     範圍內逐一交叉核對一致（`univalence_compute_wbtest.mbt` 新增 13 項）；
+     (b) **枚舉上界由 18 提升到 20**——推導：DP 子計數恆不超過 `n!`，
+     `20! = 2432902008176640000` 為最大仍落在 `Int64` 內的階乘（`21!`
+     溢位），故 `n ≤ 20` 是枚舉全程（狀態、子和、終值）維持機器整數精確
+     的最大範圍；`fin_equiv_enum_max()` 由 18 改為 20，n=19/20/21 邊界
+     三點與閉式交叉驗證（新增測試，`fin_ty(n)` 建構任意 n 元素型）；
+     (c) **有限宇宙擴充 `TySum`**——`Ty`/`PVal` 新增 `TySum`/`PVLeft`/
+     `PVRight`（`elems_of`/`in_ty` 隨附支援，左標籤後右標籤之固定序）；
+     新增 `fin_sum_swap(a,b)` 為通用 `A+B ≃ B+A` 等價見證並編入
+     `univalence_compute_all`；`wiring.mbt`/`kan_dep.mbt` 對 `TySum`
+     刻意 `abort` 樁（餘元線路/Kan 結構超出本回合範圍，為明確決定而非
+     疏漏）；新檔 `finite_universe_sum_wbtest.mbt`（4 測試）覆蓋基數/序/
+     成員/跨型別構造子窮舉/雙向搬運；過程中揪出並修正
+     `cpath_coe`（元素級，非索引級）反向搬運的潛伏錯誤（恆在錯誤的陣列中
+     搜尋，舊有呼叫端皆 `src==dst` 同形而意外answer正確，新測試首次以
+     真正不同形狀型別曝露）；(d) **`BigInt`/`BigRat` 精確有理層**——
+     `bignat.mbt` 新增 `bignat_sub`/`bignat_divmod`（一般長除法）/
+     `bignat_gcd`；新檔 `bigint.mbt`（符號-量值 `BigInt`，加減乘除/比較/
+     gcd）與 `bigrat.mbt`（`BigRat`，恆約分、分母恆正，含 `bigrat_of_rat`/
+     `rat_of_bigrat` 與現有 `Int32`-界 `Rat`（symalg.mbt）的雙向橋接）；
+     以 46337⁴（= 4610113855108469761，超出 `Int32`）示範 `Rat` 鏈式
+     乘法會靜默溢位而 `BigRat` 保持精確；18 項新白盒測試（`bignat_wbtest.mbt`
+     +3、`bigint_wbtest.mbt`4、`bigrat_wbtest.mbt`4、另 7 項併入既有檔）。
+     尚未把 `qpoly.mbt`/`qmat.mbt`/`Jacobi_interval.mbt` 全面遷移到
+     `BigRat`（工具已備，遷移本身留待後續回合，風險/範圍對本回合而言過大）。
+   - ✅ 第四回合（同日續，2026-10-22）(a) 再強化、(c) 落地接線：
+     (a) **公開判定 API 本身不再有 `LawUndecided` 出口**——此前
+     `ua_section_proved`/`ua_retraction_proved` 雖已給出任意大小即時判定，
+     但公開的 `ua_section_all`/`ua_retraction_all`（`LawVerdict` 三值 API）
+     本身在超過窮舉預算（約 8 元素起）時仍可能回 `LawUndecided`。新增
+     `fn exhaustion_search_feasible(n)`（以遞增 `Int64` 乘法早退判斷
+     `n! <= law_enum_budget()`，比真正枚舉便宜得多）：`ua_section_all`/
+     `ua_retraction_all` 若 `n` 不可行則直接委派 `ua_section_proved`/
+     `ua_retraction_proved`；若可行但窮舉中途耗盡預算，亦改為委派 `_proved`
+     版本而非回 `LawUndecided`——兩函數因而對任意大小的這兩條律**絕不**
+     回報未決定。效能陷阱與修正：先只加「耗盡後委派」而未加可行性捷徑時，
+     大型 `n` 仍會先燒光整個搜索預算（約 215536 節點）才回退，令
+     `univalence_compute_wbtest.mbt` 從約 3–5 秒暴漲到 39.7 秒；加回
+     `exhaustion_search_feasible` 捷徑後恢復到 3.4 秒（整套測試反而比舊版
+     略快，約 18 秒）。`univalence_compute_wbtest.mbt` 兩處舊斷言
+     （16 元素「誠實回報未決定」示範、及先前(9a)交叉驗證區塊）改為直接呼叫
+     `exhaust_tables`/`exhaust_equiv`（繞過公開 API）以保留「原始窮舉在
+     16 元素確實不可行」的示範，同時新增 `ua_section_all(b16,b16)`/
+     `ua_retraction_all(b16,b16)`／`b256` 版本皆判 `LawHolds` 的斷言；
+     (c) **wiring.mbt 層落地 `TySum` 等價（kan_dep.mbt 明確排除在外）**——
+     新檔 `sum_wiring.mbt` 定義 `SumWiring`（`SWLeaf`/`SWSum`/`SWSwap`/
+     `SWComp`，無 `SWInv`——`sumwiring_inv` 把反向下推到葉與
+     `SWSwap`，從不產生需要展開的不透明反向包裝）與平行 API
+     `sumwiring_src/dst/id/sum/swap/comp/inv/wf/eq/apply`；`sumwiring_comp`/
+     `sumwiring_inv` 在純葉片段上正規化回扁平 `SWLeaf(wiring_comp/inv(...))`
+     （與舊 `wiring_comp`/`wiring_inv` 完全同形），在兩個 tag-preserving
+     `SWSum` 相組合與「換位之後接回對應反換位」時亦化簡（分別化簡為逐分支
+     組合與單位等價），其餘情形退回字面 `SWComp` 包裝——此正規化是必要的：
+     首版 `sumwiring_comp` 一律回 `SWComp(w1,w2)` 字面包裝，導致
+     `equiv_comp`/`equiv_inv` 的範式不再與舊 `wiring_comp`/`wiring_inv` 一致，
+     造成 5 個既有測試（依賴「組合後仍是扁平範式」的結構相等判斷）迴歸失敗，
+     加回正規化後全部復原。`pathp_glue.mbt`：`Iso`/`Equiv` 的 `wiring` 欄位
+     型別由 `Wiring` 改為 `SumWiring`（`iso_of_wiring`/`equiv_of_wiring`
+     內部包成 `SWLeaf(w)`，呼叫端簽名不變）；新增 `iso_of_sumwiring`/
+     `equiv_of_sumwiring`、`iso_sum`/`iso_sum_swap`、以及本項實際交付物
+     `equiv_sum`/`equiv_sum_swap`（和類別化的 `fwd`/`bwd` 一起構造，對
+     `SWSum`/`SWSwap` 的 tag 分派）；`iso_wf`/`equiv_wf`/`equiv_ext_eq`/
+     `equiv_comp`/`equiv_inv`/`equiv_id`/`coe_computes`／Glue 良構檢查全數
+     改用 `sumwiring_*`；`equiv_prod` 僅接受兩側皆為 `SWLeaf` 的純積片段，
+     否則 `abort`（`TySum` 疊在 `TyProd` 內本就超出 `Wiring` 葉模型，與
+     `sum_wiring.mbt` 模組註解所載範圍限制一致，非疏漏）。新檔
+     `sum_wiring_wbtest.mbt`（6 測試）覆蓋 `sumwiring_wf` 對照
+     `elems_of`/`in_ty` 枚舉 oracle、`sumwiring_apply`/`sumwiring_inv`
+     往返、`equiv_sum`/`equiv_sum_swap` 良構與外延正確性、以及與獨立
+     `univalence_compute.mbt` 的 `fin_sum_swap`（`FinMap` 層見證）逐元素
+     交叉核對。驗證：`moon check` 0 警告、`moon test` 108/108、
+     `moon run cmd/main` 43/43、`tools/audit_spec.py --check` 2547 符號。
+   - ✅ 第五回合（同日續，2026-10-22）：**單值性機制實際接上 `qpoly`/`qmat`
+     的具體資料**——使用者澄清「把 BigRat 接上 qpoly/qmat」一語實際要求的
+     是「單值性能用到 qpoly、qmat」，途徑是 `Rat` 或 `BigRat` 並不重要
+     （故不是第 5/7 條那個獨立的、尚未執行的 `Int32`→`BigRat` 型別遷移）。
+     新檔 `qpoly_univalence.mbt`：`fin_ty`（原為 `univalence_compute_wbtest.mbt`
+     的私有測試輔助函式，提升為公開工具，去重）；`qpoly_roots_ty(p)` 把
+     `qpoly_rational_roots(p)` 回傳的具體有理根列表讀成 `fin_ty(n)` 有限
+     型別（無根回 `None`）；`qpoly_root_permutation_equiv`／
+     `qpoly_root_permutation_is_equiv`／`qpoly_root_permutation_ua`
+     把任意索引置換包成該有限型別上的 `FinMap`，交給既有
+     `fin_map_is_equiv`／`cpath_ua` 判定／搬運——即單值性的判定程序與
+     `coe` 直接作用在多項式的具體根集上，而非僅抽象 `Ty`；
+     `qmat_eigenvalue_permutation_equiv`／`_is_equiv`／`_ua` 經
+     `qmat_charpoly(a)` 把同一構造延伸到矩陣的有理譜，將 `QMat` 一併接上；
+     `qpoly_all_root_permutations_are_equivalences` 窮舉驗證 n! 個置換
+     全部是 `fin_map_is_equiv`（非抽樣），並逐一取得可計算 `cpath_ua`
+     路徑；`all_permutations(n)` 為小型置換窮舉輔助。新檔
+     `qpoly_univalence_wbtest.mbt`（5 測試）：以四個相異有理根的四次式
+     驗證全 S4（24 個置換）皆為等價並可沿 `cpath_coe` 雙向搬運、驗證非
+     單射置換正確被拒、驗證無理根多項式（`x²+1`）正確回報「無根」而非
+     誤判、以及 `diag(1,2,3)` 的 `QMat` 經特徵多項式驗證全 S3 置換。
+     `qpoly.mbt`/`qmat.mbt` 本身的 `Int32`-界 `Rat` 內部表示**不變動**
+     （依使用者澄清，途徑非重點）；第 5/7 條那個獨立的
+     `Int32`→`BigRat` 型別遷移仍待（範圍/風險評估見下）。驗證：
+     `moon check` 0 警告、`moon test` 113/113、`moon run cmd/main` 43/43、
+     `tools/audit_spec.py --check` 2557 符號。
+   - 剩餘待辦：第 5/7 條把 `qpoly.mbt`/`qmat.mbt`/`Jacobi_interval.mbt`
+     實際接上新 `BigRat` 層（橋接函式已備，尚未改接線；與上面「單值性
+     接上 qpoly/qmat」是兩件不同的事——後者已完成，前者仍是獨立待辦）。
+
+10. **n 維填充是語義截面** — ⏳
+   - Möbius 填充在區間值立方體的樣本網格上受檢；它不宣稱與 AST 的 `comp`
+     在形式合成上定義相等，成本為 `2^(2n−1)`。其二維實例刻意**不是**
+     底錨 `square_fill`（只在邊界一致），故不得混用兩填充的結果。
+   - 待辦：與 AST `comp` 的關係強化（定義相等或明確不相等定理）。
 
 ---
-
 
 <details>
 <summary><b>English</b></summary>
 
-- The schema fragment is still a finite, checkable descriptor language: universe
-  polymorphism is a host-level level scheme, not a first-class
-  universe-polymorphic declaration/abstract syntax in the AST; mutual induction
-  is compiled as a Sum-indexed family rather than primitive mutual declarations;
-  positivity only recognises transparent aliases and the indirect uses generated
-  by `DPositiveFunctor` (which now includes a dependent container node). "Any
-  functor" here means exactly any finite dependent polynomial/container
-  presentation; non-uniform nested types that cannot be presented by such a
-  positive functor, or that change family parameters when recursing (Bush, say),
-  remain outside the fragment, and opaque neutral type-operator applications are
-  still rejected conservatively. A HIT's moving-dimension comp reduces only when
-  endpoints and the target dimension can be decided exactly; otherwise a formal
-  neutral composition serves as the normal form rather than claiming
-  definitional computation; induction-recursion covers the Tarski form of
-  `DDecode`, not an arbitrary simultaneously recursive definition language.
-- Raw `DSystem` compatibility can now be reported exactly, but deciding it
-  enumerates the BDD cubes of faces, so the worst case still grows exponentially
-  in the number of dimension variables; what it decides is convertibility under
-  the given type line within those face contexts. First-match disjointification
-  only removes priority overlap; it cannot repair a genuine disagreement of an
-  effective branch with base at dimension 0, and in that case the checked
-  promotion correctly returns `None`.
-- An AST `Equiv` is a first-class equivalence of section/retraction type, not an
-  adjoint equivalence with higher coherence, and there is no propositional
-  truncation or univalence axiom stating that all equivalences are classified by
-  paths; the computation rules of `ua` and `GlueEquiv` are implemented, but no
-  logically complete characterisation is claimed. `GlueEquiv` normalises faces
-  to BDD faces when quoting, so after re-elaboration conversion equality is the
-  criterion rather than raw syntactic equality.
-- `DCheckedTypeLine` draws the trusted boundary, but the underlying `DLine` and
-  other semantic closures can still be built from host functions; a bare host
-  line that does not pass through the checked entry points does not
-  automatically respect dimension substitution. The schema registry is an
-  in-process key/value sharing and cache layer (keys include a Debug
-  representation and a semantic snapshot), not a persistent, incremental or
-  globally hash-consed production kernel.
-- The exact algebra computes with `Int32` rational coefficients: addition and
-  multiplication reduce early to delay overflow, but large inputs can still
-  overflow and there is no arbitrary-precision integer. `QPoly` does not perform
-  general irreducible factorisation over Q; rational spectrum/Jordan
-  decomposition is complete only when the characteristic polynomial splits over
-  Q (or over the single chosen `AlgNum` extension), and no splitting field is
-  constructed and no complex roots are isolated automatically. Radical denesting
-  covers only the quadratic fragment.
-- The original `Double` numeric API remains approximate diagnostics: exact
-  conclusions hold only for shadows representable as `QuadC` and low-degree
-  polynomial cubes; an arbitrary host-function `Cube` can still only be observed
-  on a grid. ROBDDs have inherent exponential lower bounds for some Boolean
-  functions/variable orders, and node-budget or DPLL-step exhaustion reports
-  "undecided"; expanding a DAG back into a tree BDD, or a BDD back into a DNF
-  face formula, can also grow exponentially.
-- S³ is a generated presentation by suspension HITs; the project does not
-  compute its homotopy groups, Hopf invariants, or equivalences with other
-  presentations of spheres. The Jacobi interval layer still computes with
-  `Int32` rational endpoints: dyadic outward rounding controls denominators, but
-  very large matrix entries can still overflow; its certificate verifies the
-  represented rotation chain, and Gershgorin clusters may merge rather than
-  separate individual eigenvalues when the spectrum is close.
-- Higher-order unification implements only the decidable Miller-pattern fragment
-  plus a closed-term fallback; full HOU is undecidable, and non-pattern
-  flex-flex/flex-rigid problems fail rather than guess. Parametric modules are
-  elaboration-time `DTerm` telescopes, not a separate compilation/linking
-  system: declarations must have bodies, import arguments may only use
-  parameters and earlier imports, and there is no binary interface or
-  incremental recompilation.
-- **Computable univalence is decided for finite types only.** `FinMap` tables
-  enumerate `elems_of`, so the algorithms are exhaustive exactly where the
-  universe is finite (and the search is `|B|^|A|` tables, fine for Bool/Unit
-  products and nothing larger). The dependent, cubical version of univalence
-  remains the `ua`/`GlueEquiv` inside the Kan engine, which is evaluated rather
-  than decided.
-- **The n-dimensional filler is a semantic section, not a normaliser.** The
-  Möbius filler is checked on sample grids over the interval-valued cube; it
-  does not claim definitional equality with the AST's `comp` on formal
-  compositions, and its cost grows as `2^(2n−1)`. Its 2-dimensional instance is
-  deliberately *not* the same function as the bottom-anchored `square_fill`
-  (they agree on the boundary only), so results must not be mixed between the
-  two fillers.
+> This section is a **running todo list**; item numbers 1–10 are stable and
+> referenced per round ("item N").  Completed work is rewritten as
+> current-state + remaining todos (✅), work in progress is 🔄, untouched is
+> ⏳; new todos are folded into the matching item.
+>
+> This round (2026-10-21): **item 9 completed** (counting overflow
+> eradicated, pruned search, budgeted exhaustion), **item 1 (scheme) (a)(b)
+> completed**; continuation round: **item 1 (c)+(e) variance-certificate
+> registry completed**, **item 9 strengthened further** (path groupoid laws +
+> DP/inverse optimisations).
+>
+> This round (2026-10-22): **item 9 sub-items (a)(b)(c)(d) all completed**
+> (a symbolic identity layer removes the `LawUndecided` ceiling, enumeration
+> ceiling raised 18→20, the finite universe gained `TySum`, a `BigInt`/
+> `BigRat` exact rational layer); **item 3's non-truncation parts completed**
+> (`ishae.mbt`: the ishae structure, biinv→ishae, contractible fibers, and
+> the three-way agreement theorem); propositional truncation remains open
+> (a wide-blast-radius schema extension).
+>
+> This round (2026-10-22, continuation): **item 9(a) strengthened further**
+> (the public `ua_section_all`/`ua_retraction_all` APIs themselves never
+> return `LawUndecided` for these laws, at any size); **item 9(c) completed
+> (scope: wiring.mbt only, kan_dep.mbt untouched)** — new `SumWiring` type
+> (`sum_wiring.mbt`) wires `TySum` into the AST-level `Equiv`/`Iso`
+> (`pathp_glue.mbt`), landing new `equiv_sum`/`equiv_sum_swap`
+> constructors. After clarification, **"wire BigRat onto qpoly/qmat" really
+> meant "univalence must be usable on qpoly/qmat data" (the Rat-vs-BigRat
+> pathway does not matter)** — new `qpoly_univalence.mbt` delivers exactly
+> that (permutations of a polynomial's root set / a matrix's rational
+> spectrum are `ua`-witnessed equivalences); the separate `Int32`→`BigRat`
+> type migration remains its own open item.
+
+1. **The schema fragment (scheme)** — 🔄 in progress
+   - Status: universe polymorphism now has first-class AST declarations
+     (`DUnivPolyDecl`/`DUnivPolyHitDecl`: a level pool with `dlevel_var` body
+     encoding, `duniv_poly_instantiate` via `dlevel_pool_eval` plus the existing
+     schema validation), and mutual induction has primitive `DMutualDecl`
+     declarations (the Sum-indexed compilation remains their semantics, with the
+     format preconditions distilled into declaration-time validation). Remaining
+     boundaries: the schema fragment is otherwise still a finite, checkable
+     descriptor language: positivity recognises transparent aliases (including
+     multi-argument reduction), the indirect uses generated by `DPositiveFunctor`
+     (which now includes a dependent container node), operator-style parameter
+     uses, and — through variance certificates — certified opaque neutral
+     operator applications. "Any
+     functor" here means exactly any finite dependent polynomial/container
+     presentation; non-uniform nested types that cannot be presented by such a
+     positive functor, or that change family parameters when recursing (Bush, say),
+     remain outside the fragment; unregistered opaque neutral type-operator
+     applications are still rejected conservatively, registered ones are judged
+     by their certificate. A HIT's moving-dimension comp reduces only when
+     endpoints and the target dimension can be decided exactly; otherwise a formal
+     neutral composition serves as the normal form rather than claiming
+     definitional computation; induction-recursion covers the Tarski form of
+     `DDecode`, not an arbitrary simultaneously recursive definition language.
+   - Progress: (a) ✅ first-class universe-polymorphic declarations; (b) ✅
+     primitive mutual declarations; (c)+(e) ✅ the variance-certificate registry
+     — `DVariance` (strict/positive/negative) with `DPositivityCert`/
+     `DPositivityCerts` registering per-position variances of neutral operators;
+     the positivity walk handles application spines (multi-argument transparent
+     aliases reduce, operator-style parameter uses certify strictly positive, and
+     certified neutral operators are judged by their certificate instead of the
+     conservative `unknown`), with `inductive_schema_validate_with_certs`/
+     `hit_schema_validate_with_certs` (external arguments admit all-strictly-
+     positive occurrences; function domains stay occurrence-free) and cache keys
+     including the certificates; embedded descriptors still infer under the
+     default rule (a layering boundary). Todos: (d) non-uniform nested types
+     (Bush) via a unified `NestedTree`; (f) wider reduction of HIT moving-
+     dimension comp; (g) induction-recursion beyond the Tarski `DDecode` form
+     (remaining).
+
+2. **Raw `DSystem` compatibility** — ⏳
+   - Raw `DSystem` compatibility can now be reported exactly, but deciding it
+     enumerates the BDD cubes of faces, so the worst case still grows exponentially
+     in the number of dimension variables; what it decides is convertibility under
+     the given type line within those face contexts. First-match disjointification
+     only removes priority overlap; it cannot repair a genuine disagreement of an
+     effective branch with base at dimension 0, and in that case the checked
+     promotion correctly returns `None`.
+   - Todos: symbolic/incremental face-cube decision; diagnostics for effective
+     branch vs base disagreement at dimension 0.
+
+3. **Higher coherence of AST `Equiv`** — 🔄 non-truncation parts done this
+   round, remaining todos below
+   - Current state: the AST `Equiv` (pathp_glue.mbt) is built on `Wiring`
+     (a signed permutation), where `fwd`/`bwd` are mutual inverses by
+     construction — so there is no independent section/retraction coherence
+     to state at that representation. The more general finite-table layer
+     `FinMap` (allowing arbitrary, not-necessarily-injective-or-surjective
+     functions) is the right place to distinguish biinv from a half-adjoint
+     equivalence (ishae). The new `ishae.mbt` (following this round's
+     research into HoTT book Def 4.2.1/4.3.1, the Coq HoTT library, and the
+     cubical fiber formulation) implements: `fin_fiber`/
+     `fin_is_contr_fiber`/`fin_is_equiv_via_contr`
+     (`isEquiv(f) := Πy. isContr(fiber f y)`, decided by counting table
+     hits, not search); an `Ishae` struct (g/η/ε/triangle τ) with
+     `ishae_eta_holds`/`ishae_eps_holds`/`ishae_triangle_holds`;
+     `ishae_triangle_is_free`, which proves and checks that in this strict-
+     equality (hSet) model the triangle law is a specialization of ε at
+     `f(x)`, not independent data (realizing the Coq HoTT library's remark
+     that "the other triangle identity is provable, but must not be
+     assumed as data"); `biinv_to_ishae(f,l,r)`, which builds a single
+     ishae out of biinv's separate left/right inverses (`g := l`, with
+     `f∘g~id` *derived* via a substitution chain, not assumed); and
+     `fin_equiv_three_ways_agree`, an exhaustively-tested theorem that
+     "bijective = contractible fibers = an ishae exists" (a concretization
+     of HoTT book Thm 4.2.3/4.3.2). Along the way, `fin_map_is_equiv` was
+     found to check injectivity only (its own doc comment already scopes
+     it to equal-cardinality inputs, which every existing call site already
+     guarantees) — `fin_equiv_three_ways_agree` adds the cardinality check
+     explicitly so the agreement theorem holds universally, and
+     `ishae_wbtest.mbt` (5 tests) includes an explicit test pinning down
+     that scope boundary. The computation rules of `ua`/`GlueEquiv` are
+     implemented, but no logically complete characterisation is claimed;
+     `GlueEquiv` normalises faces to BDD faces when quoting, so after
+     re-elaboration conversion equality is the criterion rather than raw
+     syntactic equality.
+   - ✅ Propositional truncation (squash) done: an `∥A∥`-style HIT needs
+     two constructors, `∣_∣:A→∥A∥` and `squash:∀x y:∥A∥. x≡y`; the old
+     `DHitFaceExpr{cell,args,dims}` (schema.mbt) could only express a face
+     as "instantiate another, already-defined cell", not squash's
+     self-referential (type-bound, per-call) argument endpoints. Added a
+     sentinel `hit_face_var_sentinel()=-1` plus smart constructor
+     `dhit_face_var(arg_index, total_args)`: when a face's `cell` equals
+     the sentinel it instantiates no cell at all, instead reducing
+     directly to this call's `arg_index`-th argument (encoded as
+     `DTVar(total_args-1-arg_index)`); `hit_face_instantiate` gained an
+     early-return branch that `deval_dim`s that argument directly;
+     `hit_validate_face` was restructured to compute `param_values`/
+     `source_values` once up front and branch afterward, with the
+     sentinel branch `d_check`ing `face.args[0]` against
+     `DVHitType(spec, param_values, hit_result_indices(source,
+     param_values, source_values))`. New file `ptrunc.mbt`:
+     `squash_schema()` (cell 0 `point(a:A)`, dim 0; cell 1 `squash(x,y)`,
+     dim 1, faces `[dhit_face_var(0,2), dhit_face_var(1,2)]`),
+     `ptrunc_schema(name)` (named instance, `None` on empty name or
+     validation failure), and convenience wrappers
+     `squash_type_term`/`squash_type_value`/`squash_point_value`/
+     `squash_path_value`. New file `ptrunc_wbtest.mbt` (5 tests: schema
+     validity, endpoint reduction at both ends, non-reduction at an open
+     dimension variable, symmetry under argument swap, reflexivity, and
+     `d_check` type-checking) surfaced a pre-existing, unrelated bug in
+     `conv_hit_cell_at` (schema.mbt): the `dims1.length()==
+     dims2.length()` conjunct is only checked inside a short-circuited
+     `&&` chain, yet the subsequent per-dimension `dim_eq_sem` loop
+     indexed `dims2` unconditionally by `dims1.length()` — comparing two
+     cells with different `dim_count` (squash's cell 1 against point's
+     cell 0) indexed out of bounds. Fixed by re-checking the lengths
+     before entering the loop (short-circuiting to `false` otherwise);
+     this fix is independent of `dhit_face_var` — it is a latent defect
+     in the generic HIT conversion checker that pre-dates this round. The
+     first-class univalence-axiom statement `Equiv(Path U A B, Equiv A
+     B)` is still not packaged as a single named object (its content is
+     already covered by `cpath_ua`/`cpath_to_equiv` plus the
+     `ua_section_proved`/`ua_retraction_proved` bidirectional proof —
+     only the packaging is missing) — low priority, deferred.
+
+4. **Checked boundary and registry** — ⏳
+   - `DCheckedTypeLine` draws the trusted boundary, but the underlying `DLine` and
+     other semantic closures can still be built from host functions; a bare host
+     line that does not pass through the checked entry points does not
+     automatically respect dimension substitution. The schema registry is an
+     in-process key/value sharing and cache layer (keys include a Debug
+     representation and a semantic snapshot), not a persistent, incremental or
+     globally hash-consed production kernel.
+   - Todos: closure/checked wrapping of bare host lines; persistent registry and
+     hash-consing.
+
+5. **Integer width of the exact algebra** — ⏳
+   - The exact algebra computes with `Int32` rational coefficients: addition and
+     multiplication reduce early to delay overflow, but large inputs can still
+     overflow and there is no arbitrary-precision integer. `QPoly` does not perform
+     general irreducible factorisation over Q; rational spectrum/Jordan
+     decomposition is complete only when the characteristic polynomial splits over
+     Q (or over the single chosen `AlgNum` extension), and no splitting field is
+     constructed and no complex roots are isolated automatically. Radical denesting
+     covers only the quadratic fragment.
+   - Todos: **port the `Int32` rational layer onto the new `BigNat`** (tooling now
+     in place — see item 9); general irreducible factorisation; splitting fields;
+     complex-root isolation; higher-radical denesting.
+
+6. **`Double` numeric API and ROBDD lower bounds** — ⏳
+   - The original `Double` numeric API remains approximate diagnostics: exact
+     conclusions hold only for shadows representable as `QuadC` and low-degree
+     polynomial cubes; an arbitrary host-function `Cube` can still only be observed
+     on a grid. ROBDDs have inherent exponential lower bounds for some Boolean
+     functions/variable orders, and node-budget or DPLL-step exhaustion reports
+     "undecided"; expanding a DAG back into a tree BDD, or a BDD back into a DNF
+     face formula, can also grow exponentially.
+   - Todos: more exact shadow classes; further variable-order minimisation.
+
+7. **S³ and the Jacobi envelope** — ⏳
+   - S³ is a generated presentation by suspension HITs; the project does not
+     compute its homotopy groups, Hopf invariants, or equivalences with other
+     presentations of spheres. The Jacobi interval layer still computes with
+     `Int32` rational endpoints: dyadic outward rounding controls denominators, but
+     very large matrix entries can still overflow; its certificate verifies the
+     represented rotation chain, and Gershgorin clusters may merge rather than
+     separate individual eigenvalues when the spectrum is close.
+   - Todos: homotopy groups / Hopf invariants; `BigNat` Jacobi endpoints (as in
+     item 5); finer cluster separation.
+
+8. **Higher-order unification and module linking** — ⏳
+   - Higher-order unification implements only the decidable Miller-pattern fragment
+     plus a closed-term fallback; full HOU is undecidable, and non-pattern
+     flex-flex/flex-rigid problems fail rather than guess. Parametric modules are
+     elaboration-time `DTerm` telescopes, not a separate compilation/linking
+     system: declarations must have bodies, import arguments may only use
+     parameters and earlier imports, and there is no binary interface or
+     incremental recompilation.
+   - Todos: reasonable approximations for non-pattern problems; separate
+     compilation/linking; binary interfaces.
+
+9. **Computable univalence** — ✅ completed this round (overflow eradicated);
+   remaining todos below
+   - ✅ Done: every counting formula is exact in `BigNat` (`bignat.mbt`) —
+     `fin_map_count = |B|^|A|`, `fact = n!`, `fin_equiv_count`,
+     `univalence_path_count` never wrap (the old `Int32` formulas wrapped from
+     13! on and at 16 elements `16^16 ≡ 0 (mod 2^32)` made the decision
+     vacuous); `fin_equiv_search` now prunes on injective prefixes (the n!
+     search tree, not the `|B|^|A|` table scan), deciding "A ≃ B" instantly at
+     any size in the same lexicographic order; `fin_equiv_count` is *computed*
+     by memoised enumeration of that search tree (DP) up to `n ≤ 18` and
+     cross-checked against the closed form n!; `univalence_decides` genuinely
+     computes on 16-element types (`fact(16) = 20922789888000`,
+     `16^16 = 18446744073709551616`); `ua_section_all`/`ua_retraction_all`
+     exhaust within budgets and return the three-valued `LawVerdict` (small
+     spaces table-by-table — including non-equivalence tables; equivalences
+     via the pruned search tree; over budget `LawUndecided`, never a sample).
+   - ✅ Strengthened (2026-10-21, second pass): the groupoid laws of paths are
+     completed — left/right units (`cpath_comp_left/right_unit`), involution
+     (`cpath_sym_involutive`), `¬refl = refl`, anti-homomorphism (`cpath_sym_comp`),
+     associativity (`cpath_comp_assoc`), composite transport computing
+     (`transport_comp_computes`: `coe (p∙q) = coe q ∘ coe p` both ways), and
+     `transport_refl_identity`; all wired into the `univalence_compute_all`
+     battery and whitebox tests (including endpoint-mismatch refusal).
+     Optimised: the counting DP walks free bits with precomputed masks (cost k
+     per state instead of n, no power recomputation), and `cpath_coe_index`
+     resolves reverse transport through `fin_map_inv_at` pointwise semantics
+     (same last-write-wins as `fin_map_inv`, deduplicated) without allocating
+     an inverse per call; the full suite runs about 7 seconds faster.
+   - ✅ Third pass (this round, 2026-10-22), all four sub-items done:
+     (a) **a symbolic identity layer eradicates the `LawUndecided` ceiling**
+     — the index identity `cpath_coe_index(p,0,1,i)=p.e.table[i]` makes
+     `cpath_to_equiv(cpath_ua(e))`'s table literally `e.table` for any `e`/`p`
+     whatsoever (bijective or not), an O(n) fact rather than an n!-search;
+     new `fin_map_round_trip_identity`/`cpath_round_trip_identity` (the O(n)
+     computational cores) and `ua_section_proved`/`ua_retraction_proved`
+     (checked against several `fin_map_witnesses`, deciding at any size with
+     no budget ceiling) — both 16 elements (previously `LawUndecided`) and
+     256 elements decide `LawHolds` instantly, cross-checked against the
+     exhaustive versions wherever both run (13 new tests in
+     `univalence_compute_wbtest.mbt`); (b) **enumeration ceiling raised from
+     18 to 20** — derivation: every DP sub-count is bounded by `n!`, and
+     `20! = 2432902008176640000` is the largest factorial still inside
+     `Int64` (`21!` overflows), so `n ≤ 20` is the largest range where the
+     whole enumeration stays machine-integer exact; `fin_equiv_enum_max()`
+     changed 18→20, cross-checked at the n=19/20/21 boundary against the
+     closed form (new tests, with a `fin_ty(n)` builder for arbitrary-size
+     types); (c) **the finite universe now includes `TySum`** — `Ty`/`PVal`
+     gained `TySum`/`PVLeft`/`PVRight` (with `elems_of`/`in_ty` support,
+     left-tagged-then-right-tagged order); new `fin_sum_swap(a,b)` is the
+     generic `A+B ≃ B+A` witness, wired into `univalence_compute_all`;
+     `wiring.mbt`/`kan_dep.mbt` deliberately `abort` on `TySum` (coproduct
+     wiring/Kan structure is out of this round's scope, a documented choice
+     not an oversight); new `finite_universe_sum_wbtest.mbt` (4 tests)
+     covers cardinality/order/membership/cross-former search/bidirectional
+     transport, and in writing it a latent bug surfaced and was fixed:
+     `cpath_coe` (the element-level, non-index transport) always searched
+     the wrong array for the backward direction — dormant because every
+     prior caller had `src==dst` as literally the same `Ty`, which happened
+     to give the right answer by coincidence; (d) **`BigInt`/`BigRat` exact
+     rational layer** — `bignat.mbt` gained `bignat_sub`/`bignat_divmod`
+     (general long division)/`bignat_gcd`; new `bigint.mbt` (sign-magnitude
+     `BigInt`) and `bigrat.mbt` (`BigRat`, always reduced, positive
+     denominator, with `bigrat_of_rat`/`rat_of_bigrat` bridging the existing
+     `Int32`-bounded `Rat` in symalg.mbt); demonstrated with 46337⁴
+     (= 4610113855108469761, past `Int32`) that chained `Rat` multiplication
+     silently overflows while `BigRat` stays exact; 18 new whitebox tests.
+     Not yet done: actually rewiring `qpoly.mbt`/`qmat.mbt`/
+     `Jacobi_interval.mbt` onto `BigRat` (the tooling exists; the migration
+     itself is deferred — too large/risky for this round).
+   - ✅ Fourth pass (same day, 2026-10-22): (a) strengthened further, (c)
+     actually wired in:
+     (a) **the public decision APIs themselves now never return
+     `LawUndecided`** — previously `ua_section_proved`/`ua_retraction_proved`
+     already decided any size instantly, but the public three-valued
+     `LawVerdict` API, `ua_section_all`/`ua_retraction_all`, could still
+     return `LawUndecided` once past the exhaustion budget (roughly 8
+     elements). New `fn exhaustion_search_feasible(n)` (checks
+     `n! <= law_enum_budget()` via an incrementally-multiplied `Int64` with
+     an early exit — far cheaper than actually enumerating) lets
+     `ua_section_all`/`ua_retraction_all` delegate straight to
+     `ua_section_proved`/`ua_retraction_proved` when `n` is infeasible, and
+     fall back to them (instead of `LawUndecided`) when exhaustion runs out
+     of budget partway through a feasible `n` — so both functions never
+     return undecided for these two laws, at any size. Perf trap and fix:
+     adding only the "fall back after exhaustion" half, without the
+     feasibility short-circuit, still burned the full search budget
+     (~215,536 nodes) before giving up on large `n`, which blew
+     `univalence_compute_wbtest.mbt`'s runtime from ~3-5s to 39.7s; adding
+     `exhaustion_search_feasible` as a cheap pre-check brought it back to
+     3.4s (the full suite runs slightly faster than before, ~18s).
+     `univalence_compute_wbtest.mbt` had two stale assertions fixed: the
+     "law exhaustion is honest at 16 elements" demonstration now calls
+     `exhaust_tables`/`exhaust_equiv` directly (bypassing the public API) to
+     keep demonstrating raw-exhaustion infeasibility at 16 elements, while
+     new assertions confirm `ua_section_all`/`ua_retraction_all` decide
+     `LawHolds` at both 16 and 256 elements; (c) **`TySum` equivalences land
+     in the wiring layer (kan_dep.mbt explicitly out of scope)** — new file
+     `sum_wiring.mbt` defines `SumWiring` (`SWLeaf`/`SWSum`/`SWSwap`/
+     `SWComp`, no `SWInv` — `sumwiring_inv` pushes the inverse down to
+     leaves and `SWSwap` instead of ever producing an opaque wrapper that
+     would need unwinding) with a parallel API
+     `sumwiring_src/dst/id/sum/swap/comp/inv/wf/eq/apply`.
+     `sumwiring_comp`/`sumwiring_inv` normalise back to a flat
+     `SWLeaf(wiring_comp/inv(...))` on the pure-leaf fragment (matching the
+     old `wiring_comp`/`wiring_inv` normal form exactly), and also simplify
+     two tag-preserving `SWSum`s composed branchwise and a swap followed by
+     its matching reverse swap (to a branchwise identity); anything else
+     falls back to a literal `SWComp` wrapper. This normalisation is not
+     optional: the first draft of `sumwiring_comp` always wrapped in
+     `SWComp(w1,w2)` literally, which desynchronised `equiv_comp`/
+     `equiv_inv`'s normal form from the old `wiring_comp`/`wiring_inv` one
+     and regressed 5 pre-existing tests that rely on "composing stays in
+     flat normal form" for structural-equality law checks; restoring the
+     normalisation fixed all five. In `pathp_glue.mbt`: the `Iso`/`Equiv`
+     structs' `wiring` field changed type from `Wiring` to `SumWiring`
+     (`iso_of_wiring`/`equiv_of_wiring` wrap the result in `SWLeaf(w)`
+     internally, so every existing call site's signature is unchanged); new
+     `iso_of_sumwiring`/`equiv_of_sumwiring`, `iso_sum`/`iso_sum_swap`, and
+     this item's actual deliverable, `equiv_sum`/`equiv_sum_swap` (built
+     with matching `fwd`/`bwd` closures dispatching on the `SWSum`/`SWSwap`
+     tag); `iso_wf`/`equiv_wf`/`equiv_ext_eq`/`equiv_comp`/`equiv_inv`/
+     `equiv_id`/`coe_computes`/the Glue well-formedness check all switched
+     to their `sumwiring_*` counterparts; `equiv_prod` now only accepts two
+     pure-leaf (`SWLeaf`) operands and `abort`s otherwise (a `TySum` nested
+     inside a `TyProd` is outside `Wiring`'s leaf model by design, per
+     `sum_wiring.mbt`'s module comment — not an oversight). New
+     `sum_wiring_wbtest.mbt` (6 tests) covers `sumwiring_wf` against the
+     `elems_of`/`in_ty` enumeration oracle, `sumwiring_apply`/
+     `sumwiring_inv` round-trips, `equiv_sum`/`equiv_sum_swap`
+     well-formedness and extensional correctness, and an element-by-element
+     cross-check against the independent `fin_sum_swap` witness (the
+     `FinMap` layer in `univalence_compute.mbt`). Verified: `moon check` 0
+     warnings, `moon test` 108/108, `moon run cmd/main` 43/43,
+     `tools/audit_spec.py --check` 2547 symbols.
+   - ✅ Fifth pass (same day, 2026-10-22): **the computable-univalence
+     machinery now actually acts on concrete `qpoly`/`qmat` data** — the
+     user clarified that "wire BigRat onto qpoly/qmat" actually meant
+     "univalence must be usable on qpoly/qmat", and that whether the path
+     there goes through `Rat` or `BigRat` does not matter (so this is not
+     the separate, still-pending `Int32`→`BigRat` type migration in items
+     5/7). New `qpoly_univalence.mbt`: `fin_ty` (previously a private test
+     helper in `univalence_compute_wbtest.mbt`, promoted to a public
+     utility, deduplicated); `qpoly_roots_ty(p)` reads
+     `qpoly_rational_roots(p)`'s concrete rational-root array as a
+     `fin_ty(n)` finite type (`None` with no roots);
+     `qpoly_root_permutation_equiv`/`qpoly_root_permutation_is_equiv`/
+     `qpoly_root_permutation_ua` wrap an arbitrary index permutation as a
+     `FinMap` on that finite type and hand it to the existing
+     `fin_map_is_equiv`/`cpath_ua` — so univalence's decision procedure and
+     `coe` act directly on a polynomial's concrete root set, not merely an
+     abstract `Ty`; `qmat_eigenvalue_permutation_equiv`/`_is_equiv`/`_ua`
+     extend the same construction to a matrix's rational spectrum via
+     `qmat_charpoly(a)`, wiring `QMat` in as well;
+     `qpoly_all_root_permutations_are_equivalences` exhaustively checks all
+     n! permutations are `fin_map_is_equiv` (never sampled) and that each
+     one yields a computable `cpath_ua` path; `all_permutations(n)` is a
+     small permutation-enumeration helper. New `qpoly_univalence_wbtest.mbt`
+     (5 tests): a quartic with four distinct rational roots checked against
+     the full S4 (24 permutations), each an equivalence transportable both
+     ways via `cpath_coe`; a non-injective table correctly rejected; a
+     root-free polynomial (`x²+1`) correctly reported as "no roots" rather
+     than misjudged; and `diag(1,2,3)`'s `QMat` checked against the full S3
+     through its characteristic polynomial. `qpoly.mbt`/`qmat.mbt`'s own
+     `Int32`-bounded `Rat` internal representation is **unchanged** (per
+     the user's clarification, the pathway there is not the point); the
+     separate `Int32`→`BigRat` type migration in items 5/7 remains open
+     (scope/risk discussion below). Verified: `moon check` 0 warnings,
+     `moon test` 113/113, `moon run cmd/main` 43/43,
+     `tools/audit_spec.py --check` 2557 symbols.
+   - Remaining todo: wire `qpoly.mbt`/`qmat.mbt`/`Jacobi_interval.mbt`
+     (items 5/7) onto the new `BigRat` layer (bridges are ready; the call
+     sites are not yet changed — distinct from "univalence can use
+     qpoly/qmat" above, which is now done).
+
+10. **The n-dimensional filler is a semantic section** — ⏳
+   - The Möbius filler is checked on sample grids over the interval-valued cube; it
+     does not claim definitional equality with the AST's `comp` on formal
+     compositions, and its cost grows as `2^(2n−1)`. Its 2-dimensional instance is
+     deliberately *not* the same function as the bottom-anchored `square_fill`
+     (they agree on the boundary only), so results must not be mixed between the
+     two fillers.
+   - Todos: strengthen the relation to AST `comp` (definitional equality or an
+     explicit inequality theorem).
 
 </details>
 
 ## 附錄：公共介面逐符號登記（由 `tools/audit_spec.py` 生成，勿手改）
 
 <!-- APPENDIX:BEGIN -->
-共 **2339** 個公共符號（宣告＋構造子＋欄位），分屬 54 個規格族。 / **2339** public symbols (declarations + constructors + fields) in 54 specification families.
+共 **2562** 個公共符號（宣告＋構造子＋欄位），分屬 56 個規格族。 / **2562** public symbols (declarations + constructors + fields) in 56 specification families.
 
 ### 複數標量 — Complex scalars
 
@@ -2514,6 +3210,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `inductive_result_indices` | 函數 / fn |
 | `inductive_schema_key` | 函數 / fn |
 | `inductive_schema_validate` | 函數 / fn |
+| `inductive_schema_validate_with_certs` | 函數 / fn |
 | `infer_inductive_elim` | 函數 / fn |
 | `infer_inductive_type` | 函數 / fn |
 | `infer_intro` | 函數 / fn |
@@ -2602,6 +3299,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `conv_hit_type` | 函數 / fn |
 | `dhit_cell_spec` | 函數 / fn |
 | `dhit_face` | 函數 / fn |
+| `dhit_face_var` | 函數 / fn |
 | `dhit_level_scheme` | 函數 / fn |
 | `dhit_spec` | 函數 / fn |
 | `eval_hit_elim` | 函數 / fn |
@@ -2613,6 +3311,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `hit_cell_result_indices` | 函數 / fn |
 | `hit_cell_value` | 函數 / fn |
 | `hit_elim_term` | 函數 / fn |
+| `hit_face_var_sentinel` | 函數 / fn |
 | `hit_index_types` | 函數 / fn |
 | `hit_index_types_cached` | 函數 / fn |
 | `hit_intro_term` | 函數 / fn |
@@ -2624,6 +3323,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `hit_schema_examples` | 函數 / fn |
 | `hit_schema_key` | 函數 / fn |
 | `hit_schema_validate` | 函數 / fn |
+| `hit_schema_validate_with_certs` | 函數 / fn |
 | `infer_hit_elim` | 函數 / fn |
 | `infer_hit_intro` | 函數 / fn |
 | `infer_hit_type` | 函數 / fn |
@@ -2632,6 +3332,21 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `quote_hit_type` | 函數 / fn |
 | `segment_schema` | 函數 / fn |
 | `torus_schema` | 函數 / fn |
+
+### 命題截斷 HIT（squash） — Propositional truncation HIT (squash)
+
+- 規範形式 / Canonical form：sentinel cell=-1 標記「face 即本次呼叫的第 k 個參數」（dhit_face_var），不實例化任何 cell；Squash schema：cell 0 為 point(a:A)，cell 1 為 squash(x,y) 兩端恰為該次呼叫的 x、y
+- 範疇化 / Categorification：命題截斷 ‖A‖：對任意 x y:‖A‖ 皆有 path squash x y；是通用 HIT schema 的一個合法實例，face 以「自身引數」而非「另一 cell」為目標
+- 判定 / Decision procedure：hit_validate_face 新分支：face.args 長度為 1 且型別經 d_check 對齊 DVHitType(spec,params,hit_result_indices(...))；hit_face_instantiate 新分支：cell==sentinel 時直接 deval_dim(face.args[0]) 取代 cell 實例化
+
+| 符號 / Symbol | 類別 / Kind |
+|---|---|
+| `ptrunc_schema` | 函數 / fn |
+| `squash_path_value` | 函數 / fn |
+| `squash_point_value` | 函數 / fn |
+| `squash_schema` | 函數 / fn |
+| `squash_type_term` | 函數 / fn |
+| `squash_type_value` | 函數 / fn |
 
 ### 依賴 Kan 線（coe/comp） — Dependent Kan lines (coe/comp)
 
@@ -2742,6 +3457,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `rat_make` | 函數 / fn |
 | `rat_mul` | 函數 / fn |
 | `rat_neg` | 函數 / fn |
+| `rat_of_bigrat` | 函數 / fn |
 | `rat_one` | 函數 / fn |
 | `rat_sign` | 函數 / fn |
 | `rat_sqrt_if_square` | 函數 / fn |
@@ -2867,7 +3583,9 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 |---|---|
 | `PVal` | 列舉 / enum |
 | `PVal::PVBool` | 構造子 / constructor |
+| `PVal::PVLeft` | 構造子 / constructor |
 | `PVal::PVPair` | 構造子 / constructor |
+| `PVal::PVRight` | 構造子 / constructor |
 | `PVal::PVUnit` | 構造子 / constructor |
 | `PVal::equal` | 函數 / fn |
 | `PVal::not_equal` | 函數 / fn |
@@ -2875,6 +3593,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `Ty` | 列舉 / enum |
 | `Ty::TyBool` | 構造子 / constructor |
 | `Ty::TyProd` | 構造子 / constructor |
+| `Ty::TySum` | 構造子 / constructor |
 | `Ty::TyUnit` | 構造子 / constructor |
 | `Ty::equal` | 函數 / fn |
 | `Ty::not_equal` | 函數 / fn |
@@ -2905,6 +3624,11 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `LeafMap::equal` | 函數 / fn |
 | `LeafMap::not_equal` | 函數 / fn |
 | `LeafMap::to_repr` | 函數 / fn |
+| `SumWiring` | 列舉 / enum |
+| `SumWiring::SWComp` | 構造子 / constructor |
+| `SumWiring::SWLeaf` | 構造子 / constructor |
+| `SumWiring::SWSum` | 構造子 / constructor |
+| `SumWiring::SWSwap` | 構造子 / constructor |
 | `Wiring` | 結構 / struct |
 | `Wiring.dst` | 欄位 / field |
 | `Wiring.mapping` | 欄位 / field |
@@ -2914,6 +3638,16 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `flatten_pval` | 函數 / fn |
 | `leaf_count` | 函數 / fn |
 | `leaves_of_ty` | 函數 / fn |
+| `sumwiring_apply` | 函數 / fn |
+| `sumwiring_comp` | 函數 / fn |
+| `sumwiring_dst` | 函數 / fn |
+| `sumwiring_eq` | 函數 / fn |
+| `sumwiring_id` | 函數 / fn |
+| `sumwiring_inv` | 函數 / fn |
+| `sumwiring_src` | 函數 / fn |
+| `sumwiring_sum` | 函數 / fn |
+| `sumwiring_swap` | 函數 / fn |
+| `sumwiring_wf` | 函數 / fn |
 | `wiring_apply` | 函數 / fn |
 | `wiring_assoc` | 函數 / fn |
 | `wiring_comp` | 函數 / fn |
@@ -2964,7 +3698,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `equiv_id_value` | 函數 / fn |
 | `equiv_inv` | 函數 / fn |
 | `equiv_inv_fun_value` | 函數 / fn |
-| `equiv_make_value` | 函數 / fn |
+| `equiv_of_sumwiring` | 函數 / fn |
 | `equiv_of_wiring` | 函數 / fn |
 | `equiv_parts` | 函數 / fn |
 | `equiv_prod` | 函數 / fn |
@@ -2972,12 +3706,16 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `equiv_retr_value` | 函數 / fn |
 | `equiv_sect_type` | 函數 / fn |
 | `equiv_sect_value` | 函數 / fn |
+| `equiv_sum` | 函數 / fn |
+| `equiv_sum_swap` | 函數 / fn |
 | `equiv_swap` | 函數 / fn |
-| `equiv_type_term` | 函數 / fn |
 | `equiv_wf` | 函數 / fn |
 | `equiv_wf_extensional` | 函數 / fn（差分測試 oracle，非判定路徑 / diff-test oracle, not a decision path） |
 | `iso_bool_not` | 函數 / fn |
+| `iso_of_sumwiring` | 函數 / fn |
 | `iso_of_wiring` | 函數 / fn |
+| `iso_sum` | 函數 / fn |
+| `iso_sum_swap` | 函數 / fn |
 | `iso_swap` | 函數 / fn |
 | `iso_to_equiv` | 函數 / fn |
 | `iso_to_path` | 函數 / fn |
@@ -3335,6 +4073,7 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `DInductivePlan.spec` | 欄位 / field |
 | `DInductivePlan.valid` | 欄位 / field |
 | `DSchemaRegistry` | 結構 / struct |
+| `DSchemaRegistry.cert_validations` | 欄位 / field |
 | `DSchemaRegistry.hits` | 欄位 / field |
 | `DSchemaRegistry.inductives` | 欄位 / field |
 | `DSchemaRegistry.telescope_hits` | 欄位 / field |
@@ -3390,10 +4129,19 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `dfunctor_container` | 函數 / fn |
 | `dfunctor_identity` | 函數 / fn |
 | `dfunctor_list` | 函數 / fn |
+| `dpositivity_cert` | 函數 / fn |
+| `dpositivity_cert_negative` | 函數 / fn |
+| `dpositivity_cert_positive` | 函數 / fn |
+| `dpositivity_cert_strict` | 函數 / fn |
+| `dpositivity_certs_add` | 函數 / fn |
+| `dpositivity_certs_empty` | 函數 / fn |
+| `dpositivity_certs_lookup` | 函數 / fn |
+| `dpositivity_certs_size` | 函數 / fn |
 | `dpositivity_report` | 函數 / fn |
 | `dterm_children` | 函數 / fn |
 | `dterm_family_occurs` | 函數 / fn |
 | `dterm_family_positivity` | 函數 / fn |
+| `dterm_family_positivity_with` | 函數 / fn |
 | `dterm_shift` | 函數 / fn |
 | `dterm_substitute` | 函數 / fn |
 | `infer_decode` | 函數 / fn |
@@ -3409,6 +4157,9 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 
 | 符號 / Symbol | 類別 / Kind |
 |---|---|
+| `DCertValidationEntry::equal` | 函數 / fn |
+| `DCertValidationEntry::not_equal` | 函數 / fn |
+| `DCertValidationEntry::to_repr` | 函數 / fn |
 | `DConstructorConstraint` | 結構 / struct |
 | `DConstructorConstraint.lhs` | 欄位 / field |
 | `DConstructorConstraint.rhs` | 欄位 / field |
@@ -3434,22 +4185,85 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `DLevelExpr::equal` | 函數 / fn |
 | `DLevelExpr::not_equal` | 函數 / fn |
 | `DLevelExpr::to_repr` | 函數 / fn |
+| `DMutualDecl` | 結構 / struct |
+| `DMutualDecl.components` | 欄位 / field |
+| `DMutualDecl.name` | 欄位 / field |
+| `DMutualDecl::equal` | 函數 / fn |
+| `DMutualDecl::not_equal` | 函數 / fn |
+| `DMutualDecl::to_repr` | 函數 / fn |
 | `DMutualFamily` | 結構 / struct |
 | `DMutualFamily.combined` | 欄位 / field |
 | `DMutualFamily.components` | 欄位 / field |
 | `DMutualFamily.ctor_offsets` | 欄位 / field |
 | `DMutualFamily.name` | 欄位 / field |
+| `DPositivityCert` | 結構 / struct |
+| `DPositivityCert.operator` | 欄位 / field |
+| `DPositivityCert.variances` | 欄位 / field |
+| `DPositivityCert::equal` | 函數 / fn |
+| `DPositivityCert::not_equal` | 函數 / fn |
+| `DPositivityCert::to_repr` | 函數 / fn |
+| `DPositivityCerts` | 結構 / struct |
+| `DPositivityCerts.certs` | 欄位 / field |
+| `DPositivityCerts::equal` | 函數 / fn |
+| `DPositivityCerts::not_equal` | 函數 / fn |
+| `DPositivityCerts::to_repr` | 函數 / fn |
+| `DUnivPolyDecl` | 結構 / struct |
+| `DUnivPolyDecl.level_arity` | 欄位 / field |
+| `DUnivPolyDecl.levels` | 欄位 / field |
+| `DUnivPolyDecl.name` | 欄位 / field |
+| `DUnivPolyDecl.result_level` | 欄位 / field |
+| `DUnivPolyDecl.template` | 欄位 / field |
+| `DUnivPolyDecl::equal` | 函數 / fn |
+| `DUnivPolyDecl::not_equal` | 函數 / fn |
+| `DUnivPolyDecl::to_repr` | 函數 / fn |
+| `DUnivPolyHitDecl` | 結構 / struct |
+| `DUnivPolyHitDecl.level_arity` | 欄位 / field |
+| `DUnivPolyHitDecl.levels` | 欄位 / field |
+| `DUnivPolyHitDecl.name` | 欄位 / field |
+| `DUnivPolyHitDecl.result_level` | 欄位 / field |
+| `DUnivPolyHitDecl.template` | 欄位 / field |
+| `DUnivPolyHitDecl::equal` | 函數 / fn |
+| `DUnivPolyHitDecl::not_equal` | 函數 / fn |
+| `DUnivPolyHitDecl::to_repr` | 函數 / fn |
+| `DVariance` | 列舉 / enum |
+| `DVariance::VarianceNegative` | 構造子 / constructor |
+| `DVariance::VariancePositive` | 構造子 / constructor |
+| `DVariance::VarianceStrict` | 構造子 / constructor |
+| `DVariance::equal` | 函數 / fn |
+| `DVariance::not_equal` | 函數 / fn |
+| `DVariance::to_repr` | 函數 / fn |
 | `check_schema_extensions` | 函數 / fn |
 | `circle_level_scheme` | 函數 / fn |
+| `circle_univ_poly_decl` | 函數 / fn |
 | `compile_mutual_inductive` | 函數 / fn |
 | `cube3_schema` | 函數 / fn |
 | `dlevel_eval` | 函數 / fn |
+| `dlevel_expr_wf` | 函數 / fn |
+| `dlevel_identity_pool` | 函數 / fn |
+| `dlevel_pool_eval` | 函數 / fn |
+| `dlevel_unwrap` | 函數 / fn |
+| `dlevel_var` | 函數 / fn |
+| `dmutual_decl` | 函數 / fn |
+| `dmutual_decl_compile` | 函數 / fn |
+| `dmutual_decl_matches_family` | 函數 / fn |
+| `dmutual_decl_validate` | 函數 / fn |
+| `duniv_poly_agrees_with_scheme` | 函數 / fn |
+| `duniv_poly_decl` | 函數 / fn |
+| `duniv_poly_decl_with_levels` | 函數 / fn |
+| `duniv_poly_hit_agrees_with_scheme` | 函數 / fn |
+| `duniv_poly_hit_decl` | 函數 / fn |
+| `duniv_poly_hit_decl_with_levels` | 函數 / fn |
+| `duniv_poly_hit_instantiate` | 函數 / fn |
+| `duniv_poly_hit_validate` | 函數 / fn |
+| `duniv_poly_instantiate` | 函數 / fn |
+| `duniv_poly_validate` | 函數 / fn |
 | `equal_nat_pair_schema` | 函數 / fn |
 | `even_odd_components` | 函數 / fn |
 | `even_odd_family` | 函數 / fn |
 | `instantiate_hit_level_scheme` | 函數 / fn |
 | `instantiate_inductive_level_scheme` | 函數 / fn |
 | `list_level_scheme` | 函數 / fn |
+| `list_univ_poly_decl` | 函數 / fn |
 | `mutual_ctor_index` | 函數 / fn |
 | `mutual_elim_term` | 函數 / fn |
 | `mutual_intro_term` | 函數 / fn |
@@ -4347,11 +5161,84 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `symbol_set_size` | 函數 / fn |
 | `ty_of_bits` | 函數 / fn |
 
+### 精確自然數計數 — Exact natural numbers, integers and rationals
+
+- 規範形式 / Canonical form：base-10⁹ limbs 的非負整數 BigNat（規範形：無尾隨零 limb，零為空陣列）；符號-量值 BigInt（sign∈{-1,0,1} ＋ BigNat 量值）；BigRat（BigInt 分子／BigNat 分母，恆約分、分母恆正）
+- 範疇化 / Categorification：自然數物件 (ℕ,+,×)、整數環 (ℤ,+,×,−) 與有理數體 (ℚ,+,×,÷) 的任意精度實現；到機器整數／既有 Int32-界 Rat 的轉換為部分函數（bigrat_of_rat／rat_of_bigrat雙向橋接）
+- 判定 / Decision procedure：limb 進位算術、長除法與輾轉相除 gcd；相等＝規範形結構相等；溢出時轉換回 None 而非回繞
+
+| 符號 / Symbol | 類別 / Kind |
+|---|---|
+| `BigInt` | 結構 / struct |
+| `BigInt.mag` | 欄位 / field |
+| `BigInt.sign` | 欄位 / field |
+| `BigInt::equal` | 函數 / fn |
+| `BigInt::not_equal` | 函數 / fn |
+| `BigInt::to_repr` | 函數 / fn |
+| `BigNat` | 結構 / struct |
+| `BigNat.limbs` | 欄位 / field |
+| `BigNat::equal` | 函數 / fn |
+| `BigNat::not_equal` | 函數 / fn |
+| `BigNat::to_repr` | 函數 / fn |
+| `BigRat` | 結構 / struct |
+| `BigRat.den` | 欄位 / field |
+| `BigRat.num` | 欄位 / field |
+| `BigRat::equal` | 函數 / fn |
+| `BigRat::not_equal` | 函數 / fn |
+| `BigRat::to_repr` | 函數 / fn |
+| `bigint_abs` | 函數 / fn |
+| `bigint_add` | 函數 / fn |
+| `bigint_cmp` | 函數 / fn |
+| `bigint_divmod` | 函數 / fn |
+| `bigint_gcd` | 函數 / fn |
+| `bigint_is_zero` | 函數 / fn |
+| `bigint_lt` | 函數 / fn |
+| `bigint_mul` | 函數 / fn |
+| `bigint_neg` | 函數 / fn |
+| `bigint_of_bignat` | 函數 / fn |
+| `bigint_of_int` | 函數 / fn |
+| `bigint_sign` | 函數 / fn |
+| `bigint_sub` | 函數 / fn |
+| `bigint_to_int64` | 函數 / fn |
+| `bigint_to_string` | 函數 / fn |
+| `bigint_zero` | 函數 / fn |
+| `bignat_add` | 函數 / fn |
+| `bignat_cmp` | 函數 / fn |
+| `bignat_divmod` | 函數 / fn |
+| `bignat_divmod_small` | 函數 / fn |
+| `bignat_fact` | 函數 / fn |
+| `bignat_gcd` | 函數 / fn |
+| `bignat_is_zero` | 函數 / fn |
+| `bignat_lt` | 函數 / fn |
+| `bignat_mul` | 函數 / fn |
+| `bignat_of_int` | 函數 / fn |
+| `bignat_of_int64` | 函數 / fn |
+| `bignat_pow` | 函數 / fn |
+| `bignat_sub` | 函數 / fn |
+| `bignat_to_int32` | 函數 / fn |
+| `bignat_to_int64` | 函數 / fn |
+| `bignat_to_string` | 函數 / fn |
+| `bigrat_add` | 函數 / fn |
+| `bigrat_cmp` | 函數 / fn |
+| `bigrat_div` | 函數 / fn |
+| `bigrat_eq` | 函數 / fn |
+| `bigrat_inv` | 函數 / fn |
+| `bigrat_is_zero` | 函數 / fn |
+| `bigrat_make` | 函數 / fn |
+| `bigrat_mul` | 函數 / fn |
+| `bigrat_neg` | 函數 / fn |
+| `bigrat_of_bigint` | 函數 / fn |
+| `bigrat_of_rat` | 函數 / fn |
+| `bigrat_one` | 函數 / fn |
+| `bigrat_sub` | 函數 / fn |
+| `bigrat_to_string` | 函數 / fn |
+| `bigrat_zero` | 函數 / fn |
+
 ### 可計算單值性與 n 維立方演算法 — Computable univalence and the n-dimensional cube algorithm
 
-- 規範形式 / Canonical form：FinMap 為 |A| 長的目標索引列（可枚舉的表）；CPath 為 ua 像 (src, dst, 等價表)；NBox 為 2n−1 個 (n−1)-面立方體加一個缺失面，nfill 為面子格上的 Möbius 交錯和，ncomp 取缺失面
-- 範疇化 / Categorification：等價的類型（表）與 ua 像（路徑）互為逆，兩方向逆律在全部元素上判決；開盒到填充是邊界限制映射的截面，且與維度重標交換
-- 判定 / Decision procedure：表可枚舉故『ua 是等價』為窮舉判定（路徑數 = n!）；nfill 在樣本網格逐面核對，成本 2^(2n−1)−1 可作預算判決
+- 規範形式 / Canonical form：FinMap 為 |A| 長的目標索引列（可枚舉的表，有限宇宙含 TySum 餘元）；CPath 為 ua 像 (src, dst, 等價表)；Ishae 為半伴隨等價封裝 (f, g)，η/ε/三角律皆以表格命中計算而非儲存證明項；NBox 為 2n−1 個 (n−1)-面立方體加一個缺失面，nfill 為面子格上的 Möbius 交錯和，ncomp 取缺失面
+- 範疇化 / Categorification：等價的類型（表）與 ua 像（路徑）互為逆，兩方向逆律在全部元素上判決（窮舉或符號化恆等層皆可）；isEquiv(f):=Πy.isContr(fiber f y) 與「表為雙射」兩種等價定義一致；biinv 的左右逆可併為單一 ishae（代換鏈推導，非假設）；開盒到填充是邊界限制映射的截面，且與維度重標交換
+- 判定 / Decision procedure：計數（|B|^|A|、n!、等價數）以 BigNat 精確決算（枚舉 DP 決定 n≤20，閉式 n! 遞升）；搜尋以單射前綴剪枝決定『A ≃ B』（n! 節點空間，非 |B|^|A| 表空間）；全稱逆律窮舉至預算止或由符號化恆等層（fin_map_round_trip_identity／cpath_round_trip_identity）任意大小即時判定，超預算且無法走符號化層者回報 LawUndecided 而不抽樣；纖維可縮性以計算 fiber 命中數判定；nfill 在樣本網格逐面核對，成本 2^(2n−1)−1 可作預算判決
 
 | 符號 / Symbol | 類別 / Kind |
 |---|---|
@@ -4363,6 +5250,22 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `FinMap.dst` | 欄位 / field |
 | `FinMap.src` | 欄位 / field |
 | `FinMap.table` | 欄位 / field |
+| `FinMap::equal` | 函數 / fn |
+| `FinMap::not_equal` | 函數 / fn |
+| `FinMap::to_repr` | 函數 / fn |
+| `Ishae` | 結構 / struct |
+| `Ishae.f` | 欄位 / field |
+| `Ishae.g` | 欄位 / field |
+| `Ishae::equal` | 函數 / fn |
+| `Ishae::not_equal` | 函數 / fn |
+| `Ishae::to_repr` | 函數 / fn |
+| `LawVerdict` | 列舉 / enum |
+| `LawVerdict::LawFails` | 構造子 / constructor |
+| `LawVerdict::LawHolds` | 構造子 / constructor |
+| `LawVerdict::LawUndecided` | 構造子 / constructor |
+| `LawVerdict::equal` | 函數 / fn |
+| `LawVerdict::not_equal` | 函數 / fn |
+| `LawVerdict::to_repr` | 函數 / fn |
 | `NBox` | 結構 / struct |
 | `NBox.dim` | 欄位 / field |
 | `NBox.missing_dim` | 欄位 / field |
@@ -4372,31 +5275,53 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `NBoxSide.dim` | 欄位 / field |
 | `NBoxSide.endpoint` | 欄位 / field |
 | `NBoxSide.face` | 欄位 / field |
+| `all_permutations` | 函數 / fn |
+| `biinv_to_ishae` | 函數 / fn |
 | `cpath_coe` | 函數 / fn |
 | `cpath_coe_index` | 函數 / fn |
 | `cpath_comp` | 函數 / fn |
+| `cpath_comp_assoc` | 函數 / fn |
+| `cpath_comp_left_unit` | 函數 / fn |
+| `cpath_comp_right_unit` | 函數 / fn |
 | `cpath_eq` | 函數 / fn |
 | `cpath_refl` | 函數 / fn |
+| `cpath_round_trip_identity` | 函數 / fn |
 | `cpath_sym` | 函數 / fn |
+| `cpath_sym_comp` | 函數 / fn |
+| `cpath_sym_involutive` | 函數 / fn |
+| `cpath_sym_refl` | 函數 / fn |
 | `cpath_to_equiv` | 函數 / fn |
 | `cpath_type_at` | 函數 / fn |
 | `cpath_ua` | 函數 / fn |
-| `cube_approx_eq` | 函數 / fn |
 | `default_samples` | 函數 / fn |
 | `fact` | 函數 / fn |
 | `fin_equiv_count` | 函數 / fn |
 | `fin_equiv_search` | 函數 / fn |
+| `fin_equiv_three_ways_agree` | 函數 / fn |
+| `fin_fiber` | 函數 / fn |
+| `fin_is_contr_fiber` | 函數 / fn |
+| `fin_is_equiv_via_contr` | 函數 / fn |
 | `fin_map` | 函數 / fn |
 | `fin_map_comp` | 函數 / fn |
 | `fin_map_count` | 函數 / fn |
 | `fin_map_id` | 函數 / fn |
 | `fin_map_inv` | 函數 / fn |
+| `fin_map_inv_at` | 函數 / fn |
 | `fin_map_is_equiv` | 函數 / fn |
 | `fin_map_of_code` | 函數 / fn |
+| `fin_map_of_code_big` | 函數 / fn |
+| `fin_map_round_trip_identity` | 函數 / fn |
 | `fin_map_table_eq` | 函數 / fn |
 | `fin_map_wf` | 函數 / fn |
 | `fin_not_bool` | 函數 / fn |
+| `fin_sum_swap` | 函數 / fn |
 | `fin_swap_bool_pair` | 函數 / fn |
+| `fin_ty` | 函數 / fn |
+| `ishae_eps_holds` | 函數 / fn |
+| `ishae_eta_holds` | 函數 / fn |
+| `ishae_holds` | 函數 / fn |
+| `ishae_triangle_holds` | 函數 / fn |
+| `ishae_triangle_is_free` | 函數 / fn |
 | `j_rule_on_ua` | 函數 / fn |
 | `nbox` | 函數 / fn |
 | `nbox_face_index` | 函數 / fn |
@@ -4415,7 +5340,17 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `nfill_respects_box` | 函數 / fn |
 | `nfill_term_count` | 函數 / fn |
 | `nfill_within_budget` | 函數 / fn |
+| `qmat_eigenvalue_permutation_equiv` | 函數 / fn |
+| `qmat_eigenvalue_permutation_is_equiv` | 函數 / fn |
+| `qmat_eigenvalue_permutation_ua` | 函數 / fn |
+| `qpoly_all_root_permutations_are_equivalences` | 函數 / fn |
+| `qpoly_root_permutation_equiv` | 函數 / fn |
+| `qpoly_root_permutation_is_equiv` | 函數 / fn |
+| `qpoly_root_permutation_ua` | 函數 / fn |
+| `qpoly_roots_ty` | 函數 / fn |
+| `transport_comp_computes` | 函數 / fn |
 | `transport_preserves_cardinality` | 函數 / fn |
+| `transport_refl_identity` | 函數 / fn |
 | `transport_roundtrip` | 函數 / fn |
 | `ty_card` | 函數 / fn |
 | `ua_functorial` | 函數 / fn |
@@ -4424,8 +5359,10 @@ repository (37 public declarations); `decoupling_certified()` certifies each,
 | `ua_refl_is_identity` | 函數 / fn |
 | `ua_retraction` | 函數 / fn |
 | `ua_retraction_all` | 函數 / fn |
+| `ua_retraction_proved` | 函數 / fn |
 | `ua_section` | 函數 / fn |
 | `ua_section_all` | 函數 / fn |
+| `ua_section_proved` | 函數 / fn |
 | `ua_transport_computes` | 函數 / fn |
 | `ua_type_at` | 函數 / fn |
 | `ua_value` | 函數 / fn |

@@ -109,6 +109,40 @@ fn check_rational_Jordan() -> Bool {
 ///|
 fn check_generalized_projectors() -> Bool {
   let a = qmat_from_int_rows([[2, 1, 0], [0, 2, 0], [0, 0, 3]])
+  // `qmat_rational_spectrum` packages `qmat_charpoly` + the exact
+  // rational-root factorization: `a`'s characteristic polynomial is
+  // (x-2)^2(x-3), fully rational, so the residual factor must be
+  // trivial (degree 0) and the (eigenvalue, multiplicity) pairs must be
+  // exactly {2: 2, 3: 1} regardless of the order they are reported in.
+  let spectrum = qmat_rational_spectrum(a)
+  let mut spectrum_pairs_ok = true
+  for i in 0..<spectrum.eigenvalues.length() {
+    let want_mult = if rat_eq(spectrum.eigenvalues[i], rat_int(2)) {
+      2
+    } else if rat_eq(spectrum.eigenvalues[i], rat_int(3)) {
+      1
+    } else {
+      -1
+    }
+    if spectrum.multiplicities[i] != want_mult {
+      spectrum_pairs_ok = false
+    }
+  }
+  let spectrum_ok = spectrum.eigenvalues.length() == 2 &&
+    spectrum.eigenvalues.length() == spectrum.multiplicities.length() &&
+    qpoly_degree(spectrum.residual) == 0 &&
+    spectrum_pairs_ok
+  // `sym_mat_of_qmat`: the exact rational matrix read into the symbolic
+  // complex-matrix format must agree entrywise via `sc_rat`.
+  let sym_a = sym_mat_of_qmat(a)
+  let sym_a_expected = sym_mat_from_rows([
+    [sc_rat(rat_int(2)), sc_rat(rat_int(1)), sc_rat(rat_int(0))],
+    [sc_rat(rat_int(0)), sc_rat(rat_int(2)), sc_rat(rat_int(0))],
+    [sc_rat(rat_int(0)), sc_rat(rat_int(0)), sc_rat(rat_int(3))],
+  ])
+  if !spectrum_ok || !sym_mat_eq(sym_a, sym_a_expected) {
+    return false
+  }
   let repeated = match qmat_generalized_projector(a, rat_int(2)) {
     Some(pp) => {
       let expected = qmat_from_int_rows([[1, 0, 0], [0, 1, 0], [0, 0, 0]])

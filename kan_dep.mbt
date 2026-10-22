@@ -386,6 +386,14 @@ pub fn dvalue_of_ty(ty : Ty) -> DValue {
     TyBool => DVBoolTy
     TyUnit => DVUnitTy
     TyProd(a, b) => DVSigma(dvalue_of_ty(a), _ => dvalue_of_ty(b))
+    TySum(_, _) =>
+      // No coproduct Kan structure is implemented yet (building `coe`/
+      // `comp` for a sum type needs case-split transport across the two
+      // branches, which this layer does not provide).  Sum types are
+      // supported by the computable-univalence layer (`ty_card`,
+      // `elems_of`, `FinMap`) but not by this AST/Kan embedding; see SPEC
+      // §四 item 9(c).
+      abort("dvalue_of_ty: TySum has no Kan semantics in this layer yet")
   }
 }
 
@@ -395,6 +403,8 @@ pub fn dline_of_ty(ty : Ty) -> DLine {
     TyBool => dline_bool()
     TyUnit => dline_unit()
     TyProd(a, b) => dline_sigma_constfam(dline_of_ty(a), dline_of_ty(b))
+    TySum(_, _) =>
+      abort("dline_of_ty: TySum has no Kan semantics in this layer yet")
   }
 }
 
@@ -404,6 +414,8 @@ pub fn pval_to_dvalue(v : PVal) -> DValue {
     PVUnit => DVUnit
     PVBool(b) => DVBool(b)
     PVPair(a, b) => DVPair(pval_to_dvalue(a), pval_to_dvalue(b))
+    PVLeft(_) | PVRight(_) =>
+      abort("pval_to_dvalue: sum-tagged values have no Kan semantics in this layer yet")
   }
 }
 

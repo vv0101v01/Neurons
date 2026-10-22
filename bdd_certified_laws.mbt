@@ -107,6 +107,34 @@ fn check_certified_projector() -> Bool {
     qcc_real(quad_sqrt_rat(rat_make(1, 2))),
   ]
   let r = cert_outer(w)
+  // `cert_projector_of_vector` on a non-unit vector normalizes before
+  // taking the outer product, so it must agree with `cert_outer` of
+  // the vector's own unit normalization, and must still be a genuine
+  // (idempotent, Hermitian, trace-1) projector; on the zero vector
+  // (norm 0, not invertible) it must report `None`.
+  let v_raw : CertVec = [
+    qcc_real(quad_rat(rat_make(1, 1))),
+    qcc_real(quad_rat(rat_make(1, 1))),
+    qcc_zero(),
+  ]
+  let w_unit : CertVec = [
+    qcc_real(quad_sqrt_rat(rat_make(1, 2))),
+    qcc_real(quad_sqrt_rat(rat_make(1, 2))),
+    qcc_zero(),
+  ]
+  let projector_of_vector_ok = match cert_projector_of_vector(v_raw) {
+    Some(pv) =>
+      cert_mat_eq(pv, cert_outer(w_unit)) &&
+      cert_is_hermitian(pv) &&
+      cert_is_idempotent(pv) &&
+      qcc_eq(cert_mat_trace(pv), qcc_one())
+    None => false
+  }
+  let projector_of_zero_vector_rejected = match
+    cert_projector_of_vector(cert_vec_zero(3)) {
+    Some(_) => false
+    None => true
+  }
   let numeric = certify_numeric_projector(
     example_projector(),
     p,
@@ -129,7 +157,9 @@ fn check_certified_projector() -> Bool {
   !cert_mat_eq(cert_mat_mul(p, r), cert_mat_mul(r, p)) &&
   numeric.ok &&
   numeric.numeric_residual < 0.000000001 &&
-  interval_ok
+  interval_ok &&
+  projector_of_vector_ok &&
+  projector_of_zero_vector_rejected
 }
 
 ///|
